@@ -324,7 +324,7 @@
             var isLoadedField = productForm.find('#codefabric_extension_loaded');
             if (!isLoadedField || isLoadedField.length == 0) {
               productForm.append('<input type="hidden" id="codefabric_extension_loaded" value="true" />');
-              productForm.on('change', function() {
+              productForm.on('load', function() {
                 loadProductExtensions(productId);
               });
             }
