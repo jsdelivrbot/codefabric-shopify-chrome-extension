@@ -221,8 +221,8 @@
                   var tab = tabs.filter(function(e, i) { return e.key == tabName; });
                   if (tab.length > 0) {
                     tab = tab[0];
-                    var tabElement = createTab(tab);
-                    addCardContent.call(tabsCard, tabElement, pageData[0].pages);
+                    var tabElement = createTab(tab, pageData[0].pages);
+                    addCardContent.call(tabsCard, tabElement);
                   }
                 }
 
@@ -233,16 +233,16 @@
                   }
 
                   if (order.filter(function (e, i) { return e.trim() == tab.key; }) == 0) {
-                    var tabElement = createTab(tab);
-                    addCardContent.call(tabsCard, tabElement, pageData[0].pages);
+                    var tabElement = createTab(tab, pageData[0].pages);
+                    addCardContent.call(tabsCard, tabElement);
                   }
                 }
               }
               else {
                 for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
                   var tab = tabs[tabIdx];
-                  var tabElement = createTab(tab);
-                  addCardContent.call(tabsCard, tabElement, pageData[0].pages);
+                  var tabElement = createTab(tab, pageData[0].pages);
+                  addCardContent.call(tabsCard, tabElement);
                 }
               }
 
