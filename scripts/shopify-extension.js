@@ -46,7 +46,10 @@
               url: op.url,
               method: op.method,
               dataType: 'application/json',
-              data: op.data
+              data: op.data,
+              error: function (a, b, c, d, e) {
+                  debugger;
+              }
             }).done(function(r) {
               showMessage(r);
             }).fail(function(e) {
@@ -88,6 +91,8 @@
         };
 
         var updateMetafield = function(parentType, parentId, id, value, type) {
+          if (!id || id == '') { return; }
+          
           var url = '/admin/';
           switch (parentType) {
             case 'product':
@@ -114,6 +119,8 @@
         };
 
         var deleteMetafield = function(parentType, parentId, id) {
+          if (!id || id == '') { return; }
+
           var url = '/admin/';
           switch (parentType) {
             case 'product':
