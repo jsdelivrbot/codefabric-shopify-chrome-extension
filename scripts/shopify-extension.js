@@ -355,17 +355,17 @@
                   }
 
                   if (tabId) {
-                    updateMetafield('tab', tabId, tabKey, value);
+                    updateMetafield('product', productId, tabId, value);
                   }
                   else {
-                    addMetafield('tab', tabKey, value);
+                    addMetafield('product', productId, 'tab', tabKey, value);
                   }
                 }
 
                 var deletedTabs = jq(this).find('.tabs-editor input[name=tabs-deleted]').val().split(';');
                 for (var delIdx = 0; delIdx < deletedTabs.length; delIdx++) {
-                  var tabId = deletedTabs[delIdx];
-                  deleteMetafield('tab', tabId);
+                  var delId = deletedTabs[delIdx];
+                  deleteMetafield('product', productId, delId);
                 }
               });
 
