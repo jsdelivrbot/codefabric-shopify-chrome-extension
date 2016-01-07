@@ -104,7 +104,32 @@
 
         };
 
+        var createTab = function (tab) {
+          var keyHandle = tab.key.toLowerCase().replace(' ', '-');
+          var tabContent = jq(cardInputWrapper)
+                            .append(jq(cardOuterGrid)
+                              .append(jq(cardGridCell)
+                                .append(jq(cardInputTitle).text(tab.key)
+                                                          .attr({ 'for': 'tab-' + keyHandle })))
+                              .append(jq(cardGridCellNoFlex)
+                                .append(jq(cardInnerGrid)
+                                  .append(jq(cardGridCellNoFlex).append('<label for="test_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="test_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
+                                 )
+                              )
+                            )
+                            .append(jq(cardInputTextArea)
+                              .val(tab.value)
+                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle })
+                            );
+
+          return tabContent;
+        };
+
         var loadProductExtensions = function(productId) {
+          var result = jq.Deferred();
+
           var tabsCard = jq(cardHtml).addClass('tabs-editor');
 
           addCardHeader.call(tabsCard, 'Tabs', [ 
@@ -117,17 +142,60 @@
           ]);
 
 
-          var tabContent = jq(cardOuterGrid).append(jq(cardGridCell).append(jq(cardInputTitle).text('Radio Test')))
-                                            .append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).append(jq(cardGridCellNoFlex).append('<label for="test_type_text" class="next-label--inline">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
-                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_page" class="next-label--inline">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
-                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet" class="next-label--inline">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
-                                             ));
+          jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab')
+            .done(function (data) {
+              var tabs = data.metafields;
+              var order = [];
+              if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
+                order = tabs.filter(function(e, i) { return e.key == '_order'; })[0].value.split(',');
+              }
 
-          addCardContent.call(tabsCard, jq(cardInputWrapper).append(tabContent).append(jq(cardInputTextArea).val('Something to test')
-                                                                                                            .attr({'name': 'test', 'id': 'test'})));
+              if (order) {
+                for (var orderIdx = 0; orderIdx < order.length; orderIdx++) {
+                  var tabName = order[orderIdx].trim();
+                  var tab = tabs.filter(function(e, i) { return e.key == tabName; });
+                  if (tab.length > 0) {
+                    tab = tab[0];
+                    var tabElement = createTab(tab);
+                    addCardContent(tab);
+                  }
+                }
 
+                for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
+                  var tab = tabs[tabIdx];
+                  if (tab.key == '_order') {
+                    continue;
+                  }
 
-          jq('.next-card.images').before(tabsCard);
+                  if (order.filter(function (e, i) { return e == tab.key; }) == 0) {
+                    var tabElement = createTab(tab);
+                    addCardContent.call(tabsCard, tabElement);
+                  }
+                }
+              }
+              else {
+                for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
+                  var tab = tabs[tabIdx];
+                  var tabElement = createTab(tab);
+                  addCardContent.call(tabsCard, tabElement);
+                }
+              }
+
+              jq('.next-card.images').before(tabsCard);
+
+              result.resolve();
+            });
+
+          return result;
+          // var tabContent = jq(cardOuterGrid).append(jq(cardGridCell).append(jq(cardInputTitle).text('Radio Test')))
+          //                                   .append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).append(jq(cardGridCellNoFlex).append('<label for="test_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
+          //                                                                                          .append(jq(cardGridCellNoFlex).append('<label for="test_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
+          //                                                                                          .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
+          //                                    ));
+
+          // addCardContent.call(tabsCard, jq(cardInputWrapper).append(tabContent).append(jq(cardInputTextArea).val('Something to test')
+          //                                                                                                   .attr({'name': 'test', 'id': 'test'})));
+
         };
 
         // Public
@@ -142,10 +210,11 @@
             var adminPage = getAdminPage();
             if (adminPage.length > 1)
             {
+              var promise = null;
               switch (adminPage[1]) {
                 case 'products':
                   if (adminPage.length > 2) {
-                    loadProductExtensions(adminPage[2]);
+                    promise = loadProductExtensions(adminPage[2]);
                   }
                   else {
                     loadProductListExtensions();
@@ -158,7 +227,15 @@
               }
             }
 
-            showMessage('CodeFabric Shopify extensions loaded!');
+            if (promise) {
+              promise.done(function () {
+                showMessage('CodeFabric Shopify extensions loaded!');
+              });
+            }
+            else {
+              showMessage('CodeFabric Shopify extensions loaded!');
+            }
+            
           }
         };
 
