@@ -29,6 +29,11 @@
         var cardHeaderTitle = '<h2 class="next-heading"></h2>';
 
         var cardContentWrapper = '<div class="next-card__section"></div>';
+        var cardInputWrapper = '<div class="next-input-wrapper"></div>';
+        var cardInputTitle = '<label class="next-label"></label>';
+        var cardInputTextBox = '<input type="text" class="next-input" size="30" />';
+        var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
+        var cardInputDropdown = '<select class="next-input"></select>';
 
         // HTML builder functions
         var addCard = function (cardHandle) {
@@ -57,6 +62,27 @@
           return this;
         };
 
+        var addCardContent = function (content) {
+          var wrapper = this.find('.next-card__section');
+          if (!wrapper) {
+            wrapper = this.append(cardContentWrapper).find('.next-card__section');
+          }
+
+          wrapper.append(content);
+
+          return this;
+        };
+
+        var createTextArea = function (title, handle, value) {
+          return jq(cardInputWrapper).append(jq(cardInputTitle).text(title))
+                                     .append(jq(cardInputTextArea).val(value)
+                                                                  .attr({'name': handle, 'id': handle}));
+        };
+
+        var addDropdown = function (title, handle, options, value) {
+
+        };
+
         var isShopify = function () {
           return /^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/.*$/i.test(location.href);
         };
@@ -77,7 +103,7 @@
             { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
           ]);
 
-
+          addCardContent.call(tabsCard, createTextArea('Test', 'test', 'Something to test'));
 
 
           jq('.next-card.images').before(tabsCard);
