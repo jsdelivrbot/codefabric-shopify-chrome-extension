@@ -329,7 +329,7 @@
               tabsCard.append('<input type="hidden" name="tabs-deleted" />');
               productForm.on('submit', function() {
                 //Save the metafields
-                var tabEditors = this.find('.tabs-editor').find('input[type=radio]');
+                var tabEditors = jq(this).find('.tabs-editor').find('input[type=radio]');
                 for (var editorIdx = 0; editorIdx < tabEditors.length; editorIdx++) {
                   var editorRd = tabEditors[editorIdx];
 
@@ -357,7 +357,7 @@
                   }
                 }
 
-                var deletedTabs = this.find('.tabs-editor input[name=tabs-deleted]').val().split(';');
+                var deletedTabs = jq(this).find('.tabs-editor input[name=tabs-deleted]').val().split(';');
                 for (var delIdx = 0; delIdx < deletedTabs.length; delIdx++) {
                   var tabId = deletedTabs[delIdx];
                   deleteMetafield('tab', tabId);
