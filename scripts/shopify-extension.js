@@ -373,11 +373,13 @@
                   deleteMetafield('product', productId, delId);
                 }
               });
+              
+              tabsCard.append('<script type="text/html" class="modal_source" id="add-tab-modal"><p>Banana!</p><a href class="btn close-modal">Close</a></script>');
 
               addCardHeader.call(tabsCard, 'Tabs', [ 
                 { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
                     e.preventDefault();
-                    var modal = new shopify.Modal(jq('<script type="text/html" class="modal_source"><p>Banana!</p><a href class="btn close-modal">Close</a></script>'));
+                    var modal = new shopify.Modal(jq('#add-tab-modal'));
                     modal.show();
                 } },
                 { handle: 'tab-order', title: 'Change tab order', onClick: function(e) {
