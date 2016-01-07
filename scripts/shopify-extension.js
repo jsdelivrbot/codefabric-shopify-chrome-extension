@@ -46,14 +46,11 @@
               url: op.url,
               method: op.method,
               dataType: 'json',
-              data: op.data,
-              error: function (a, b, c, d, e) {
-                  debugger;
-              }
+              data: op.data
             }).done(function(r) {
-              showMessage(r);
+              
             }).fail(function(e) {
-              showError(e);
+              showError(e.responseText);
             }).always(function() {
               processApiQueue();
             });
@@ -325,7 +322,7 @@
             if (!isLoadedField || isLoadedField.length == 0) {
               productForm.append('<input type="hidden" id="codefabric_extension_loaded" value="true" />');
               productForm.on('submit', function() {
-                window.setTimeout(function() { loadProductExtensions(productId); }, 1000);
+                window.setTimeout(function() { loadProductExtensions(productId); }, 2000);
               }); 
             }
             else {
