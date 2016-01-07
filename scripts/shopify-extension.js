@@ -108,15 +108,19 @@
           var tabsCard = jq(cardHtml).addClass('tabs-editor');
 
           addCardHeader.call(tabsCard, 'Tabs', [ 
-            { handle: 'add-tab', title: 'Add a new tab', onClick: function() {} },
+            { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
+                e.preventDefault();
+                var modal = new shopify.Modal(jq('<div><p>Banana!</p></div>'));
+                modal.show();
+            } },
             { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
           ]);
 
 
           var tabContent = jq(cardOuterGrid).append(jq(cardGridCell).append(jq(cardInputTitle).text('Radio Test')))
-                                            .append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).append(jq(cardGridCellNoFlex).append('<label for="test_type_text">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
-                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_page">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
-                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
+                                            .append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).append(jq(cardGridCellNoFlex).append('<label for="test_type_text" class="next-label--inline">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
+                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_page" class="next-label--inline">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
+                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet" class="next-label--inline">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
                                              ));
 
           addCardContent.call(tabsCard, jq(cardInputWrapper).append(tabContent).append(jq(cardInputTextArea).val('Something to test')
