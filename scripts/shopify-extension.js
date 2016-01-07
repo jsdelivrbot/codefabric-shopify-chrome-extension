@@ -59,9 +59,9 @@
           }
         };
 
-        var addMetafield = function (type, parentId, namespace, key, value, type) {
+        var addMetafield = function (parentType, parentId, namespace, key, value, type) {
           var url = '/admin/';
-          switch (type) {
+          switch (parentType) {
             case 'product':
               url += 'products/' + parentId;
               break;
@@ -86,9 +86,9 @@
           }
         };
 
-        var updateMetafield = function(type, parentId, id, value, type) {
+        var updateMetafield = function(parentType, parentId, id, value, type) {
           var url = '/admin/';
-          switch (type) {
+          switch (parentType) {
             case 'product':
               url += 'products/' + parentId + '/';
               break;
@@ -112,9 +112,9 @@
           }
         };
 
-        var deleteMetafield = function(type, parentId, id) {
+        var deleteMetafield = function(parentType, parentId, id) {
           var url = '/admin/';
-          switch (type) {
+          switch (parentType) {
             case 'product':
               url += 'products/' + parentId + '/';
               break;
