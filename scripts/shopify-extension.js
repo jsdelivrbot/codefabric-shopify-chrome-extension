@@ -34,6 +34,103 @@
         var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
         var cardInputDropdown = '<select></select>';
 
+        //API functions
+        var apiQueue = [];
+        var isProcessing = false;
+        var processApiQueue = function() {
+          if (apiQueue.length > 0) {
+            isProcessing = true;
+            var op = apiQueue.pop();
+
+            jq.ajax({
+              url: op.url,
+              method: op.method,
+              dataType: 'application/json',
+              data: op.data
+            }).done(function(r) {
+              processApiQueue();
+              showMessage(r);
+            }).fail(function(e) {
+              showError(e);
+            });
+          }
+          else {
+            isProcessing = false;
+          }
+        };
+
+        var addMetafield = function (type, parentId, namespace, key, value, type) {
+          var url = '/admin/';
+          switch (type) {
+            case 'product':
+              url += 'products/' + parentId;
+              break;
+          }
+          url += '/metafields.json';
+
+          apiQueue.push({
+            url: url,
+            method: 'POST',
+            data: {
+              metafield: {
+                namespace: namespace,
+                key: key,
+                value: value,
+                value_type: type || 'string'
+              }
+            }
+          });
+
+          if (!isProcessing) {
+            processApiQueue();
+          }
+        };
+
+        var updateMetafield = function(type, parentId, id, value, type) {
+          var url = '/admin/';
+          switch (type) {
+            case 'product':
+              url += 'products/' + parentId + '/';
+              break;
+          }
+          url += 'metafields/' + id + '.json';
+
+          apiQueue.push({
+            url: url,
+            method: 'PUT',
+            data: {
+              metafield: {
+                id: id,
+                value: value,
+                value_type: type || 'string'
+              }
+            }
+          });
+
+          if (!isProcessing) {
+            processApiQueue();
+          }
+        };
+
+        var deleteMetafield = function(type, parentId, id) {
+          var url = '/admin/';
+          switch (type) {
+            case 'product':
+              url += 'products/' + parentId + '/';
+              break;
+          }
+          url += 'metafields/' + id + '.json';
+
+          apiQueue.push({
+            url: url,
+            method: 'DELETE'
+          });
+
+          if (!isProcessing) {
+            processApiQueue();
+          }
+        };
+
 
         // HTML builder functions
         var addCard = function (cardHandle) {
@@ -111,16 +208,17 @@
           }
 
           var keyHandle = tab.key.toLowerCase().replace(' ', '-');
-          var tabContent = jq(cardInputWrapper)
+          var tabContent = jq(cardInputWrapper).data('id', tab.id).data('key', tab.key)
                             .append(jq(cardOuterGrid)
                               .append(jq(cardGridCell)
                                 .append(jq(cardInputTitle).text(tab.key)
                                                           .attr({ 'for': 'tab-' + keyHandle })))
                               .append(jq(cardGridCellNoFlex)
                                 .append(jq(cardInnerGrid)
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="' + keyHandle +'_type" id="' + keyHandle +'_type_text" value="text" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="' + keyHandle +'_type" id="' + keyHandle +'_type_page" value="page" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="' + keyHandle +'_type" id="' + keyHandle +'_type_snippet" value="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_text" value="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_page" value="page" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_snippet" value="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<a class="btn btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'))
                                  )
                               )
                             )
@@ -128,18 +226,18 @@
                               .addClass('text')
                               .val(tab.value)
                               .hide()
-                              .attr({'name': 'tab-' + tab.key + '_text', 'id': 'tab-' + keyHandle + '_text' })
+                              .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_text' })
                             )
                             .append(jq(cardInputDropdown)
                               .addClass('page')
                               .append(pageOptions)
                               .hide()
-                              .attr({'name': 'tab-' + tab.key + '_page', 'id': 'tab-' + keyHandle + '_page' })
+                              .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_page' })
                             )
                             .append(jq(cardInputTextBox)
                               .addClass('snippet')
                               .hide()
-                              .attr({'name': 'tab-' + tab.key + '_snippet', 'id': 'tab-' + keyHandle + '_snippet' })
+                              .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_snippet' })
                             );
 
           var textarea = tabContent.find('#tab-' + keyHandle +'_text');
@@ -153,11 +251,11 @@
           var snippetMatch = tab.value.match(/^\{([^\{\}]+)\}$/);
           var pageMatch = tab.value.match(/^\[([^\[\]]+)\]$/);
           if (snippetMatch && snippetMatch.length > 1) {
-            snippetDropdown.val(snippetMatch[1]).show();
+            snippetDropdown.val(snippetMatch[1].trim()).show();
             snippetRadio.attr({ 'checked': 'checked' });
           }
           else if (pageMatch && pageMatch.length > 1) {
-            pageDropdown.val(pageMatch[1]).show();
+            pageDropdown.val(pageMatch[1].trim()).show();
             pageRadio.attr({ 'checked': 'checked' });
           }
           else {
@@ -189,6 +287,16 @@
             }
           });
 
+          tabContent.find('.delete-tab-btn').on('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you wish to delete the tab "' + jq(this).closest('.next-input-wrapper').data('key') + '"?')) {
+              var delField = jq(this).closest('.tabs-editor').find('input[name=tabs-deleted]');
+              var ids = (delField.val() || '').split(';');
+              ids.push(jq(this).closest('.next-input-wrapper').data('id'));
+              delField.val(ids.join(';'));
+            }
+          });
+
           return tabContent;
         };
 
@@ -216,16 +324,57 @@
                   jq.get('/admin/pages.json'))
             .done(function (productData, pageData) {
 
-
               var tabsCard = jq(cardHtml).addClass('tabs-editor');
+
+              tabsCard.append('<input type="hidden" name="tabs-deleted" />');
+              productForm.on('submit', function() {
+                //Save the metafields
+                var tabEditors = this.find('.tabs-editor').find('input[type=radio]');
+                for (var editorIdx = 0; editorIdx < tabEditors.length; editorIdx++) {
+                  var editorRd = tabEditors[editorIdx];
+
+                  var tabId = wrapper.data('id');
+                  var tabKey = wrapper.data('key');
+
+                  var wrapper = editorRd.closest('.input-wrapper');
+                  var textEditor = wrapper.find('.next-input.text');
+                  var pageEditor = wrapper.find('select.page');
+                  var snippetEditor = wrapper.find('.next-input.snippet');
+
+                  var value = textEditor.val();
+                  if (editorRd.id.indexOf('snippet') > 0) {
+                    value = '{' + snippetEditor.val() + '}';
+                  }
+                  else if (editorRd.id.indexOf('page') > 0) {
+                    value = '[' + pageEditor.val() + ']';
+                  }
+
+                  if (tabId) {
+                    updateMetafield('tab', tabId, tabKey, value);
+                  }
+                  else {
+                    addMetafield('tab', tabKey, value);
+                  }
+                }
+
+                var deletedTabs = this.find('.tabs-editor input[name=tabs-deleted]').val().split(';');
+                for (var delIdx = 0; delIdx < deletedTabs.length; delIdx++) {
+                  var tabId = deletedTabs[delIdx];
+                  deleteMetafield('tab', tabId);
+                }
+              });
 
               addCardHeader.call(tabsCard, 'Tabs', [ 
                 { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
                     e.preventDefault();
-                    var modal = new shopify.Modal(jq('<div><p>Banana!</p></div>'));
+                    var modal = new shopify.Modal(jq('<script type="text/html" class="modal_source"><p>Banana!</p><a href class="btn close-modal">Close</a></script>'));
                     modal.show();
                 } },
-                { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
+                { handle: 'tab-order', title: 'Change tab order', onClick: function(e) {
+                    e.preventDefault();
+                    var modal = new shopify.Modal(jq('<div><p>Banana!</p></div>'));
+                    modal.show();
+                } } 
               ]);
 
               var tabs = productData[0].metafields;
