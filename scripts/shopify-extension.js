@@ -48,10 +48,11 @@
               dataType: 'application/json',
               data: op.data
             }).done(function(r) {
-              processApiQueue();
               showMessage(r);
             }).fail(function(e) {
               showError(e);
+            }).always(function() {
+              processApiQueue();
             });
           }
           else {
