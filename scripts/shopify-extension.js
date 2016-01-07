@@ -149,7 +149,7 @@
 
           var snippetMatch = tab.value.match(/^\{([^\{\}]+)\}$/);
           var pageMatch = tab.value.match(/^\[([^\[\]]+)\]$/);
-          if (snippetMatch.length > 1) {
+          if (snippetMatch && snippetMatch.length > 1) {
             snippetDropdown.val(snippetMatch[1]).show();
             tabContent.find('#' + keyHandle +'_type_snippet').attr({ 'checked': 'checked' })
               .on('change', function() {
@@ -161,7 +161,7 @@
                 }
               });
           }
-          else if (pageMatch.length > 1) {
+          else if (pageMatch && pageMatch.length > 1) {
             pageDropdown.val(pageMatch[1]).show();
             tabContent.find('#' + keyHandle +'_type_page').attr({ 'checked': 'checked' })
               .on('change', function() {
