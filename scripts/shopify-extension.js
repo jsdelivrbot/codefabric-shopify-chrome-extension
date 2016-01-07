@@ -166,21 +166,24 @@
             textRadio.attr({ 'checked': 'checked' });
           }
 
-          snippetRadio.on('change', function() {
+          snippetRadio.on('change', function(e) {
+            e.preventDefault();
             jq(this).closest('.next-input-wrapper').find('.next-input').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.snippet').show();
             }
           });
 
-          pageRadio.on('change', function() {
+          pageRadio.on('change', function(e) {
+            e.preventDefault();
             jq(this).closest('.next-input-wrapper').find('.next-input').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.page').show();
             }
           });
 
-          textRadio.on('change', function() {
+          textRadio.on('change', function(e) {
+            e.preventDefault();
             jq(this).closest('.next-input-wrapper').find('.next-input').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.text').show();
