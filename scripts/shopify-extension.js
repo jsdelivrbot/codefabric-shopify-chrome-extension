@@ -156,7 +156,7 @@
                   if (tab.length > 0) {
                     tab = tab[0];
                     var tabElement = createTab(tab);
-                    addCardContent(tabsCard, tabElement);
+                    addCardContent.call(tabsCard, tabElement);
                   }
                 }
 
