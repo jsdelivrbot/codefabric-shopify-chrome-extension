@@ -37,7 +37,7 @@
             
             grid.append(jq(cardGridCell).append(jq(cardHeaderTitle).text(headerText)));
 
-            var actionsGrid = grid.append(jq(cardGridCellNoFlex).append(cardInnerGrid).addClass('actions')).find('.actions');
+            var actionsGrid = grid.append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).addClass('actions'))).find('.actions');
             for (var actionIdx = 0; actionIdx < actions.length; actionIdx++) {
               var action = actions[actionIdx];
               var actionLink = actionsGrid.append(jq(cardGridCellNoFlex).append('<a class="action-' + action.handle + '" href>' + action.title + '</a>')).find('.action-' + action.handle);
