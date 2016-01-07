@@ -6,7 +6,6 @@
     if (!CodeFabric.Shopify.Extension) {
 
       CodeFabric.Shopify.Extension = function () {
-
         // Private
         var self = this;
 
