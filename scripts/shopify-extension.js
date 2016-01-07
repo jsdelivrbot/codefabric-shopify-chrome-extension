@@ -32,7 +32,7 @@
         var cardInputTitle = '<label class="next-label"></label>';
         var cardInputTextBox = '<input type="text" class="next-input" size="30" />';
         var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
-        var cardInputDropdown = '<select class="next-input"></select>';
+        var cardInputDropdown = '<select></select>';
 
 
         // HTML builder functions
@@ -167,7 +167,7 @@
 
           snippetRadio.on('change', function(e) {
             e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.next-input').hide();
+            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.snippet').show();
             }
@@ -175,7 +175,7 @@
 
           pageRadio.on('change', function(e) {
             e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.next-input').hide();
+            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.page').show();
             }
@@ -183,7 +183,7 @@
 
           textRadio.on('change', function(e) {
             e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.next-input').hide();
+            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.text').show();
             }
