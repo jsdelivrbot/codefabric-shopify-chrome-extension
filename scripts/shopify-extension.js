@@ -21,6 +21,7 @@
         // Public
         return {
           init: function () {
+            debugger;
             if (!isShopify()) {
               alert('Cannot be used outside of Shopify Admin!');
               return;
