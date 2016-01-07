@@ -73,6 +73,14 @@
           return this;
         };
 
+        var createRichTextArea = function (title, handle, value) {
+          var wrapper = jq(cardInputWrapper).append(jq(cardInputTitle).text(title))
+                                     .append(jq(cardInputTextArea).val(value)
+                                                                  .attr({'name': handle, 'id': handle}));
+          new shopify.Rte(wrapper);
+          return wrapper;
+        };
+
         var createTextArea = function (title, handle, value) {
           return jq(cardInputWrapper).append(jq(cardInputTitle).text(title))
                                      .append(jq(cardInputTextArea).val(value)
@@ -103,7 +111,8 @@
             { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
           ]);
 
-          addCardContent.call(tabsCard, createTextArea('Test', 'test', 'Something to test'));
+
+          addCardContent.call(tabsCard, createRichTextArea('Test', 'test', 'Something to test'));
 
 
           jq('.next-card.images').before(tabsCard);
