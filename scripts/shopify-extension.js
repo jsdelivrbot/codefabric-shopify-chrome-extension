@@ -104,7 +104,13 @@
 
         };
 
-        var createTab = function (tab) {
+        var createTab = function (tab, pages) {
+          var pageOptions = '';
+          for (var pageIdx = 0; pageIdx < pages.length; pageIdx++) {
+            var page = pages[pageIdx];
+            pageOptions += '<option value="' + page.handle + '">' + page.title + '</option>';
+          }
+
           var keyHandle = tab.key.toLowerCase().replace(' ', '-');
           var tabContent = jq(cardInputWrapper)
                             .append(jq(cardOuterGrid)
@@ -113,16 +119,72 @@
                                                           .attr({ 'for': 'tab-' + keyHandle })))
                               .append(jq(cardGridCellNoFlex)
                                 .append(jq(cardInnerGrid)
-                                  .append(jq(cardGridCellNoFlex).append('<label for="test_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="test_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="' + keyHandle +'_type" id="' + keyHandle +'_type_text" value="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="' + keyHandle +'_type" id="' + keyHandle +'_type_page" value="page" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="' + keyHandle +'_type" id="' + keyHandle +'_type_snippet" value="text" />'))
                                  )
                               )
                             )
                             .append(jq(cardInputTextArea)
+                              .addClass('text')
                               .val(tab.value)
-                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle })
+                              .hide()
+                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle + '_text' })
+                            )
+                            .append(jq(cardInputDropdown)
+                              .addClass('page')
+                              .append(pageOptions)
+                              .hide()
+                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle + '_page' })
+                            )
+                            .append(jq(cardInputTextBox)
+                              .addClass('snippet')
+                              .hide()
+                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle + '_snippet' })
                             );
+
+          var textarea = tabContent.find('#tab-' + keyHandle +'_text');
+          var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
+          var pageDropdown = tabContent.find('#tab-' + keyHandle +'_page');
+
+          var snippetMatch = tab.value.match(/^\{([^\{\}]+)\}$/);
+          var pageMatch = tab.value.match(/^\[([^\[\]]+)\]$/);
+          if (snippetMatch.length > 1) {
+            snippetDropdown.val(snippetMatch[1]).show();
+            tabContent.find('#' + keyHandle +'_type_snippet').attr({ 'checked': 'checked' })
+              .on('change', function() {
+                if (!this.checked) {
+                  jq(this).closest('.next-input-wrapper').find('.snippet').hide();
+                }
+                else {
+                  jq(this).closest('.next-input-wrapper').find('.snippet').show();
+                }
+              });
+          }
+          else if (pageMatch.length > 1) {
+            pageDropdown.val(pageMatch[1]).show();
+            tabContent.find('#' + keyHandle +'_type_page').attr({ 'checked': 'checked' })
+              .on('change', function() {
+                if (!this.checked) {
+                  jq(this).closest('.next-input-wrapper').find('.page').hide();
+                }
+                else {
+                  jq(this).closest('.next-input-wrapper').find('.page').show();
+                }
+              });
+          }
+          else {
+            textarea.val(tab.value).show();
+            tabContent.find('#' + keyHandle +'_type_text').attr({ 'checked': 'checked' })
+              .on('change', function() {
+                if (!this.checked) {
+                  jq(this).closest('.next-input-wrapper').find('.text').hide();
+                }
+                else {
+                  jq(this).closest('.next-input-wrapper').find('.text').show();
+                }
+              });
+          }
 
           return tabContent;
         };
@@ -130,8 +192,12 @@
         var loadProductExtensions = function(productId) {
           var result = jq.Deferred();
 
-          jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab')
-            .done(function (data) {
+
+          jq.when(jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab'),
+                  jq.get('/admin/pages.json'))
+            .done(function (productData, pageData) {
+
+
               var tabsCard = jq(cardHtml).addClass('tabs-editor');
 
               addCardHeader.call(tabsCard, 'Tabs', [ 
@@ -143,7 +209,7 @@
                 { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
               ]);
 
-              var tabs = data.metafields;
+              var tabs = productData.metafields;
               var order = [];
               if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
                 order = tabs.filter(function(e, i) { return e.key == '_order'; })[0].value.split(',');
@@ -156,7 +222,7 @@
                   if (tab.length > 0) {
                     tab = tab[0];
                     var tabElement = createTab(tab);
-                    addCardContent.call(tabsCard, tabElement);
+                    addCardContent.call(tabsCard, tabElement, pageData.pages);
                   }
                 }
 
@@ -166,9 +232,9 @@
                     continue;
                   }
 
-                  if (order.filter(function (e, i) { return e == tab.key; }) == 0) {
+                  if (order.filter(function (e, i) { return e.trim() == tab.key; }) == 0) {
                     var tabElement = createTab(tab);
-                    addCardContent.call(tabsCard, tabElement);
+                    addCardContent.call(tabsCard, tabElement, pageData.pages);
                   }
                 }
               }
@@ -176,7 +242,7 @@
                 for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
                   var tab = tabs[tabIdx];
                   var tabElement = createTab(tab);
-                  addCardContent.call(tabsCard, tabElement);
+                  addCardContent.call(tabsCard, tabElement, pageData.pages);
                 }
               }
 
