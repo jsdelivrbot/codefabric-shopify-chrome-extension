@@ -11,11 +11,11 @@
         var self = this;
 
         var isShopify = function () {
-          return /^http[s]?\:\\\\[^\\\/]+\.myshopify\.com\/admin\/.*$/i.test(location.href);
+          return /^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/.*$/i.test(location.href);
         };
 
         var getAdminPage = function () {
-          return location.href.match(/^http[s]?\:\\\\[^\\\/]+\.myshopify\.com\/admin\/([^\\\/]+)[\/]?(\d+)*.*$/i);
+          return location.href.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/]+)[\/]?(\d+)*.*$/i);
         };
 
         // Public
