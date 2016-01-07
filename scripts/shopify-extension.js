@@ -64,7 +64,7 @@
 
         var addCardContent = function (content) {
           var wrapper = this.find('.next-card__section');
-          if (!wrapper) {
+          if (!wrapper || wrapper.length == 0) {
             wrapper = this.append(cardContentWrapper).find('.next-card__section');
           }
 
