@@ -215,27 +215,30 @@
                                                           .attr({ 'for': 'tab-' + keyHandle })))
                               .append(jq(cardGridCellNoFlex)
                                 .append(jq(cardInnerGrid)
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_text" value="text" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_page" value="page" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_snippet" value="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_text" value="text" data-type="text" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_page" value="page" data-type="page" />'))
+                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_snippet" value="text" data-type="snippet" />'))
                                   .append(jq(cardGridCellNoFlex).append('<a class="btn btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'))
                                  )
                               )
                             )
                             .append(jq(cardInputTextArea)
                               .addClass('text')
+                              .data('type', 'text')
                               .val(tab.value)
                               .hide()
                               .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_text' })
                             )
                             .append(jq(cardInputDropdown)
                               .addClass('page')
+                              .data('type', 'page')
                               .append(pageOptions)
                               .hide()
                               .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_page' })
                             )
                             .append(jq(cardInputTextBox)
                               .addClass('snippet')
+                              .data('type', 'snippet')
                               .hide()
                               .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_snippet' })
                             );
@@ -344,10 +347,10 @@
                   var tabKey = wrapper.data('key');
 
                   var value = textEditor.val();
-                  if (editorRd.id.indexOf('snippet') > 0) {
+                  if (editorRd.data('type') == 'snippet') {
                     value = '{' + snippetEditor.val() + '}';
                   }
-                  else if (editorRd.id.indexOf('page') > 0) {
+                  else if (editorRd.data('type') == 'page') {
                     value = '[' + pageEditor.val() + ']';
                   }
 
