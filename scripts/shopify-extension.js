@@ -207,6 +207,9 @@
                 loadProductExtensions(productId);
               });
             }
+            else {
+              return;
+            }
           }
 
           jq.when(jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab'),
