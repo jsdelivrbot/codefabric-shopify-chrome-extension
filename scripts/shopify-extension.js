@@ -1,4 +1,5 @@
 (function() {
+  alert('GO!');
   
   var extensionJs = (function(shopify, jq) {
     var CodeFabric = CodeFabric || {};
