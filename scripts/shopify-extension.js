@@ -10,6 +10,40 @@
         // Private
         var self = this;
 
+        // HTML snippets
+        var cardHtml = '<div class="next-card"></div>';
+        var cardHeader = '<header class="next-card__header"></header>';
+        var cardOuterGrid = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered"></div>';
+        var cardInnerGrid = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered"></div>';
+        var cardGridCell = '<div class="next-grid__cell"></div>';
+        var cardGridCellNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
+        var cardHeader = '<h2 class="next-heading"></h2>';
+
+        var cardContentWrapper = '<div class="next-card__section"></div>';
+
+        // HTML builder functions
+        var addCard = function (cardHandle) {
+          return this.append(jq(cardHtml).addClass(cardHandle)).find('.' + cardHandle);
+        };
+
+        var addCardHeader = function(headerText, actions) {
+          if (!actions || actions.length == 0) {
+            this.append(jq(cardHeader).text(headerText));
+          }
+          else {
+            var grid = this.append(cardOuterGrid).find('.next-grid');
+            var header = grid.append(jq(cardGridCell).append(jq(cardHeader).text(headerText))).find('header');
+            var actionsGrid = grid.append(jq(cardGridCellNoFlex).append(cardInnerGrid).addClass('actions')).find('.actions');
+            for (var actionIdx = 0; actionIdx < actions.length; actionIdx++) {
+              var action = actions[actionIdx];
+              var actionLink = actionsGrid.append(jq(cardGridCellNoFlex).append('<a class="action-' + action.handle + '" href>' + action.label + '</a>')).find('.action-' + action.handle);
+              actionLink.on('click', action.onClick);
+            }
+          }
+
+          return this;
+        };
+
         var isShopify = function () {
           return /^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/.*$/i.test(location.href);
         };
@@ -23,15 +57,20 @@
         };
 
         var loadProductExtensions = function(productId) {
-          var tabsCard = jq('<div class="next-card tabs"><header class="next-card__header"></header><div class="next-card__section"></div></div>');
-          var cardHeader = tabsCard.find('header').append('<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered"></div>').find('.next-grid');
-          var cardContent = tabsCard.find('.next-card__section');
+          var tabsCard = jq(cardHtml).addClass('tabs');
 
-          cardHeader.append('<div class="next-grid__cell"><h2 class="next-heading">Tabs</h2></div>');
-          var cardActions = cardHeader.append('<div class="next-grid__cell next-grid__cell--no-flex actions"><div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered"></div></div>').find('.next-grid__cell.actions .next-grid');
+          addCardHeader.call(tabsCard, 'Tabs', [ 
+            { handle: 'add-tab', title: 'Add a new tab', onClick: function() {} },
+            { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
+          ]);
+          // var cardHeader =  tabsCard.find('header').append('<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered"></div>').find('.next-grid');
+          // var cardContent = tabsCard.find('.next-card__section');
+
+          // cardHeader.append('<div class="next-grid__cell"><h2 class="next-heading">Tabs</h2></div>');
+          // var cardActions = cardHeader.append('<div class="next-grid__cell next-grid__cell--no-flex actions"><div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered"></div></div>').find('.next-grid__cell.actions .next-grid');
           
-          var addTabAction = cardActions.append('<div class="next-grid__cell next-grid__cell--no-flex"><a class="action-add-tab" href="#">Add tab</a></div>').find('.action-add-tab');
-          var tabOrderAction = cardActions.append('<div class="next-grid__cell next-grid__cell--no-flex"><a class="action-tab-order" href="#">Tab order</a></div>').find('.action-tab-order');
+          // var addTabAction = cardActions.append('<div class="next-grid__cell next-grid__cell--no-flex"><a class="action-add-tab" href="#">Add tab</a></div>').find('.action-add-tab');
+          // var tabOrderAction = cardActions.append('<div class="next-grid__cell next-grid__cell--no-flex"><a class="action-tab-order" href="#">Tab order</a></div>').find('.action-tab-order');
 
           jq('.next-card.images').before(tabsCard);
         };
