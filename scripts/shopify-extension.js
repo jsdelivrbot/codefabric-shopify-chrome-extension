@@ -167,28 +167,22 @@
           }
 
           snippetRadio.on('change', function() {
-            if (!this.checked) {
-              jq(this).closest('.next-input-wrapper').find('.snippet').hide();
-            }
-            else {
+            jq(this).closest('.next-input-wrapper').find('.next-input').hide();
+            if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.snippet').show();
             }
           });
 
           pageRadio.on('change', function() {
-            if (!this.checked) {
-              jq(this).closest('.next-input-wrapper').find('.page').hide();
-            }
-            else {
+            jq(this).closest('.next-input-wrapper').find('.next-input').hide();
+            if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.page').show();
             }
           });
 
           textRadio.on('change', function() {
-            if (!this.checked) {
-              jq(this).closest('.next-input-wrapper').find('.text').hide();
-            }
-            else {
+            jq(this).closest('.next-input-wrapper').find('.next-input').hide();
+            if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.text').show();
             }
           });
@@ -259,21 +253,11 @@
             });
 
           return result;
-          // var tabContent = jq(cardOuterGrid).append(jq(cardGridCell).append(jq(cardInputTitle).text('Radio Test')))
-          //                                   .append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).append(jq(cardGridCellNoFlex).append('<label for="test_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
-          //                                                                                          .append(jq(cardGridCellNoFlex).append('<label for="test_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
-          //                                                                                          .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
-          //                                    ));
-
-          // addCardContent.call(tabsCard, jq(cardInputWrapper).append(tabContent).append(jq(cardInputTextArea).val('Something to test')
-          //                                                                                                   .attr({'name': 'test', 'id': 'test'})));
-
         };
 
         // Public
         return {
           init: function () {
-            debugger;
             if (!isShopify()) {
               showError('CodeFabric Shopify extensions cannot be used outside of Shopify Admin!');
               return;
