@@ -130,20 +130,19 @@
         var loadProductExtensions = function(productId) {
           var result = jq.Deferred();
 
-          var tabsCard = jq(cardHtml).addClass('tabs-editor');
-
-          addCardHeader.call(tabsCard, 'Tabs', [ 
-            { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
-                e.preventDefault();
-                var modal = new shopify.Modal(jq('<div><p>Banana!</p></div>'));
-                modal.show();
-            } },
-            { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
-          ]);
-
-
           jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab')
             .done(function (data) {
+              var tabsCard = jq(cardHtml).addClass('tabs-editor');
+
+              addCardHeader.call(tabsCard, 'Tabs', [ 
+                { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
+                    e.preventDefault();
+                    var modal = new shopify.Modal(jq('<div><p>Banana!</p></div>'));
+                    modal.show();
+                } },
+                { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
+              ]);
+
               var tabs = data.metafields;
               var order = [];
               if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
@@ -157,7 +156,7 @@
                   if (tab.length > 0) {
                     tab = tab[0];
                     var tabElement = createTab(tab);
-                    addCardContent(tab);
+                    addCardContent(tabsCard, tabElement);
                   }
                 }
 
