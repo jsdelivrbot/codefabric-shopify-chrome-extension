@@ -18,6 +18,22 @@
           return location.href.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/]+)[\/]?(\d+)*.*$/i);
         };
 
+        var loadProductListExtensions = function() {
+
+        };
+
+        var loadProductExtensions = function(productId) {
+          var tabsCard = jq('<div class="next-card tabs"><header class="next-card__header"></header><div class="next-card__section"></div></div>');
+          var cardHeader = tabsCard.find('header');
+          var cardContent = tabsCard.find('next-card__section');
+
+          cardHeader.append('<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered"><div class="next-grid__cell">Tabs</div><div class="next-grid__cell next-grid__cell--no-flex"></div></div>');
+
+          
+
+          jq('.next-card.images').before(tabsCard);
+        };
+
         // Public
         return {
           init: function () {
@@ -28,7 +44,23 @@
             }
 
             var adminPage = getAdminPage();
-            jq('body').prepend('<p>' + JSON.stringify(adminPage) + '</p>');
+            if (adminPage.length > 1)
+            {
+              switch (adminPage[1]) {
+                case 'products':
+                  if (adminPage.length > 2) {
+                    loadProductExtensions(adminPage[2]);
+                  }
+                  else {
+                    loadProductListExtensions();
+                  }
+                  break;
+
+                default:
+                  console.log("Don't have any extensions to load for " + adminPage[1] + "!");
+                  break;
+              }
+            }
           }
         };
 
