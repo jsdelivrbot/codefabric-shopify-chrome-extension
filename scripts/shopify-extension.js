@@ -35,6 +35,7 @@
         var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
         var cardInputDropdown = '<select class="next-input"></select>';
 
+
         // HTML builder functions
         var addCard = function (cardHandle) {
           return this.append(jq(cardHtml).addClass(cardHandle)).find('.' + cardHandle);
@@ -112,7 +113,14 @@
           ]);
 
 
-          addCardContent.call(tabsCard, createRichTextArea('Test', 'test', 'Something to test'));
+          var tabContent = jq(cardOuterGrid).append(jq(cardGridCell).append(jq(cardInputTitle).text('Radio Test')))
+                                            .append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).append(jq(cardGridCellNoFlex).append('<label for="test_type_text">Text</label><input type="radio" name="test_type" id="test_type_text" value="text" />'))
+                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_page">Page</label><input type="radio" name="test_type" id="test_type_page" value="page" />'))
+                                                                                                   .append(jq(cardGridCellNoFlex).append('<label for="test_type_snippet">Snippet</label><input type="radio" name="test_type" id="test_type_snippet" value="text" />'))
+                                             ));
+
+          addCardContent.call(tabsCard, jq(cardInputWrapper).append(tabContent).append(jq(cardInputTextArea).val('Something to test')
+                                                                                                            .attr({'name': 'test', 'id': 'test'})));
 
 
           jq('.next-card.images').before(tabsCard);
