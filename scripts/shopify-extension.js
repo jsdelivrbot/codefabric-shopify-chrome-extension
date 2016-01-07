@@ -129,18 +129,18 @@
                               .addClass('text')
                               .val(tab.value)
                               .hide()
-                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle + '_text' })
+                              .attr({'name': 'tab-' + tab.key + '_text', 'id': 'tab-' + keyHandle + '_text' })
                             )
                             .append(jq(cardInputDropdown)
                               .addClass('page')
                               .append(pageOptions)
                               .hide()
-                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle + '_page' })
+                              .attr({'name': 'tab-' + tab.key + '_page', 'id': 'tab-' + keyHandle + '_page' })
                             )
                             .append(jq(cardInputTextBox)
                               .addClass('snippet')
                               .hide()
-                              .attr({'name': 'product[metafields[tab[' + tab.key + ']]]', 'id': 'tab-' + keyHandle + '_snippet' })
+                              .attr({'name': 'tab-' + tab.key + '_snippet', 'id': 'tab-' + keyHandle + '_snippet' })
                             );
 
           var textarea = tabContent.find('#tab-' + keyHandle +'_text');
@@ -267,7 +267,7 @@
             }
 
             var adminPage = getAdminPage();
-            if (adminPage.length > 1)
+            if (adminPage && adminPage.length > 1)
             {
               var promise = null;
               switch (adminPage[1]) {
