@@ -209,7 +209,7 @@
                 { handle: 'tab-order', title: 'Change tab order', onClick: function() {} } 
               ]);
 
-              var tabs = productData.metafields;
+              var tabs = productData[0].metafields;
               var order = [];
               if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
                 order = tabs.filter(function(e, i) { return e.key == '_order'; })[0].value.split(',');
@@ -222,7 +222,7 @@
                   if (tab.length > 0) {
                     tab = tab[0];
                     var tabElement = createTab(tab);
-                    addCardContent.call(tabsCard, tabElement, pageData.pages);
+                    addCardContent.call(tabsCard, tabElement, pageData[0].pages);
                   }
                 }
 
@@ -234,7 +234,7 @@
 
                   if (order.filter(function (e, i) { return e.trim() == tab.key; }) == 0) {
                     var tabElement = createTab(tab);
-                    addCardContent.call(tabsCard, tabElement, pageData.pages);
+                    addCardContent.call(tabsCard, tabElement, pageData[0].pages);
                   }
                 }
               }
@@ -242,7 +242,7 @@
                 for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
                   var tab = tabs[tabIdx];
                   var tabElement = createTab(tab);
-                  addCardContent.call(tabsCard, tabElement, pageData.pages);
+                  addCardContent.call(tabsCard, tabElement, pageData[0].pages);
                 }
               }
 
