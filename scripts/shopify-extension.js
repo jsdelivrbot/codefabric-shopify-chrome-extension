@@ -45,7 +45,7 @@
             jq.ajax({
               url: op.url,
               method: op.method,
-              dataType: 'application/json',
+              dataType: 'json',
               data: op.data,
               error: function (a, b, c, d, e) {
                   debugger;
@@ -92,7 +92,7 @@
 
         var updateMetafield = function(parentType, parentId, id, value, type) {
           if (!id || id == '') { return; }
-          
+
           var url = '/admin/';
           switch (parentType) {
             case 'product':
