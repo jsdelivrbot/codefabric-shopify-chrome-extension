@@ -160,12 +160,12 @@
         };
 
         var addCardContent = function (content) {
-          var wrapper = this.find('.next-card__section');
+          var wrapper = jq(this).find('.next-card__section');
           if (!wrapper || wrapper.length == 0) {
-            wrapper = this.append(cardContentWrapper).find('.next-card__section');
+            wrapper = jq(this).append(cardContentWrapper).find('.next-card__section');
           }
 
-          wrapper.append(content);
+          jq(wrapper).append(content);
 
           return this;
         };
@@ -333,7 +333,7 @@
                 //Save the metafields
                 var tabEditors = jq(this).find('.tabs-editor').find('input[type=radio]');
                 for (var editorIdx = 0; editorIdx < tabEditors.length; editorIdx++) {
-                  var editorRd = tabEditors[editorIdx];
+                  var editorRd = jq(tabEditors[editorIdx]);
 
                   var wrapper = editorRd.closest('.next-input-wrapper');
                   var textEditor = wrapper.find('.next-input.text');
