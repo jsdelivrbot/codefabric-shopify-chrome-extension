@@ -17,7 +17,7 @@
         var cardInnerGrid = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered"></div>';
         var cardGridCell = '<div class="next-grid__cell"></div>';
         var cardGridCellNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
-        var cardHeader = '<h2 class="next-heading"></h2>';
+        var cardHeaderTitle = '<h2 class="next-heading"></h2>';
 
         var cardContentWrapper = '<div class="next-card__section"></div>';
 
@@ -27,16 +27,20 @@
         };
 
         var addCardHeader = function(headerText, actions) {
+          var header = this.append(cardHeader).find('header');
+
           if (!actions || actions.length == 0) {
-            this.append(jq(cardHeader).text(headerText));
+            header.append(jq(cardHeaderTitle).text(headerText));
           }
           else {
-            var grid = this.append(cardOuterGrid).find('.next-grid');
-            var header = grid.append(jq(cardGridCell).append(jq(cardHeader).text(headerText))).find('header');
+            var grid = header.append(cardOuterGrid).find('.next-grid');
+            
+            grid.append(jq(cardGridCell).append(jq(cardHeaderTitle).text(headerText)));
+
             var actionsGrid = grid.append(jq(cardGridCellNoFlex).append(cardInnerGrid).addClass('actions')).find('.actions');
             for (var actionIdx = 0; actionIdx < actions.length; actionIdx++) {
               var action = actions[actionIdx];
-              var actionLink = actionsGrid.append(jq(cardGridCellNoFlex).append('<a class="action-' + action.handle + '" href>' + action.label + '</a>')).find('.action-' + action.handle);
+              var actionLink = actionsGrid.append(jq(cardGridCellNoFlex).append('<a class="action-' + action.handle + '" href>' + action.title + '</a>')).find('.action-' + action.handle);
               actionLink.on('click', action.onClick);
             }
           }
