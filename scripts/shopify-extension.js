@@ -291,9 +291,11 @@
             e.preventDefault();
             if (confirm('Are you sure you wish to delete the tab "' + jq(this).closest('.next-input-wrapper').data('key') + '"?')) {
               var delField = jq(this).closest('.tabs-editor').find('input[name=tabs-deleted]');
-              var ids = (delField.val() || '').split(';');
+              var ids = delField.val() ? delField.val().split(';') : [];
               ids.push(jq(this).closest('.next-input-wrapper').data('id'));
               delField.val(ids.join(';'));
+
+              jq(this).closest('.next-input-wrapper').remove();
             }
           });
 
