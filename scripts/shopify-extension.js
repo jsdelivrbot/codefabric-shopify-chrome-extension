@@ -10,11 +10,11 @@
         // Private
         var self = this;
 
-        function isShopify = function () {
+        var isShopify = function () {
           return /^http[s]?\:\\\\[^\\\/]+\.myshopify\.com\/admin\/.*$/i.test(location.href);
         };
 
-        function getAdminPage = function () {
+        var getAdminPage = function () {
           return location.href.match(/^http[s]?\:\\\\[^\\\/]+\.myshopify\.com\/admin\/([^\\\/]+)[\/]?(\d+)*.*$/i);
         };
 
@@ -129,5 +129,4 @@
     extensionJs.call(this, s, jq, {});
   });
 
-})();
 })();
