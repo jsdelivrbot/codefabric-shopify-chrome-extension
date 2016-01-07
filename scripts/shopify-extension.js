@@ -147,44 +147,51 @@
           var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
           var pageDropdown = tabContent.find('#tab-' + keyHandle +'_page');
 
+          var snippetRadio = tabContent.find('#' + keyHandle +'_type_snippet');
+          var pageRadio = tabContent.find('#' + keyHandle +'_type_page');
+          var textRadio = tabContent.find('#' + keyHandle +'_type_text');
+
           var snippetMatch = tab.value.match(/^\{([^\{\}]+)\}$/);
           var pageMatch = tab.value.match(/^\[([^\[\]]+)\]$/);
           if (snippetMatch && snippetMatch.length > 1) {
             snippetDropdown.val(snippetMatch[1]).show();
-            tabContent.find('#' + keyHandle +'_type_snippet').attr({ 'checked': 'checked' })
-              .on('change', function() {
-                if (!this.checked) {
-                  jq(this).closest('.next-input-wrapper').find('.snippet').hide();
-                }
-                else {
-                  jq(this).closest('.next-input-wrapper').find('.snippet').show();
-                }
-              });
+            snippetRadio.attr({ 'checked': 'checked' });
           }
           else if (pageMatch && pageMatch.length > 1) {
             pageDropdown.val(pageMatch[1]).show();
-            tabContent.find('#' + keyHandle +'_type_page').attr({ 'checked': 'checked' })
-              .on('change', function() {
-                if (!this.checked) {
-                  jq(this).closest('.next-input-wrapper').find('.page').hide();
-                }
-                else {
-                  jq(this).closest('.next-input-wrapper').find('.page').show();
-                }
-              });
+            pageRadio.attr({ 'checked': 'checked' });
           }
           else {
             textarea.val(tab.value).show();
-            tabContent.find('#' + keyHandle +'_type_text').attr({ 'checked': 'checked' })
-              .on('change', function() {
-                if (!this.checked) {
-                  jq(this).closest('.next-input-wrapper').find('.text').hide();
-                }
-                else {
-                  jq(this).closest('.next-input-wrapper').find('.text').show();
-                }
-              });
+            textRadio.attr({ 'checked': 'checked' });
           }
+
+          snippetRadio.on('change', function() {
+            if (!this.checked) {
+              jq(this).closest('.next-input-wrapper').find('.snippet').hide();
+            }
+            else {
+              jq(this).closest('.next-input-wrapper').find('.snippet').show();
+            }
+          });
+
+          pageRadio.on('change', function() {
+            if (!this.checked) {
+              jq(this).closest('.next-input-wrapper').find('.page').hide();
+            }
+            else {
+              jq(this).closest('.next-input-wrapper').find('.page').show();
+            }
+          });
+
+          textRadio.on('change', function() {
+            if (!this.checked) {
+              jq(this).closest('.next-input-wrapper').find('.text').hide();
+            }
+            else {
+              jq(this).closest('.next-input-wrapper').find('.text').show();
+            }
+          });
 
           return tabContent;
         };
