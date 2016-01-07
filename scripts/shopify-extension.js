@@ -1,6 +1,5 @@
 (function() {
-  alert('GO!');
-  
+
   var extensionJs = (function(shopify, jq) {
     var CodeFabric = CodeFabric || {};
     CodeFabric.Shopify = CodeFabric.Shopify || {};
@@ -196,6 +195,19 @@
         var loadProductExtensions = function(productId) {
           var result = jq.Deferred();
 
+          var productForm = jq('form#edit_product_' + productId);
+          if (!productForm || productForm.length == 0) {
+            return;
+          }
+          else {
+            var isLoadedField = productForm.find('#codefabric_extension_loaded');
+            if (!isLoadedField || isLoadedField.length == 0) {
+              productForm.append('<input type="hidden" id="codefabric_extension_loaded" value="true" />');
+              productForm.on('change') {
+                loadProductExtensions(productId);
+              }
+            }
+          }
 
           jq.when(jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab'),
                   jq.get('/admin/pages.json'))
