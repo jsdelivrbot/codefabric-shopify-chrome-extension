@@ -334,7 +334,7 @@
               tabsCard.append('<input type="hidden" name="tabs-deleted" />');
               productForm.on('submit', function() {
                 //Save the metafields
-                var tabEditors = jq(this).find('.tabs-editor').find('input[type=radio]');
+                var tabEditors = jq(this).find('.tabs-editor').find('input[type=radio]:checked');
                 for (var editorIdx = 0; editorIdx < tabEditors.length; editorIdx++) {
                   var editorRd = jq(tabEditors[editorIdx]);
 
