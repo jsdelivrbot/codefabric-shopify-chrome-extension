@@ -335,13 +335,13 @@
                 for (var editorIdx = 0; editorIdx < tabEditors.length; editorIdx++) {
                   var editorRd = tabEditors[editorIdx];
 
-                  var tabId = wrapper.data('id');
-                  var tabKey = wrapper.data('key');
-
                   var wrapper = editorRd.closest('.input-wrapper');
                   var textEditor = wrapper.find('.next-input.text');
                   var pageEditor = wrapper.find('select.page');
                   var snippetEditor = wrapper.find('.next-input.snippet');
+
+                  var tabId = wrapper.data('id');
+                  var tabKey = wrapper.data('key');
 
                   var value = textEditor.val();
                   if (editorRd.id.indexOf('snippet') > 0) {
