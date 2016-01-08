@@ -468,7 +468,8 @@
                     });
                     modal.onClose(function (e) { 
                       if (confirmed) {
-                        var newTabOrder = jq(this).find('ol li').map(function (idx, el) { return jq(el).data('key'); });
+                        var newTabOrder = [];
+                        jq(this).find('ol li').each(function (idx, el) { newTabOrder.push(jq(el).data('key')); });
                         reorderTabs(productForm.find('.tabs-editor'), newTabOrder);
                         productForm.trigger('change');
                       }
