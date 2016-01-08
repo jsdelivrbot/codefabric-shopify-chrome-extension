@@ -249,23 +249,27 @@
           }
 
           var keyHandle = tab.key.toLowerCase().replace(' ', '-');
-          var tabContent = jq(cardInputWrapper).data('id', tab.id).data('key', tab.key)
-                            .append(jq(cardOuterGrid)
-                              .append(jq(cardGridCell)
-                                .append(jq(cardInputTitle).text(tab.key)
-                                                          .attr({ 'for': 'tab-' + keyHandle })))
-                              .append(jq(cardGridCellNoFlex)
-                                .append(jq(cardInnerGrid)
+
+          var tabTypeRadioGrid = jq(cardInnerGrid)
                                   .append(createTabTypeRadio('Text', tab.key, keyHandle))
                                   .append(createTabTypeRadio('Page', tab.key, keyHandle))
                                   .append(createTabTypeRadio('Snippet', tab.key, keyHandle))
-                                  .append(jq(cardGridCellNoFlex).append('<a class="btn btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'))
-                                 )
-                              )
+                                  .append(jq(cardGridCellNoFlex).append('<a class="btn btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'));
+
+          var tabHeader = jq(cardOuterGrid)
+                            .append(
+                              jq(cardGridCell).append(jq(cardInputTitle).text(tab.key).attr({ 'for': 'tab-' + keyHandle }))
                             )
-                            .append(createInputTextArea('text', tab.key, keyHandle, tab.value))
-                            .append(createInputDropdown('page', tab.key, keyHandle, pageOptions))
-                            .append(createInputDropdown('snippet', tab.key, keyHandle, snippetOptions));
+                            .append(
+                              jq(cardGridCellNoFlex).append(tabTypeRadioGrid)
+                            );
+
+          var tabContent = jq(cardInputWrapper).data('id', tab.id).data('key', tab.key);
+
+          tabContent.append(tabHeader);
+          tabContent.append(createInputTextArea('text', tab.key, keyHandle, tab.value));
+          tabContent.append(createInputDropdown('page', tab.key, keyHandle, pageOptions));
+          tabContent.append(createInputDropdown('snippet', tab.key, keyHandle, snippetOptions));
 
           var textarea = tabContent.find('#tab-' + keyHandle +'_text');
           var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
