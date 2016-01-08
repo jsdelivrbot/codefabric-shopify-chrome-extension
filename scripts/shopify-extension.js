@@ -34,6 +34,10 @@
         var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
         var cardInputDropdown = '<select></select>';
 
+        //Modals
+        var addTabModal = '<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
+        var reorderTabsModal = '<script type="text/html" class="modal_source"><header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
+
         //API functions
         var apiQueue = [];
         var isProcessing = false;
@@ -377,9 +381,7 @@
               addCardHeader.call(tabsCard, 'Tabs', [ 
                 { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
                     e.preventDefault();
-                    var modalContent = jq('<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a href="#" class="btn close-modal btn-ok">OK</a><a href="#" class="close-modal">cancel</a></div></script>');
-
-                    var modal = new shopify.Modal(modalContent.get(0));
+                    var modal = new shopify.Modal(jq(addTabModal).get(0));
                     var confirmed = false;
                     modal.show();
                     jq(modal.$container()).find(".btn-ok").on('click', function (e) {
@@ -400,13 +402,20 @@
                         }
                       }
                     });
-                    
-
                 } },
                 { handle: 'tab-order', title: 'Change tab order', onClick: function(e) {
                     e.preventDefault();
-                    var modal = new shopify.Modal(jq('<div><p>Banana!</p></div>'));
+                    var modal = new shopify.Modal(jq(reorderTabsModal).get(0));
+                    var confirmed = false;
                     modal.show();
+                    jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+                      confirmed = true;
+                    });
+                    modal.onClose(function (e) { 
+                      if (confirmed) {
+                        
+                      }
+                    });
                 } } 
               ]);
 
