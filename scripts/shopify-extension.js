@@ -425,7 +425,7 @@
                       modalOl.append(reorderItem);
                     }
 
-                    modalContent = modalContent.wrap(reorderTabsModalWrapper).closest('script');
+                    modalContent = modalContent.wrapAll(reorderTabsModalWrapper).closest('script');
                     var modal = new shopify.Modal(modalContent.get(0));
                     var confirmed = false;
                     modal.show();
