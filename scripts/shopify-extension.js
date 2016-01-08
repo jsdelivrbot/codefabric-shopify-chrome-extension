@@ -308,6 +308,7 @@
               delField.val(ids.join(';'));
 
               jq(this).closest('.next-input-wrapper').remove();
+              jq(this).closest('form').trigger('change');
             }
           });
 
@@ -399,6 +400,7 @@
 
                           var newTabElement = createTab(newTab, pageData[0].pages);
                           addCardContent.call(tabsCard, newTabElement);
+                          productForm.trigger('change');
                         }
                       }
                     });
