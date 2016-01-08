@@ -30,8 +30,8 @@
         var cardContentWrapper = '<div class="next-card__section"></div>';
         var cardInputWrapper = '<div class="next-input-wrapper"></div>';
         var cardInputTitle = '<label class="next-label"></label>';
-        var cardInputTextBox = '<input required type="text" class="next-input" size="30" />';
-        var cardInputTextArea = '<textarea required class="next-input" size="30" rows="10"></textarea>';
+        var cardInputTextBox = '<input type="text" class="next-input" size="30" />';
+        var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
         var cardInputDropdown = '<select></select>';
 
         var tabOrderField = '<input type="hidden" name="tab-order" />';
@@ -283,20 +283,20 @@
           var pageMatch = tab.value.match(/^\[([^\[\]]+)\]$/);
           if (snippetMatch && snippetMatch.length > 1) {
             snippetDropdown.val(snippetMatch[1].trim()).show();
-            snippetRadio.attr({ 'checked': 'checked' });
+            snippetRadio.prop('checked', true);
           }
           else if (pageMatch && pageMatch.length > 1) {
             pageDropdown.val(pageMatch[1].trim()).show();
-            pageRadio.attr({ 'checked': 'checked' });
+            pageRadio.prop('checked', true);
           }
           else {
-            textarea.val(tab.value).show();
-            textRadio.attr({ 'checked': 'checked' });
+            textarea.val(tab.value).prop('required', true).show();
+            textRadio.prop('checked', true);
           }
 
           snippetRadio.on('change', function(e) {
             e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').hide();
+            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.snippet').show();
             }
@@ -304,7 +304,7 @@
 
           pageRadio.on('change', function(e) {
             e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').hide();
+            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
             if (this.checked) {
               jq(this).closest('.next-input-wrapper').find('.page').show();
             }
@@ -312,9 +312,9 @@
 
           textRadio.on('change', function(e) {
             e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').hide();
+            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
             if (this.checked) {
-              jq(this).closest('.next-input-wrapper').find('.text').show();
+              jq(this).closest('.next-input-wrapper').find('.text').prop('required', true).show();
             }
           });
 
