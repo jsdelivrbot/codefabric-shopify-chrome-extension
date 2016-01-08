@@ -36,7 +36,8 @@
 
         //Modals
         var addTabModal = '<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
-        var reorderTabsModal = '<script type="text/html" class="modal_source"><header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
+        var reorderTabItem = '<li class="reorder-modal__options-row js-product-option next-grid next-grid--no-outside-padding"><div class="next-grid__cell next-grid__cell--quarter next-grid__cell--vertically-centered"><div class="js-product-option-name js-product-option-name--is-draggable drag"><div class="next-grid next-grid--no-padding"><div class="next-grid__cell next-grid__cell--no-flex"><i class="ico ico-drag-handle reorder-modal__option-drag-handle"></i></div><div class="next-grid__cell"><span class="next-label next-label--no-margin"></span></div></div></div></div></li>';
+        var reorderTabsModal = '<script type="text/html" class="modal_source"><header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body"><p class="ssb">Reorder tabs to change how they appear in on your store.</p><ol class="js-product-options reorder-modal__options-list ui-sortable"></ol></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
 
         //API functions
         var apiQueue = [];
@@ -407,7 +408,22 @@
                 } },
                 { handle: 'tab-order', title: 'Change tab order', onClick: function(e) {
                     e.preventDefault();
-                    var modal = new shopify.Modal(jq(reorderTabsModal).get(0));
+                    var modalContent = jq(reorderTabsModal);
+                    var modalOl = modalContent.find('ol');
+
+                    var currentTabs = productForm.find('.tabs-editor').find('.next-input-wrapper');
+                    for (var oTabIdx = 0; oTabIdx < currentTabs.length; oTabIdx++) {
+                      var tabEl = currentTabs[oTabIdx];
+                      var tabName = tabEl.data('key');
+                      var tabId = tabEl.data('id');
+
+                      var reorderItem = jq(reorderTabItem);
+                      reorderItem.find('li').data('key', tabName)
+                                 .find('.next-label').text(tabName);
+                      modalOl.append(reorderItem);
+                    }
+
+                    var modal = new shopify.Modal(modalContent.get(0));
                     var confirmed = false;
                     modal.show();
                     jq(modal.$container()).find(".btn-ok").on('click', function (e) {
