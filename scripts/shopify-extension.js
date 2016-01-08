@@ -219,7 +219,7 @@
                   .data('type', type)
                   .append(options)
                   .hide()
-                  .attr({'name': 'tab-' + name, 'id': 'tab-' + handle + '_' + type });
+                  .attr({'name': 'tab-' + handle, 'id': 'tab-' + handle + '_' + type });
         };
 
         var createInputTextArea = function (type, name, handle, value) {
@@ -228,11 +228,11 @@
                   .data('type', type)
                   .val(value)
                   .hide()
-                  .attr({'name': 'tab-' + name, 'id': 'tab-' + handle + '_' + type });
+                  .attr({'name': 'tab-' + handle, 'id': 'tab-' + handle + '_' + type });
         };
 
         var createTabTypeRadio = function (type, name, handle) {
-          return jq(cardGridCellNoFlex).append('<label for="' + handle +'_type_' + type.toLowerCase() + '" class="next-label next-label--inline">' + type + '</label><input type="radio" name="type-' + name + '" id="' + handle +'_type_' + type.toLowerCase() + '" value="' + type.toLowerCase() + '" data-type="' + type.toLowerCase() + '" />');
+          return jq(cardGridCellNoFlex).append('<label for="' + handle +'_type_' + type.toLowerCase() + '" class="next-label next-label--inline">' + type + '</label><input type="radio" name="type-' + handle + '" id="' + handle +'_type_' + type.toLowerCase() + '" value="' + type.toLowerCase() + '" data-type="' + type.toLowerCase() + '" />');
         };
 
         var createTab = function (tab, pages, snippets) {
