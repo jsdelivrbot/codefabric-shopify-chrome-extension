@@ -382,7 +382,7 @@
                     var modal = new shopify.Modal(modalContent.get(0));
                     var confirmed = false;
                     modal.show();
-                    jq(modal.container()).find(".btn-ok").on('click', function (e) {
+                    jq(modal.$container()).find(".btn-ok").on('click', function (e) {
                       confirmed = true;
                     });
                     modal.onClose(function (e) { 
