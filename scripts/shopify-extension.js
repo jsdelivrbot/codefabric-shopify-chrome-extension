@@ -30,8 +30,8 @@
         var cardContentWrapper = '<div class="next-card__section"></div>';
         var cardInputWrapper = '<div class="next-input-wrapper"></div>';
         var cardInputTitle = '<label class="next-label"></label>';
-        var cardInputTextBox = '<input type="text" class="next-input" size="30" />';
-        var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
+        var cardInputTextBox = '<input required type="text" class="next-input" size="30" />';
+        var cardInputTextArea = '<textarea required class="next-input" size="30" rows="10"></textarea>';
         var cardInputDropdown = '<select></select>';
 
         var tabOrderField = '<input type="hidden" name="tab-order" />';
