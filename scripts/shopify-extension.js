@@ -377,25 +377,27 @@
               addCardHeader.call(tabsCard, 'Tabs', [ 
                 { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
                     e.preventDefault();
-                    var modalContent = jq('<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a href="#" class="btn close-modal">OK</a></div></script>');
+                    var modalContent = jq('<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a href="#" class="btn close-modal btn-ok">OK</a><a href="#" class="close-modal">cancel</a></div></script>');
 
                     var modal = new shopify.Modal(modalContent.get(0));
-                    var context = {};
-                    modal.show(context);
+                    var confirmed = false;
+                    modal.show();
+                    jq(modal.container()).find(".btn-ok").on('click', function (e) {
+                      confirmed = true;
+                    });
                     modal.onClose(function (e) { 
-                      debugger;
-                      var tabContent = modalContent.find('#new-tab-title').val();
+                      if (confirmed) {
+                        var tabName = jq(this).find('#new-tab-title').val();
+                        if (tabName && tabName.length > 0) {
+                          var newTab = {
+                            namespace: 'tab',
+                            key: tabName,
+                            value: ''
+                          };
 
-                      var tabName = prompt('Enter a name for the new tab:');
-                      if (tabName && tabName.length > 0) {
-                        var newTab = {
-                          namespace: 'tab',
-                          key: tabName,
-                          value: ''
-                        };
-
-                        var newTabElement = createTab(newTab, pageData[0].pages);
-                        addCardContent.call(tabsCard, newTabElement);
+                          var newTabElement = createTab(newTab, pageData[0].pages);
+                          addCardContent.call(tabsCard, newTabElement);
+                        }
                       }
                     });
                     
