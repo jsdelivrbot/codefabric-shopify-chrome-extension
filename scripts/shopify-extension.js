@@ -420,31 +420,20 @@
                       var tabId = tabEl.data('id');
 
                       var reorderItem = jq(reorderTabItem);
-                      reorderItem.find('li').data('key', tabName)
-                                 .find('.next-label').text(tabName);
+                      reorderItem.find('li').data('key', tabName);
+                      reorderItem.find('.next-label').text(tabName);
                       modalOl.append(reorderItem);
                     }
-
-                    // {
-                    //   handle: ".js-product-option-name--is-draggable",
-                    //   opacity: .8,
-                    //   axis: "y",
-                    //   update: function() {
-                    //     return true;
-                    //   },
-                    //   change: function(t, e) {
-                    //     return $(this.node).find(".js-product-option:not(.ui-sortable-helper)")
-                    //       .each(function(idx, el) {
-                    //         return jq(el).hasClass("ui-sortable-placeholder");
-                    //       })
-                    //   }
-                    // });
 
                     modalContent = modalContent.wrapAll(reorderTabsModalWrapper).closest('script');
                     var modal = new shopify.Modal(modalContent.get(0));
                     var confirmed = false;
                     modal.show();
-                    jq(modal.$container()).find('ol').sortable();
+                    jq(modal.$container()).find('ol').sortable({
+                      handle: ".js-product-option-name--is-draggable",
+                      opacity: .8,
+                      axis: "y"
+                    });
                     jq(modal.$container()).find(".btn-ok").on('click', function (e) {
                       confirmed = true;
                     });
