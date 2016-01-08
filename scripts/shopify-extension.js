@@ -459,6 +459,14 @@
 
                               var newTabElement = createTab(newTab, pageData[0].pages, snippets);
                               addCardContent.call(tabsCard, newTabElement);
+
+                              var orderField = tabsCard.find('input[name=tab-order]');
+                              if (orderField && orderField.length > 0) {
+                                var newOrder = orderField.val().split(',');
+                                newOrder.push(tabName);
+                                orderField.val(newOrder.join(','));
+                              }
+
                               productForm.trigger('change');
                             }
                           }
