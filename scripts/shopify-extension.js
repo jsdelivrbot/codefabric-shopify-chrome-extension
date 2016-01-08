@@ -505,7 +505,7 @@
                   if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
                     var orderTab = tabs.filter(function(e, i) { return e.key == '_order'; })[0];
                     order = orderTab.value.split(',');
-                    var orderField = tabsCard.find('input[name=tab-order"]');
+                    var orderField = tabsCard.find('input[name=tab-order]');
                     if (!orderField || orderField.length == 0) {
                       orderField = tabsCard.append(jq(tabOrderField).data('id', orderTab.id)).find('input[name=tab-order]');
                     }
