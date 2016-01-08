@@ -324,6 +324,11 @@
               ids.push(jq(this).closest('.next-input-wrapper').data('id'));
               delField.val(ids.join(';'));
 
+              var orderField = jq(this).closest('.tab-editor').find('input[name=tab-order]');
+              if (orderField && orderField.length > 0) {
+                var newOrder = orderField.val().split(',').filter(function (e) { return e.trim() != jq(this).closest('.next-input-wrapper').data('key'); });
+                orderField.val(newOrder.join(','));
+              }
               jq(this).closest('.next-input-wrapper').remove();
               jq(this).closest('form').trigger('change');
             }
