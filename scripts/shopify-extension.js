@@ -262,12 +262,6 @@
                               .hide()
                               .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_snippet' })
                             );
-                            // .append(jq(cardInputTextBox)
-                            //   .addClass('snippet')
-                            //   .data('type', 'snippet')
-                            //   .hide()
-                            //   .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_snippet' })
-                            // );
 
           var textarea = tabContent.find('#tab-' + keyHandle +'_text');
           var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
@@ -329,8 +323,8 @@
                 var newOrder = orderField.val().split(',').filter(function (e) { return e.trim() != jq(this).closest('.next-input-wrapper').data('key'); });
                 orderField.val(newOrder.join(','));
               }
-              jq(this).closest('.next-input-wrapper').remove();
               jq(this).closest('form').trigger('change');
+              jq(this).closest('.next-input-wrapper').remove();
             }
           });
 
