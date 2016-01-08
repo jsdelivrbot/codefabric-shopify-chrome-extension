@@ -449,8 +449,7 @@
                       var tabId = tabEl.data('id');
 
                       var reorderItem = jq(reorderTabItem);
-                      reorderItem.find('li').data('key', tabName);
-                      reorderItem.find('.next-label').text(tabName);
+                      reorderItem.data('key', tabName).find('.next-label').text(tabName);
                       modalOl.append(reorderItem);
                     }
 
@@ -468,8 +467,7 @@
                     });
                     modal.onClose(function (e) { 
                       if (confirmed) {
-                        var newTabOrder = [];
-                        jq(this).find('ol li').each(function (idx, el) { newTabOrder.push(jq(el).data('key')); });
+                        var newTabOrder = jq(this).find('ol li').map(function () { return jq(this).data('key'); });
                         reorderTabs(productForm.find('.tabs-editor'), newTabOrder);
                         productForm.trigger('change');
                       }
