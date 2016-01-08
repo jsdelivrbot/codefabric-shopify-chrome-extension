@@ -335,7 +335,7 @@
         var reorderTabs = function (container, newOrder) {
           var orderField = container.find('input[name=tab-order]');
           if (!orderField || orderField.length == 0) {
-            container.append(jq(tabOrderField));
+            orderField = container.append(jq(tabOrderField)).find('input[name=tab-order]');
           }
 
           var tabEls = container.find('.next-input-wrapper');
