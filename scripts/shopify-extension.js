@@ -377,11 +377,12 @@
               addCardHeader.call(tabsCard, 'Tabs', [ 
                 { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
                     e.preventDefault();
-                    var modalContent = jq('<header><h2>New tab</h2></header><div class="body"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a href class="btn close-modal">OK</a></div>');
+                    var modalContent = jq('<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a href="#" class="btn close-modal">OK</a></div></script>');
 
                     var modal = new shopify.Modal(modalContent.get(0));
-                    modal.show();
-                    modal.onClose(function (a, b, c) { 
+                    var context = {};
+                    modal.show(context);
+                    modal.onClose(function (e) { 
                       debugger;
                       var tabContent = modalContent.find('#new-tab-title').val();
 
