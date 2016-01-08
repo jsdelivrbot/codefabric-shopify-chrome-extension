@@ -34,10 +34,12 @@
         var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
         var cardInputDropdown = '<select></select>';
 
+        var tabOrderField = '<input type="hidden" name="tab-order" />';
+
         //Modals
         var addTabModal = '<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
         var reorderTabItem = '<li class="reorder-modal__options-row js-product-option next-grid next-grid--no-outside-padding"><div class="next-grid__cell next-grid__cell--quarter next-grid__cell--vertically-centered"><div class="js-product-option-name js-product-option-name--is-draggable drag"><div class="next-grid next-grid--no-padding"><div class="next-grid__cell next-grid__cell--no-flex"><i class="ico ico-drag-handle reorder-modal__option-drag-handle"></i></div><div class="next-grid__cell"><span class="next-label next-label--no-margin"></span></div></div></div></div></li>';
-        var reorderTabsModalContent = '<header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body"><p class="ssb">Reorder tabs to change how they appear in on your store.</p><ol class="js-product-options reorder-modal__options-list ui-sortable"></ol></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
+        var reorderTabsModalContent = '<header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body"><p class="ssb">Reorder tabs to change how they appear in on your store.</p><ol class="js-product-options reorder-modal__options-list ui-sortable"></ol></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">OK</a></div>';
         var reorderTabsModalWrapper = '<script type="text/html" class="modal_source"></script>';
 
         //API functions
@@ -317,6 +319,22 @@
           return tabContent;
         };
 
+        var reorderTabs = function (container, newOrder) {
+          var orderField = container.find('input[name=_order]');
+          if (!orderField || orderField.length == 0) {
+            container.append(jq(tabOrderField));
+          }
+
+          var tabEls = container.find('.next-input-wrapper').detach();
+
+          orderField.val(newOrder.join(','));
+          for (var oIdx = 0; oIdx < newOrder.length; newOrder++) {
+            var tabName = newOrder[oIdx];
+            var matchingTabEls = tabEls.filter(function(e) { return jq(e).data('key') == tabName; });
+            container.append(matchingTabEls);
+          }
+        };
+
         var loadProductExtensions = function(productId) {
           var result = jq.Deferred();
 
@@ -371,6 +389,17 @@
                   }
                   else {
                     addMetafield('product', productId, 'tab', tabKey, value);
+                  }
+                }
+
+                var tabOrder = jq(this).find('input[name=tab-order]');
+                if (tabOrder && tabOrder.length > 0) {
+                  var orderId = tabOrder.data('id');
+                  if (orderId) {
+                    updateMetafield('product', productId, orderId, tabOrder.val());
+                  }
+                  else {
+                    addMetafield('product', productId, 'tab', '_order', tabOrder.val());
                   }
                 }
 
@@ -439,7 +468,9 @@
                     });
                     modal.onClose(function (e) { 
                       if (confirmed) {
-                        
+                        var newTabOrder = jq(this).find('ol li').map(function (idx, e) { return e.data('key'); });
+                        reorderTabs(productForm.find('.tabs-editor'), newTabOrder);
+                        productForm.trigger('change');
                       }
                     });
                 } } 
@@ -448,7 +479,13 @@
               var tabs = productData[0].metafields;
               var order = [];
               if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
-                order = tabs.filter(function(e, i) { return e.key == '_order'; })[0].value.split(',');
+                var orderTab = tabs.filter(function(e, i) { return e.key == '_order'; })[0];
+                order = orderTab.value.split(',');
+                var orderField = tabsCard.find('input[name=tab-order"]');
+                if (!orderField || orderField.length == 0) {
+                  orderField = tabsCard.append(jq(tabOrderField).data('id', orderTab.id)).find('input[name=tab-order]');
+                }
+                orderField.val(order.join(','));
               }
 
               if (order) {
