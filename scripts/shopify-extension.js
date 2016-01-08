@@ -248,7 +248,7 @@
             snippetOptions += '<option value="' + snippet + '">' + snippet + '</option>';
           }
 
-          var keyHandle = tab.key.toLowerCase().replace(' ', '-');
+          var keyHandle = tab.key.toLowerCase().replace(/ /g, '-');
 
           var tabTypeRadioGrid = jq(cardInnerGrid)
                                   .append(createTabTypeRadio('Text', tab.key, keyHandle))
