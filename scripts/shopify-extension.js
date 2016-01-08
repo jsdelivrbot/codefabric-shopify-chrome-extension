@@ -425,6 +425,21 @@
                       modalOl.append(reorderItem);
                     }
 
+                    jq(".js-product-options", modalContent).sortable({
+                      handle: ".js-product-option-name--is-draggable",
+                      opacity: .8,
+                      axis: "y",
+                      update: function() {
+                        return true;
+                      },
+                      change: function(t, e) {
+                        return $(this.node).find(".js-product-option:not(.ui-sortable-helper)")
+                          .each(function(idx, el) {
+                            return jq(el).hasClass("ui-sortable-placeholder");
+                          })
+                      }
+                    });
+
                     modalContent = modalContent.wrapAll(reorderTabsModalWrapper).closest('script');
                     var modal = new shopify.Modal(modalContent.get(0));
                     var confirmed = false;
