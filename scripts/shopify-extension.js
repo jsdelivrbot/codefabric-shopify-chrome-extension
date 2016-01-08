@@ -449,7 +449,7 @@
                       var tabId = tabEl.data('id');
 
                       var reorderItem = jq(reorderTabItem);
-                      reorderItem.data('key', tabName).find('.next-label').text(tabName);
+                      reorderItem.attr('data-key', tabName).find('.next-label').text(tabName);
                       modalOl.append(reorderItem);
                     }
 
