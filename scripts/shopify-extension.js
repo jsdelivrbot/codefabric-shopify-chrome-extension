@@ -373,14 +373,32 @@
                   deleteMetafield('product', productId, delId);
                 }
               });
-              
-              tabsCard.append('<script type="text/html" class="modal_source" id="add-tab-modal"><p>Banana!</p><a href class="btn close-modal">Close</a></script>');
 
               addCardHeader.call(tabsCard, 'Tabs', [ 
                 { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
                     e.preventDefault();
-                    var modal = new shopify.Modal(jq('#add-tab-modal'));
+                    var modalContent = jq('<header><h2>New tab</h2></header><div class="body"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a href class="btn close-modal">OK</a></div>');
+
+                    var modal = new shopify.Modal(modalContent.get(0));
                     modal.show();
+                    modal.onClose(function (a, b, c) { 
+                      debugger;
+                      var tabContent = modalContent.find('#new-tab-title').val();
+
+                      var tabName = prompt('Enter a name for the new tab:');
+                      if (tabName && tabName.length > 0) {
+                        var newTab = {
+                          namespace: 'tab',
+                          key: tabName,
+                          value: ''
+                        };
+
+                        var newTabElement = createTab(newTab, pageData[0].pages);
+                        addCardContent.call(tabsCard, newTabElement);
+                      }
+                    });
+                    
+
                 } },
                 { handle: 'tab-order', title: 'Change tab order', onClick: function(e) {
                     e.preventDefault();
