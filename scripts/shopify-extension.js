@@ -213,6 +213,28 @@
 
         };
 
+        var createInputDropdown = function (type, name, handle, options) {
+          return jq(cardInputDropdown)
+                  .addClass(type)
+                  .data('type', type)
+                  .append(options)
+                  .hide()
+                  .attr({'name': 'tab-' + name, 'id': 'tab-' + handle + '_' + type });
+        };
+
+        var createInputTextArea = function (type, name, handle, value) {
+          return jq(cardInputTextArea)
+                  .addClass(type)
+                  .data('type', type)
+                  .val(value)
+                  .hide()
+                  .attr({'name': 'tab-' + name, 'id': 'tab-' + handle + '_' + type });
+        };
+
+        var createTabTypeRadio = function (type, name, handle) {
+          return jq(cardGridCellNoFlex).append('<label for="' + handle +'_type_' + type.toLowerCase() + '" class="next-label next-label--inline">' + type + '</label><input type="radio" name="type-' + name + '" id="' + handle +'_type_' + type.toLowerCase() + '" value="' + type.toLowerCase() + '" data-type="' + type.toLowerCase() + '" />');
+        };
+
         var createTab = function (tab, pages, snippets) {
           var pageOptions = '';
           for (var pageIdx = 0; pageIdx < pages.length; pageIdx++) {
@@ -234,34 +256,16 @@
                                                           .attr({ 'for': 'tab-' + keyHandle })))
                               .append(jq(cardGridCellNoFlex)
                                 .append(jq(cardInnerGrid)
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_text" class="next-label next-label--inline">Text</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_text" value="text" data-type="text" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_page" class="next-label next-label--inline">Page</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_page" value="page" data-type="page" />'))
-                                  .append(jq(cardGridCellNoFlex).append('<label for="' + keyHandle +'_type_snippet" class="next-label next-label--inline">Snippet</label><input type="radio" name="type-' + tab.key + '" id="' + keyHandle +'_type_snippet" value="text" data-type="snippet" />'))
+                                  .append(createTabTypeRadio('Text', tab.key, keyHandle))
+                                  .append(createTabTypeRadio('Page', tab.key, keyHandle))
+                                  .append(createTabTypeRadio('Snippet', tab.key, keyHandle))
                                   .append(jq(cardGridCellNoFlex).append('<a class="btn btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'))
                                  )
                               )
                             )
-                            .append(jq(cardInputTextArea)
-                              .addClass('text')
-                              .data('type', 'text')
-                              .val(tab.value)
-                              .hide()
-                              .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_text' })
-                            )
-                            .append(jq(cardInputDropdown)
-                              .addClass('page')
-                              .data('type', 'page')
-                              .append(pageOptions)
-                              .hide()
-                              .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_page' })
-                            )
-                            .append(jq(cardInputDropdown)
-                              .addClass('snippet')
-                              .data('type', 'snippet')
-                              .append(snippetOptions)
-                              .hide()
-                              .attr({'name': 'tab-' + tab.key, 'id': 'tab-' + keyHandle + '_snippet' })
-                            );
+                            .append(createInputTextArea('text', tab.key, keyHandle, tab.value))
+                            .append(createInputDropdown('page', tab.key, keyHandle, pageOptions))
+                            .append(createInputDropdown('snippet', tab.key, keyHandle, snippetOptions));
 
           var textarea = tabContent.find('#tab-' + keyHandle +'_text');
           var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
