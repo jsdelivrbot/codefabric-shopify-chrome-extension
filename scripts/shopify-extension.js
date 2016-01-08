@@ -375,7 +375,7 @@
 
               jq.when(jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab'),
                       jq.get('/admin/pages.json'),
-                      jq.get('/admin/themes/' + theme.themes.id + '/assets.json'))
+                      jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json'))
                 .done(function (productData, pageData, themeData) {
 
                   var tabsCard = jq(cardHtml).addClass('tabs-editor');
