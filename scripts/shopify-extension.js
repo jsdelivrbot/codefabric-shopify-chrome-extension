@@ -378,7 +378,7 @@
                       jq.get('/admin/pages.json'),
                       jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json'))
                 .done(function (productData, pageData, themeData) {
-
+                  var snippets = themeData[0].assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
                   var tabsCard = jq(cardHtml).addClass('tabs-editor');
 
                   tabsCard.append('<input type="hidden" name="tabs-deleted" />');
@@ -449,7 +449,7 @@
                                 value: ''
                               };
 
-                              var newTabElement = createTab(newTab, pageData[0].pages);
+                              var newTabElement = createTab(newTab, pageData[0].pages, snippets);
                               addCardContent.call(tabsCard, newTabElement);
                               productForm.trigger('change');
                             }
@@ -507,8 +507,6 @@
                     }
                     orderField.val(order.join(','));
                   }
-
-                  var snippets = themeData[0].assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
 
                   if (order) {
                     for (var orderIdx = 0; orderIdx < order.length; orderIdx++) {
