@@ -320,7 +320,7 @@
         };
 
         var reorderTabs = function (container, newOrder) {
-          var orderField = container.find('input[name=_order]');
+          var orderField = container.find('input[name=tab-order]');
           if (!orderField || orderField.length == 0) {
             container.append(jq(tabOrderField));
           }
@@ -330,7 +330,7 @@
           orderField.val(newOrder.join(','));
           for (var oIdx = 0; oIdx < newOrder.length; newOrder++) {
             var tabName = newOrder[oIdx];
-            var matchingTabEls = tabEls.filter(function(e) { return jq(e).data('key') == tabName; });
+            var matchingTabEls = tabEls.filter(function() { return jq(this).data('key').trim() == tabName.trim(); });
             container.append(matchingTabEls);
           }
         };
