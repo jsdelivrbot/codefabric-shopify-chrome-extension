@@ -313,6 +313,8 @@
           tabContent.find('.delete-tab-btn').on('click', function(e) {
             e.preventDefault();
             if (confirm('Are you sure you wish to delete the tab "' + jq(this).closest('.next-input-wrapper').data('key') + '"?')) {
+              var tabName = jq(this).closest('.next-input-wrapper').data('key');
+
               var delField = jq(this).closest('.tabs-editor').find('input[name=tabs-deleted]');
               var ids = delField.val() ? delField.val().split(';') : [];
               ids.push(jq(this).closest('.next-input-wrapper').data('id'));
@@ -320,7 +322,7 @@
 
               var orderField = jq(this).closest('.tabs-editor').find('input[name=tab-order]');
               if (orderField && orderField.length > 0) {
-                var newOrder = orderField.val().split(',').filter(function (e) { return e.trim() != jq(this).closest('.next-input-wrapper').data('key'); });
+                var newOrder = orderField.val().split(',').filter(function (e) { return e.trim() != tabName; });
                 orderField.val(newOrder.join(','));
               }
               jq(this).closest('form').trigger('change');
