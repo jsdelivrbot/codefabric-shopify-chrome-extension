@@ -425,7 +425,6 @@
                       modalOl.append(reorderItem);
                     }
 
-                    modalOl.sortable();
                     // {
                     //   handle: ".js-product-option-name--is-draggable",
                     //   opacity: .8,
@@ -445,6 +444,7 @@
                     var modal = new shopify.Modal(modalContent.get(0));
                     var confirmed = false;
                     modal.show();
+                    jq(modal.$container()).find('ol').sortable();
                     jq(modal.$container()).find(".btn-ok").on('click', function (e) {
                       confirmed = true;
                     });
