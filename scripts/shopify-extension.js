@@ -325,13 +325,15 @@
             container.append(jq(tabOrderField));
           }
 
-          var tabEls = container.find('.next-input-wrapper').detach();
+          var tabEls = container.find('.next-input-wrapper');
+          var inputContainer = tabEls.parent();
+          tabEls.detach();
 
           orderField.val(newOrder.join(','));
-          for (var oIdx = 0; oIdx < newOrder.length; newOrder++) {
+          for (var oIdx = 0; oIdx < newOrder.length; oIdx++) {
             var tabName = newOrder[oIdx];
             var matchingTabEls = tabEls.filter(function() { return jq(this).data('key').trim() == tabName.trim(); });
-            container.append(matchingTabEls);
+            inputContainer.append(matchingTabEls);
           }
         };
 
