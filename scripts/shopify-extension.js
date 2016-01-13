@@ -636,7 +636,7 @@
               var promise = null;
               switch (adminPage[1]) {
                 case 'products':
-                  if (adminPage.length > 2) {
+                  if (adminPage[2]) {
                     promise = loadProductExtensions(adminPage[2]);
                   }
                   else {
