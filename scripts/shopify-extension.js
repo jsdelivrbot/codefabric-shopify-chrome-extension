@@ -389,9 +389,11 @@
             for (var btnIdx = 0; btnIdx < buttons.secondary.length; btnIdx++) {
               var button = buttons.secondary[btnIdx];
 
-              buttonContainer.append(jq(toolbarSegmentedButton).find('.btn')
-                                                               .text(button.title)
-                                                               .on('click', button.click));
+              var buttonEl = jq(toolbarSegmentedButton);
+              buttonEl.find('.btn')
+                      .text(button.title)
+                      .on('click', button.click);
+              buttonContainer.append(buttonEl);
             }
             toolbar.find('.header__secondary-actions').append(buttonContainer);
           }
