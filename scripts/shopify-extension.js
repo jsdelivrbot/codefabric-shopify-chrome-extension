@@ -422,9 +422,26 @@
           }
         };
 
+        var getSelectedItems = function() {
+          var allSelected = !(jq('.bulk-select-all .bulk-action-all-selector').find('span').hasClass('hide'));
+          if (allSelected) {
+            return [];
+          }
+          else {
+            return jq('tbody input:checked').map(function(idx, e) { return $(e).val(); });
+          }
+        };
+
         var bulkAddProductTab = function (e) {
           e.preventDefault();
-          alert('1');
+
+          var selectedItems = getSelectedItems();
+          if (selectedItems.length > 0) {
+            alert(selectedItems.length);
+          }
+          else {
+            alert('all');
+          }
         };
 
         var bulkRemoveProductTab = function (e) {
