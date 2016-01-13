@@ -1,11 +1,6 @@
 (function() {
 
   var extensionJs = (function(shopify, jq, cardBuilder, extensions) {
-    if (typeof(CodeFabric) === 'undefined') {
-      CodeFabric = {
-        Shopify: { }
-      };
-    }
     if (!CodeFabric.Shopify.Extension) {
 
       CodeFabric.Shopify.Extension = function () {
@@ -735,9 +730,12 @@
       });
     }
   };
-
-  CodeFabric = CodeFabric || { };
-  CodeFabric.Shopify = CodeFabric.Shopify || { };
+  
+  if (typeof(CodeFabric) === 'undefined') {
+    CodeFabric = {
+      Shopify: { }
+    };
+  }
   utils.ensureDependencies(function (s, jq) {
     extensionJs.call(this, s, jq, {});
   });
