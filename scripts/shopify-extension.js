@@ -423,7 +423,7 @@
         };
 
         var getSelectedItems = function() {
-          var allSelected = !(jq('.bulk-select-all .bulk-action-all-selector').find('span').hasClass('hide'));
+          var allSelected = jq('.bulk-select-all .bulk-action-all-selector').find('span').hasClass('hide');
           if (allSelected) {
             return [];
           }
