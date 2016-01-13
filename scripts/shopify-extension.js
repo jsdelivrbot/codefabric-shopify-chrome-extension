@@ -1,7 +1,7 @@
 (function() {
 
-  var extensionJs = (function(shopify, jq) {
-    var CodeFabric = CodeFabric || {};
+  var extensionJs = (function(shopify, jq, cardBuilder, extensions) {
+    CodeFabric = CodeFabric || {};
     CodeFabric.Shopify = CodeFabric.Shopify || {};
     if (!CodeFabric.Shopify.Extension) {
 
@@ -254,7 +254,7 @@
                                   .append(createTabTypeRadio('Text', tab.key, keyHandle))
                                   .append(createTabTypeRadio('Page', tab.key, keyHandle))
                                   .append(createTabTypeRadio('Snippet', tab.key, keyHandle))
-                                  .append(jq(cardGridCellNoFlex).append('<a class="btn btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'));
+                                  .append(jq(cardGridCellNoFlex).append('<a class="btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'));
 
           var tabHeader = jq(cardOuterGrid)
                             .append(
@@ -613,6 +613,8 @@
 
   /** Utilities and loading **/
 
+  var rootLoadPath = 'https://rawgit.com/codefabric/codefabric-shopify-chrome-extension/master/scripts/';
+
   var utils = {
     loadScript: function (url, callback) {
 
@@ -635,6 +637,34 @@
 
         script.src = url;
         document.getElementsByTagName("head")[0].appendChild(script);
+    },
+    loadScripts: function (rootUrl, scriptNames, callback) {
+        var scriptsToLoad = scriptNames.length;
+        for (var scriptIdx = 0; scriptIdx < scriptNames.length; scriptIdx++) {
+          var script = document.createElement("script")
+          script.type = "text/javascript";
+
+          if (script.readyState) {  //IE
+              script.onreadystatechange = function () {
+                  if (script.readyState == "loaded" ||
+                          script.readyState == "complete") {
+                      script.onreadystatechange = null;
+                      if (--scriptsToLoad <= 0) {
+                        callback();
+                      }
+                  }
+              };
+          } else {  //Others
+              script.onload = function () {
+                if (--scriptsToLoad <= 0) {
+                  callback();
+                }
+              };
+          }
+
+          script.src = rootUrl + scriptNames[scriptIdx];
+          document.getElementsByTagName("head")[0].appendChild(script);
+        }
     },
 
     loadCss: function (url, callback) {
@@ -685,12 +715,17 @@
       }
     },
 
+    loadExtensions: function(callback) {
+      callback();
+      //utils.loadScripts(rootLoadPath, ['shopify-card-builder', 'tabs-extension', 'product-attributes-extension'], callback);
+    },
+
     ensureDependencies: function (callback) {
       utils.ensureCss(function() {
         utils.ensureJQuery(1.9, '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
           function ($) {
             utils.ensureShopify(function(shopify) {
-              callback(shopify, $);
+              utils.loadExtensions(function() { callback(shopify, $); });
             });
           }
         );
@@ -698,6 +733,8 @@
     }
   };
 
+  CodeFabric = CodeFabric || { };
+  CodeFabric.Shopify = CodeFabric.Shopify || { };
   utils.ensureDependencies(function (s, jq) {
     extensionJs.call(this, s, jq, {});
   });
