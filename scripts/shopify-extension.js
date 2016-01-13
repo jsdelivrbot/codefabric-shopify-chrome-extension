@@ -357,11 +357,11 @@
         var loadProductListExtensions = function() {
           var result = jq.Deferred();
 
-          addToolbarButtons({ secondary: [
-            { title: 'Add Product Tabs', click: bulkAddProductTabs },
-            { title: 'Remove Product Tabs', click: bulkRemoveProductTabs },
-            { title: 'Change Product Tab Order', click: bulkChangeProductTabOrder },
-           ] });
+          addBulkMenuItems([
+            { title: 'Add product tab', click: bulkAddProductTab },
+            { title: 'Remove product tab', click: bulkRemoveProductTab },
+            { title: 'Change product tab order', click: bulkChangeProductTabOrder },
+           ]);
 
           result.resolve();
 
@@ -378,6 +378,9 @@
 
         var toolbarSegmentedButtonList = '<ul class="segmented"></ul>';
         var toolbarSegmentedButton = '<li><a class="btn"></a></li>';
+
+        var dropdownMenuItemWithBreak = '<li class="break-top"><a href></a></li>';
+        var dropdownMenuItem = '<li><a href></a></li>';
 
         var addToolbarButtons = function (buttons) {
           var toolbar = jq('header.header');
@@ -399,12 +402,32 @@
           }
         };
 
-        var bulkAddProductTabs = function (e) {
+        var addBulkMenuItems = function(items) {
+          var bulkMenu = jq('.bulk-actions ul .dropdown ul');
+          for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
+            var item = items[itemIdx];
+            var itemEl = null;
+            if (itemIdx == 0) {
+              itemEl = jq(dropdownMenuItemWithBreak);
+            }
+            else {
+              itemEl = jq(dropdownMenuItem);
+            }
+
+            itemEl.find('a')
+                  .text(item.title)
+                  .on('click', item.click);
+
+            bulkMenu.append(itemEl);
+          }
+        };
+
+        var bulkAddProductTab = function (e) {
           e.preventDefault();
           alert('1');
         };
 
-        var bulkRemoveProductTabs = function (e) {
+        var bulkRemoveProductTab = function (e) {
           e.preventDefault();
           alert('2');
         };
