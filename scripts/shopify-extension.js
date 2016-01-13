@@ -207,10 +207,6 @@
           return location.href.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/]+)[\/]?(\d+)*.*$/i);
         };
 
-        var loadProductListExtensions = function() {
-
-        };
-
         var createInputDropdown = function (type, name, handle, options) {
           return jq(cardInputDropdown)
                   .addClass(type)
@@ -357,6 +353,68 @@
           }
         };
 
+        /*** PRODUCT LIST ***/
+        var loadProductListExtensions = function() {
+          var result = jq.Deferred();
+
+          addToolbarButtons({ secondary: [
+            { title: 'Add Product Tabs', click: bulkAddProductTabs },
+            { title: 'Remove Product Tabs', click: bulkRemoveProductTabs },
+            { title: 'Change Product Tab Order', click: bulkChangeProductTabOrder },
+           ] });
+
+          result.resolve();
+
+          return result;
+          // jq.get('/admin/themes.json?role=main')
+          //   .done(function (theme) {
+
+          //     jq.when(jq.get('/admin/pages.json'),
+          //             jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json'))
+          //       .done(function (pageData, themeData) {
+          //       });
+          //   });
+        };
+
+        var toolbarSegmentedButtonList = '<ul class="segmented"></ul>';
+        var toolbarSegmentedButton = '<li><a class="btn"></a></li>';
+
+        var addToolbarButtons = function (buttons) {
+          var toolbar = jq('header.header');
+          if (buttons.primary) {
+
+          }
+          else if (buttons.secondary) {
+            var buttonContainer = jq(toolbarSegmentedButtonList);
+            for (var btnIdx = 0; btnIdx < buttons.secondary.length; btnIdx++) {
+              var button = buttons.secondary[btnIdx];
+
+              buttonContainer.append(jq(toolbarSegmentedButton).find('.btn')
+                                                               .text(button.title)
+                                                               .on('click', button.click));
+            }
+            toolbar.find('.header__secondary-actions').append(buttonContainer);
+          }
+        };
+
+        var bulkAddProductTabs = function (e) {
+          e.preventDefault();
+          alert('1');
+        };
+
+        var bulkRemoveProductTabs = function (e) {
+          e.preventDefault();
+          alert('2');
+        };
+
+        var bulkChangeProductTabOrder = function (e) {
+          e.preventDefault();
+          alert('3');
+        };
+
+        /*** END PRODUCT LIST ***/
+
+        /*** PRODUCT ***/
         var loadProductExtensions = function(productId) {
           var result = jq.Deferred();
 
@@ -559,6 +617,8 @@
                 });
           });
 
+          /*** END PRODUCT ***/
+
           return result;
         };
 
@@ -580,7 +640,7 @@
                     promise = loadProductExtensions(adminPage[2]);
                   }
                   else {
-                    loadProductListExtensions();
+                    promise = loadProductListExtensions();
                   }
                   break;
 
@@ -730,7 +790,7 @@
       });
     }
   };
-  
+
   if (typeof(CodeFabric) === 'undefined') {
     CodeFabric = {
       Shopify: { }
