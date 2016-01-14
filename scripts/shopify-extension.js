@@ -486,8 +486,7 @@
                 var modalBody = jq(modalContent[1]);
                 modalBody.append(createTab({ key: 'New Tab', value: '' }, pages, snippets, true));
 
-                var outerGrid = modalBody.find('.card-outer');
-                outerGrid.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
+                modalBody.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
 
                 modalContent = modalContent.wrapAll(modalWrapper).closest('script');
                 var modal = new shopify.Modal(modalContent.get(0));
