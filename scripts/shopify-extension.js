@@ -481,10 +481,10 @@
           }
 
           jq.when(getPages(), getSnippets())
-            .done(function (pageData, snippetData) {
+            .done(function (pages, snippets) {
                 var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
                 var modalBody = jq(modalContent[1]);
-                modalBody.append(createTab({ key: 'New Tab', value: '' }, pageData[0], snippetData[0], true));
+                modalBody.append(createTab({ key: 'New Tab', value: '' }, pages, snippets, true));
 
                 var outerGrid = modalBody.find('.card-outer');
                 outerGrid.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
