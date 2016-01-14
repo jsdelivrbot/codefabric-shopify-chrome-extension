@@ -474,22 +474,19 @@
         var bulkAddProductTab = function (e) {
           e.preventDefault();
 
+          var itemsText = 'all';
           var selectedItems = getSelectedItems();
           if (selectedItems.length > 0) {
-            alert(selectedItems.length);
-          }
-          else {
-            alert('all');
+            itemsText = selectedItems.length;
           }
 
           jq.when(getPages(), getSnippets())
             .done(function (pageData, snippetData) {
-                var modalContent = jq(bulkAddTabModalContent);
-                var modalBody = modalContent.find('.body');
+                var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
+                var modalBody = jq(modalContent[1]);
                 modalBody.append(createTab({ key: 'New Tab', value: '' }, pageData[0], snippetData[0], true));
 
-                var outerGrid = modalBody.find('card-outer');
-                outerGrid.find('.next-grid__cell:first-child>label').remove();
+                var outerGrid = modalBody.find('.card-outer');
                 outerGrid.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
 
                 modalContent = modalContent.wrapAll(modalWrapper).closest('script');
