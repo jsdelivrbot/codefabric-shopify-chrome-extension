@@ -18,16 +18,16 @@
 
         // HTML snippets
         var cardHtml = '<div class="next-card"></div>';
-        var cardHeader = '<header class="next-card__header"></header>';
-        var cardOuterGrid = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered"></div>';
-        var cardInnerGrid = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered"></div>';
+        var cardHeader = '<header class="next-card__header card-header"></header>';
+        var cardOuterGrid = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered card-outer></div>';
+        var cardInnerGrid = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered card-inner"></div>';
         var cardGridCell = '<div class="next-grid__cell"></div>';
         var cardGridCellNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
         var cardHeaderTitle = '<h2 class="next-heading"></h2>';
 
         var cardContentWrapper = '<div class="next-card__section"></div>';
         var cardInputWrapper = '<div class="next-input-wrapper"></div>';
-        var cardInputTitle = '<label class="next-label"></label>';
+        var cardInputTitle = '<label class="next-label title"></label>';
         var cardInputTextBox = '<input type="text" class="next-input" size="30" />';
         var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
         var cardInputDropdown = '<select></select>';
@@ -38,7 +38,7 @@
         var addTabModal = '<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
         var reorderTabItem = '<li class="reorder-modal__options-row js-product-option next-grid next-grid--no-outside-padding"><div class="next-grid__cell next-grid__cell--quarter next-grid__cell--vertically-centered"><div class="js-product-option-name js-product-option-name--is-draggable drag"><div class="next-grid next-grid--no-padding"><div class="next-grid__cell next-grid__cell--no-flex"><i class="ico ico-drag-handle reorder-modal__option-drag-handle"></i></div><div class="next-grid__cell"><span class="next-label next-label--no-margin"></span></div></div></div></div></li>';
         var reorderTabsModalContent = '<header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body"><p class="ssb">Reorder tabs to change how they appear in on your store.</p><ol class="js-product-options reorder-modal__options-list ui-sortable"></ol></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">OK</a></div>';
-        var reorderTabsModalWrapper = '<script type="text/html" class="modal_source"></script>';
+        var modalWrapper = '<script type="text/html" class="modal_source"></script>';
 
         //API functions
         var apiQueue = [];
@@ -229,7 +229,7 @@
           return jq(cardGridCellNoFlex).append('<label for="' + handle +'_type_' + type.toLowerCase() + '" class="next-label next-label--inline">' + type + '</label><input type="radio" name="type-' + handle + '" id="' + handle +'_type_' + type.toLowerCase() + '" value="' + type.toLowerCase() + '" data-type="' + type.toLowerCase() + '" />');
         };
 
-        var createTab = function (tab, pages, snippets) {
+        var createTab = function (tab, pages, snippets, hideDelete) {
           var pageOptions = '';
           for (var pageIdx = 0; pageIdx < pages.length; pageIdx++) {
             var page = pages[pageIdx];
@@ -312,7 +312,7 @@
             }
           });
 
-          tabContent.find('.delete-tab-btn').on('click', function(e) {
+          var deleteBtn = tabContent.find('.delete-tab-btn').on('click', function(e) {
             e.preventDefault();
             if (confirm('Are you sure you wish to delete the tab "' + jq(this).closest('.next-input-wrapper').data('key') + '"?')) {
               var tabName = jq(this).closest('.next-input-wrapper').data('key');
@@ -331,6 +331,9 @@
               jq(this).closest('.next-input-wrapper').remove();
             }
           });
+          if (hideDelete) {
+            deleteBtn.hide();
+          }
 
           return tabContent;
         };
@@ -382,6 +385,8 @@
         var dropdownMenuItemWithBreak = '<li class="break-top"><a href></a></li>';
         var dropdownMenuItem = '<li><a href></a></li>';
 
+        var bulkAddTabModalContent = '<header><h2>Add a tab to {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
+
         var addToolbarButtons = function (buttons) {
           var toolbar = jq('header.header');
           if (buttons.primary) {
@@ -432,6 +437,40 @@
           }
         };
 
+        var pages = null, snippets = null;
+        var getPages = function() {
+          var result = $.Deferred();
+          if (pages) {
+            result.resolve(pages);
+          }
+          else {
+            jq.get('/admin/pages.json')
+              .done(function (pageData) {
+                pages = pageData.pages;
+                result.resolve(pages);
+              });
+          }
+          return result;
+        };
+        var getSnippets = function() {
+          var result = $.Deferred();
+          if (snippets) {
+            result.resolve(snippets);
+          }
+          else {
+
+          jq.get('/admin/themes.json?role=main')
+            .done(function (theme) {
+              jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json')
+                .done(function (themeData) {
+                  snippets = themeData.assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
+                  result.resolve(snippets);
+                });
+              });
+          }
+          return result;
+        };
+
         var bulkAddProductTab = function (e) {
           e.preventDefault();
 
@@ -442,6 +481,31 @@
           else {
             alert('all');
           }
+
+          jq.when(getPages(), getSnippets())
+            .done(function (pageData, snippetData) {
+                var modalContent = jq(bulkAddTabModalContent);
+                var modalBody = modalContent.find('.body');
+                modalBody.append(createTab({ key: 'New Tab', value: '' }, pageData[0], snippetData[0], true));
+
+                var outerGrid = modalBody.find('card-outer');
+                outerGrid.find('.next-grid__cell:first-child>label').remove();
+                outerGrid.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
+
+                modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+                var modal = new shopify.Modal(modalContent.get(0));
+                var confirmed = false;
+                modal.show();
+                jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+                  confirmed = true;
+                });
+                modal.onClose(function (e) { 
+                  if (confirmed) {
+                    debugger;
+                  }
+                });
+            })
+         
         };
 
         var bulkRemoveProductTab = function (e) {
@@ -587,7 +651,7 @@
                           modalOl.append(reorderItem);
                         }
 
-                        modalContent = modalContent.wrapAll(reorderTabsModalWrapper).closest('script');
+                        modalContent = modalContent.wrapAll(modalWrapper).closest('script');
                         var modal = new shopify.Modal(modalContent.get(0));
                         var confirmed = false;
                         modal.show();
