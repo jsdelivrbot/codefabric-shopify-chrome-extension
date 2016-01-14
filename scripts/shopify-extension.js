@@ -19,7 +19,7 @@
         // HTML snippets
         var cardHtml = '<div class="next-card"></div>';
         var cardHeader = '<header class="next-card__header card-header"></header>';
-        var cardOuterGrid = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered card-outer></div>';
+        var cardOuterGrid = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered card-outer"></div>';
         var cardInnerGrid = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered card-inner"></div>';
         var cardGridCell = '<div class="next-grid__cell"></div>';
         var cardGridCellNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
