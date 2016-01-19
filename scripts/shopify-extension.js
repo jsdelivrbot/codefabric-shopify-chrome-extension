@@ -434,13 +434,41 @@
         };
 
         var getSelectedItems = function() {
+          var result = jq.Deferred();
+          var products = [];
           var allSelected = jq('.bulk-select-all .bulk-action-all-selector').find('span').hasClass('hide');
           if (allSelected) {
-            return [];
+            loadProducts(1)
+              .done(function (prods) {
+                result.resolve(prods);
+              });
           }
           else {
-            return jq('tbody input:checked').map(function(idx, e) { return $(e).val(); });
+            result.resolve(jq('tbody input:checked').map(function(idx, e) { return $(e).val(); }));
           }
+
+          return result;
+        };
+
+        var loadProducts = function (page) {
+          var result = jq.Deferred();
+          var products = [];
+          jq.get('/admin/products.json?limit=250&page=' + (page || 1))
+            .done(function (prods) {
+              for (var pIdx = 0; pIdx < prods.products.length; pIdx++) {
+                products.push(prods.products[pIdx].id);
+              }
+              if (prods.products.length == 250) {
+                loadProducts((page || 1) + 1), )
+                  .done(function (pRes) {
+                    products.push(pRes.products);
+                    result.resolve(products);
+                  });
+              }
+              else {
+                result.resolve(products);
+              }
+            });
         };
 
         var pages = null, snippets = null;
@@ -480,14 +508,9 @@
         var bulkAddProductTab = function (e) {
           e.preventDefault();
 
-          var itemsText = 'all';
-          var selectedItems = getSelectedItems();
-          if (selectedItems.length > 0) {
-            itemsText = selectedItems.length;
-          }
-
-          jq.when(getPages(), getSnippets())
-            .done(function (pages, snippets) {
+          jq.when(getPages(), getSnippets(), getSelectedItems())
+            .done(function (pages, snippets, selection) {
+                var itemsText = selection.length;
                 var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
                 var modalBody = jq(modalContent[1]);
                 var tabContent = createTab({ key: 'New Tab', value: '', id: 'new-tab' }, pages, snippets);
@@ -506,7 +529,25 @@
                 });
                 modal.onClose(function (e) { 
                   if (confirmed) {
-                    debugger;
+                    var wrapper = editorRd.closest('.tab-content-new-tab');
+                    var textEditor = wrapper.find('.next-input.text');
+                    var pageEditor = wrapper.find('select.page');
+                    var snippetEditor = wrapper.find('select.snippet');
+
+                    var tabId = wrapper.data('id');
+                    var tabKey = wrapper.data('key');
+
+                    var value = textEditor.val();
+                    if (editorRd.data('type') == 'snippet') {
+                      value = '{' + snippetEditor.val() + '}';
+                    }
+                    else if (editorRd.data('type') == 'page') {
+                      value = '[' + pageEditor.val() + ']';
+                    }
+
+                    for (var prodIdx = 0; prodIdx < selection.length; prodIdx++) {
+                      addMetafield('product', selection[prodIdx], 'tab', tabKey, value);
+                    }
                   }
                 });
             })
