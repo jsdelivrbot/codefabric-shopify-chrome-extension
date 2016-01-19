@@ -265,6 +265,10 @@
           tabContent.append(createInputDropdown('page', tab.key, keyHandle, pageOptions));
           tabContent.append(createInputDropdown('snippet', tab.key, keyHandle, snippetOptions));
 
+          return tabContent;
+        };
+
+        var setupTabContentEvents = function (tab, tabContent) {
           var textarea = tabContent.find('#tab-' + keyHandle +'_text');
           var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
           var pageDropdown = tabContent.find('#tab-' + keyHandle +'_page');
@@ -484,7 +488,8 @@
             .done(function (pages, snippets) {
                 var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
                 var modalBody = jq(modalContent[1]);
-                modalBody.append(createTab({ key: 'New Tab', value: '' }, pages, snippets, true));
+                var tabContent = createTab({ key: 'New Tab', value: '' }, pages, snippets, true);
+                modalBody.append(tabContent);
 
                 modalBody.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
 
@@ -492,6 +497,8 @@
                 var modal = new shopify.Modal(modalContent.get(0));
                 var confirmed = false;
                 modal.show();
+
+                setupTabContentEvents({ key: 'New Tab', value: '' }, tabContent);
                 jq(modal.$container()).find(".btn-ok").on('click', function (e) {
                   confirmed = true;
                 });
@@ -616,6 +623,7 @@
                               };
 
                               var newTabElement = createTab(newTab, pageData[0].pages, snippets);
+                              newTabElement = setupTabContentEvents(newTab, newTabElement);
                               addCardContent.call(tabsCard, newTabElement);
 
                               var orderField = tabsCard.find('input[name=tab-order]');
@@ -689,6 +697,7 @@
                       if (tab.length > 0) {
                         tab = tab[0];
                         var tabElement = createTab(tab, pageData[0].pages, snippets);
+                        tabElement = setupTabContentEvents(tab, tabElement);
                         addCardContent.call(tabsCard, tabElement);
                       }
                     }
@@ -701,6 +710,7 @@
 
                       if (order.filter(function (e, i) { return e.trim() == tab.key; }) == 0) {
                         var tabElement = createTab(tab, pageData[0].pages, snippets);
+                        tabElement = setupTabContentEvents(tab, tabElement);
                         addCardContent.call(tabsCard, tabElement);
                       }
                     }
@@ -709,6 +719,7 @@
                     for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
                       var tab = tabs[tabIdx];
                       var tabElement = createTab(tab, pageData[0].pages, snippets);
+                      tabElement = setupTabContentEvents(tab, tabElement);
                       addCardContent.call(tabsCard, tabElement);
                     }
                   }
