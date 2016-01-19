@@ -258,7 +258,7 @@
                               jq(cardGridCellNoFlex).append(tabTypeRadioGrid)
                             );
 
-          var tabContent = jq(cardInputWrapper).data('id', tab.id).data('key', tab.key);
+          var tabContent = jq(cardInputWrapper).addClass('tab-content-' + tab.id).data('id', tab.id).data('key', tab.key);
 
           tabContent.append(tabHeader);
           tabContent.append(createInputTextArea('text', tab.key, keyHandle, tab.value));
@@ -500,7 +500,7 @@
                 var confirmed = false;
                 modal.show();
 
-                setupTabContentEvents({ key: 'New Tab', value: '', id: 'new-tab' }, jq(modal.$container()).find('#new-tab'), true);
+                setupTabContentEvents({ key: 'New Tab', value: '', id: 'new-tab' }, jq(modal.$container()).find('.tab-content-new-tab'), true);
                 jq(modal.$container()).find(".btn-ok").on('click', function (e) {
                   confirmed = true;
                 });
