@@ -490,7 +490,7 @@
             .done(function (pages, snippets) {
                 var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
                 var modalBody = jq(modalContent[1]);
-                var tabContent = createTab({ key: 'New Tab', value: '' }, pages, snippets);
+                var tabContent = createTab({ key: 'New Tab', value: '', id: 'new-tab' }, pages, snippets);
                 modalBody.append(tabContent);
 
                 modalBody.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
@@ -500,7 +500,7 @@
                 var confirmed = false;
                 modal.show();
 
-                setupTabContentEvents({ key: 'New Tab', value: '' }, tabContent, true);
+                setupTabContentEvents({ key: 'New Tab', value: '', id: 'new-tab' }, jq(modal.$container()).find('#new-tab'), true);
                 jq(modal.$container()).find(".btn-ok").on('click', function (e) {
                   confirmed = true;
                 });
