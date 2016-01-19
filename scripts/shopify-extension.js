@@ -229,7 +229,7 @@
           return jq(cardGridCellNoFlex).append('<label for="' + handle +'_type_' + type.toLowerCase() + '" class="next-label next-label--inline">' + type + '</label><input type="radio" name="type-' + handle + '" id="' + handle +'_type_' + type.toLowerCase() + '" value="' + type.toLowerCase() + '" data-type="' + type.toLowerCase() + '" />');
         };
 
-        var createTab = function (tab, pages, snippets, hideDelete) {
+        var createTab = function (tab, pages, snippets) {
           var pageOptions = '';
           for (var pageIdx = 0; pageIdx < pages.length; pageIdx++) {
             var page = pages[pageIdx];
@@ -268,7 +268,9 @@
           return tabContent;
         };
 
-        var setupTabContentEvents = function (tab, tabContent) {
+        var setupTabContentEvents = function (tab, tabContent, hideDelete) {
+          var keyHandle = tab.key.toLowerCase().replace(/ /g, '-');
+
           var textarea = tabContent.find('#tab-' + keyHandle +'_text');
           var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
           var pageDropdown = tabContent.find('#tab-' + keyHandle +'_page');
@@ -488,7 +490,7 @@
             .done(function (pages, snippets) {
                 var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
                 var modalBody = jq(modalContent[1]);
-                var tabContent = createTab({ key: 'New Tab', value: '' }, pages, snippets, true);
+                var tabContent = createTab({ key: 'New Tab', value: '' }, pages, snippets);
                 modalBody.append(tabContent);
 
                 modalBody.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
@@ -498,7 +500,7 @@
                 var confirmed = false;
                 modal.show();
 
-                setupTabContentEvents({ key: 'New Tab', value: '' }, tabContent);
+                setupTabContentEvents({ key: 'New Tab', value: '' }, tabContent, true);
                 jq(modal.$container()).find(".btn-ok").on('click', function (e) {
                   confirmed = true;
                 });
