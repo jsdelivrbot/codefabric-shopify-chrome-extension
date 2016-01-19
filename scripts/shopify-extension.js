@@ -459,7 +459,7 @@
                 products.push(prods.products[pIdx].id);
               }
               if (prods.products.length == 250) {
-                loadProducts((page || 1) + 1))
+                loadProducts((page || 1) + 1)
                   .done(function (pRes) {
                     products.push(pRes.products);
                     result.resolve(products);
