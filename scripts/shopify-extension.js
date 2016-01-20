@@ -45,6 +45,7 @@
         var isProcessing = false;
         var processApiQueue = function() {
           if (apiQueue.length > 0) {
+            shopify.Loading.start();
             isProcessing = true;
             var op = apiQueue.pop();
 
@@ -62,6 +63,7 @@
             });
           }
           else {
+            shopify.Loading.stop();
             isProcessing = false;
           }
         };
