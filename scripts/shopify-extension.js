@@ -529,7 +529,8 @@
                 });
                 modal.onClose(function (e) { 
                   if (confirmed) {
-                    var wrapper = editorRd.closest('.tab-content-new-tab');
+                    var wrapper = jq(modal.$container()).closest('.tab-content-new-tab');
+                    var editorRd = wrapper.find('input[type=radio]:checked');
                     var textEditor = wrapper.find('.next-input.text');
                     var pageEditor = wrapper.find('select.page');
                     var snippetEditor = wrapper.find('select.snippet');
