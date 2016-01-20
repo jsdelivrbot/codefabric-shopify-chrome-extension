@@ -471,6 +471,8 @@
                 result.resolve(products);
               }
             });
+
+          return result;
         };
 
         var pages = null, snippets = null;
