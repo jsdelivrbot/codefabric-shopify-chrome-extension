@@ -535,8 +535,8 @@
                     var pageEditor = wrapper.find('select.page');
                     var snippetEditor = wrapper.find('select.snippet');
 
-                    var tabId = wrapper.data('id');
-                    var tabKey = wrapper.data('key');
+                    var tabName = jq(model.$container()).find('#new-tab-name');
+                    var tabKey = tabName.val();
 
                     var value = textEditor.val();
                     if (editorRd.data('type') == 'snippet') {
