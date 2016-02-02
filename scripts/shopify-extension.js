@@ -206,7 +206,7 @@
         };
 
         var getAdminPage = function () {
-          return location.href.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/]+)[\/]?(\d+)*.*$/i);
+          return location.href.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/\?]+)[\/]?(\d+)*.*$/i);
         };
 
         var createInputDropdown = function (type, name, handle, options) {
