@@ -964,6 +964,11 @@
       console.log('document ready called');
     });
 
+    jq(window).on('message', function (e) {
+      console.log('message: ' + e);
+      debugger;
+    });
+
     jq('body').on('beforeunload', function() {
       console.log('before unload...');
       window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
