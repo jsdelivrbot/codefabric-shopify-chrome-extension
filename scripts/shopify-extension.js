@@ -456,6 +456,7 @@
           var promises = [];
           var prodProm = {};
           var tabs = [];
+          showMessage('Loading existing tabs...');
           for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
             promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
               .done(function(r) {
@@ -477,6 +478,7 @@
         var loadProducts = function (page) {
           var result = jq.Deferred();
           var products = [];
+          showMessage('Loading products...');
           jq.get('/admin/products.json?limit=250&page=' + (page || 1))
             .done(function (prods) {
               for (var pIdx = 0; pIdx < prods.products.length; pIdx++) {
@@ -504,6 +506,8 @@
             result.resolve(pages);
           }
           else {
+            showMessage('Loading pages...');
+
             jq.get('/admin/pages.json')
               .done(function (pageData) {
                 pages = pageData.pages;
@@ -518,9 +522,10 @@
             result.resolve(snippets);
           }
           else {
+            showMessage('Loading snippets...');
 
-          jq.get('/admin/themes.json?role=main')
-            .done(function (theme) {
+            jq.get('/admin/themes.json?role=main')
+              .done(function (theme) {
               jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json')
                 .done(function (themeData) {
                   snippets = themeData.assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
