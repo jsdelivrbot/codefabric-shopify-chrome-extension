@@ -960,6 +960,12 @@
   utils.ensureDependencies(function (s, jq) {
     var self = this;
     extensionJs.call(self, s, jq, {});
+
+    s.MessageBus.registerHandler(function(e) { 
+      console.log(e);
+      debugger;
+    });
+
     jq(document).ready(function () {
       console.log('document ready called');
     });
