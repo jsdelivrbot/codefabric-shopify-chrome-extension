@@ -959,6 +959,9 @@
   }
   utils.ensureDependencies(function (s, jq) {
     extensionJs.call(this, s, jq, {});
+    jq(document).ready(function () {
+      console.log('document ready called');
+    });
   });
 
 })();
