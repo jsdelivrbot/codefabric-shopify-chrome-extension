@@ -958,9 +958,15 @@
     };
   }
   utils.ensureDependencies(function (s, jq) {
-    extensionJs.call(this, s, jq, {});
+    var self = this;
+    extensionJs.call(self, s, jq, {});
     jq(document).ready(function () {
       console.log('document ready called');
+    });
+
+    jq('body').on('beforeunload', function() {
+      console.log('before unload...');
+      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
     });
   });
 
