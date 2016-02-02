@@ -713,7 +713,7 @@
                   for (var mIdx = 0; mIdx < missingTabs.length; mIdx++) {
                     if (addedTabs.indexOf(missingTabs[mIdx]) < 0) {
                       var reorderItem = jq(reorderTabItem);
-                      reorderItem.attr('data-key', missingTabs[mIdx]).find('.next-label').text(missingTabs[mIdx]);
+                      reorderItem.attr('data-key', missingTabs[mIdx].key).find('.next-label').text(missingTabs[mIdx].key);
                       modalOl.append(reorderItem);
                       addedTabs.push(missingTabs[mIdx]);
                     }
