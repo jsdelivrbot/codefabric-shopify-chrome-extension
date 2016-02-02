@@ -687,25 +687,30 @@
                     }
                   }
 
-                  var addedTabs = [];
-                  for (var oIdx = 0; oIdx < maxLength; oIdx++) {
-                    var mergedIndex = [];
-                    for (var mIdx = 0; mIdx < distinctOrders.length; mIdx++) {
-                      var splitOrder = splitOrders[mIdx];
-                      if (splitOrder.length > oIdx) {
-                        mergedIndex.push(splitOrder[oIdx].trim());
-                      }
-                    }
+                  var splitOrdersByLength = splitOrders.sort(function (a, b) { return a.length > b.length ? -1 : ( a.length < b.length ? 1 : 0); });
 
-                    var sorted = mergedIndex.sort(function (a, b) { return a < b ? -1 : (a > b ? 1 : 0); });
-                    for (var sIdx = 0; sIdx < sorted.length; sIdx++) {
-                      if (addedTabs.indexOf(sorted[sIdx]) < 0) {
-                        var reorderItem = jq(reorderTabItem);
-                        reorderItem.attr('data-key', sorted[sIdx]).find('.next-label').text(sorted[sIdx]);
-                        modalOl.append(reorderItem);
-                        addedTabs.push(sorted[sIdx]);
+                  var addedTabs = [];
+                  var mergedTabs = [];
+                  for (var oIdx = 0; oIdx < splitOrdersByLength.length; oIdx++) {
+                    var list = splitOrdersByLength[oIdx];
+                    for (var sIdx = 0; sIdx < list.length; sIdx++) {
+                      var tabName = list[sIdx].trim();
+                      var newIdx = Math.ceil(maxLength / list.length * sIdx);
+                      if (addedTabs.indexOf(tabName) < 0) {
+                        addedTabs.push(tabName);
+                        if (oIdx > 0) {
+                          mergedTabs = mergedTabs.splice(newIdx, 0, tabName);
+                        } else {
+                          mergedTabs.push(tabName);
+                        }
                       }
                     }
+                  }
+
+                  for (var oIdx = 0; oIdx < mergedTabs.length; oIdx++) {
+                    var reorderItem = jq(reorderTabItem);
+                    reorderItem.attr('data-key', mergedTabs[oIdx]).find('.next-label').text(mergedTabs[oIdx]);
+                    modalOl.append(reorderItem);
                   }
 
                   var missingTabs = tabs.map(function (t) { return t.key.trim(); })
