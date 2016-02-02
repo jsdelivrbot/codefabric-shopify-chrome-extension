@@ -394,6 +394,8 @@
         var dropdownMenuItem = '<li><a href></a></li>';
 
         var bulkAddTabModalContent = '<header><h2>Add a tab to {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
+        var bulkRemoveTabModalContent = '<header><h2>Remove tabs from {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Remove</a></div>';
+
 
         var addToolbarButtons = function (buttons) {
           var toolbar = jq('header.header');
@@ -448,6 +450,33 @@
           else {
             result.resolve(jq('tbody input:checked').map(function(idx, e) { return $(e).val(); }));
           }
+
+          return result;
+        };
+
+        var getTabsForProducts = function (products) {
+          var result = $.Deferred();
+          var promises = [];
+          var tabs = [];
+          for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
+            var promise = $.Deferred();
+            jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
+              .done(function(r) {
+                for (var idx = 0; idx < r.metafields.length; idx++) {
+                  tabs.push(r.metafields[idx]);
+                }
+                promise.resolve(true);
+              })
+              .fail(function (err) {
+                promise.reject(err);
+              });
+            promises.push(promise);
+          }
+
+          jq.when.apply(jq, promises)
+                 .done(function () {
+                    result.resolve(tabs);
+                 });
 
           return result;
         };
@@ -561,7 +590,46 @@
 
         var bulkRemoveProductTab = function (e) {
           e.preventDefault();
-          alert('2');
+          
+          jq.when(getSelectedItems())
+            .done(function (selection) {
+              jq.when(getTabsForProducts(selection))
+                .done(function (tabs) {
+                  var itemsText = selection.length;
+                  var modalContent = jq(bulkRemoveTabModalContent.replace('{0}', itemsText));
+                  var modalBody = jq(modalContent[1]);
+
+                  var usedKeys = [];
+                  for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
+                      var tab = tabs[tabIdx];
+                      if (usedKeys.indexOf(tab.key) < 0) {
+                        usedKeys.push(tab.key);
+                        modalBody.append(jq(cardInputWrapper).append('<label class="next-label" for="remove-tab-' + tab.id + '">' + tab.key + '</label><input type="checkbox" id="remove-tab-' + tab.id + '" class="next-input" value="' + tab.key + '" />'))
+                      }
+                  }
+
+                  modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+                  var modal = new shopify.Modal(modalContent.get(0));
+                  var confirmed = false;
+                  modal.show();
+                  
+                  jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+                    confirmed = true;
+                  });
+                  modal.onClose(function (e) { 
+                    if (confirmed) {
+                      debugger;
+                      var checked = jq(modal.$container()).find('input[type=checkbox]:checked');
+                      for (var checkedIdx = 0; checkedIdx < checked.length; checkedIdx++) {
+                        var matchedTabs = tabs.filter(function (t) { return t.key == jq(checked[checkedIdx]).val(); });
+                        for (var tIdx = 0; tIdx < matchedTabs.length; tIdx++) {
+                          deleteMetafield('product', matchedTabs[tIdx].owner_id, matchedTabs[tIdx].id);
+                        }
+                      }
+                    }
+                  });
+                });
+            });
         };
 
         var bulkChangeProductTabOrder = function (e) {
