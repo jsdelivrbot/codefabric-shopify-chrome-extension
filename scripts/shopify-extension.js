@@ -693,7 +693,7 @@
                     for (var mIdx = 0; mIdx < distinctOrders.length; mIdx++) {
                       var splitOrder = splitOrders[mIdx];
                       if (splitOrder.length > oIdx) {
-                        mergedIndex.push(splitOrder[oIdx]);
+                        mergedIndex.push(splitOrder[oIdx].trim());
                       }
                     }
 
@@ -708,14 +708,14 @@
                     }
                   }
 
-                  var missingTabs = tabs.filter(function(t) { return addedTabs.indexOf(t.key) < 0; })
-                                        .sort(function (a, b) { return a < b ? -1 : (a > b ? 1 : 0); });
+                  var missingTabs = tabs.filter(function(t) { return addedTabs.indexOf(t.key.trim()) < 0; })
+                                        .sort(function (a, b) { return a.trim() < b.trim() ? -1 : (a.trim() > b.trim() ? 1 : 0); });
                   for (var mIdx = 0; mIdx < missingTabs.length; mIdx++) {
-                    if (addedTabs.indexOf(missingTabs[mIdx]) < 0) {
+                    if (addedTabs.indexOf(missingTabs[mIdx].key.trim()) < 0) {
                       var reorderItem = jq(reorderTabItem);
-                      reorderItem.attr('data-key', missingTabs[mIdx].key).find('.next-label').text(missingTabs[mIdx].key);
+                      reorderItem.attr('data-key', missingTabs[mIdx].key.trim()).find('.next-label').text(missingTabs[mIdx].key.trim());
                       modalOl.append(reorderItem);
-                      addedTabs.push(missingTabs[mIdx]);
+                      addedTabs.push(missingTabs[mIdx].key.trim());
                     }
                   }
 
