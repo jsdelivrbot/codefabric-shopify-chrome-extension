@@ -49,6 +49,7 @@
             isProcessing = true;
             var op = apiQueue.pop();
 
+            showMessage('Doing the thing: ' + op.name);
             jq.ajax({
               url: op.url,
               method: op.method,
@@ -63,6 +64,7 @@
             });
           }
           else {
+            showMessage('Done all the things!');
             shopify.Loading.stop();
             isProcessing = false;
           }
@@ -78,6 +80,7 @@
           url += '/metafields.json';
 
           apiQueue.push({
+            name: 'Adding metafield ' + namespace + ':' + key + ' to ' + parentType + ' ' + parentId,
             url: url,
             method: 'POST',
             data: {
@@ -107,6 +110,7 @@
           url += 'metafields/' + id + '.json';
 
           apiQueue.push({
+            name: 'Updating metafield ' + namespace + ':' + key + ' on ' + parentType + ' ' + parentId,
             url: url,
             method: 'PUT',
             data: {
@@ -135,6 +139,7 @@
           url += 'metafields/' + id + '.json';
 
           apiQueue.push({
+            name: 'Removing metafield ' + id + ' from ' + parentType + ' ' + parentId,
             url: url,
             method: 'DELETE'
           });
@@ -377,14 +382,6 @@
           result.resolve();
 
           return result;
-          // jq.get('/admin/themes.json?role=main')
-          //   .done(function (theme) {
-
-          //     jq.when(jq.get('/admin/pages.json'),
-          //             jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json'))
-          //       .done(function (pageData, themeData) {
-          //       });
-          //   });
         };
 
         var toolbarSegmentedButtonList = '<ul class="segmented"></ul>';
@@ -394,6 +391,8 @@
         var dropdownMenuItem = '<li><a href></a></li>';
 
         var bulkAddTabModalContent = '<header><h2>Add a tab to {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
+        var bulkRemoveTabModalContent = '<header><h2>Remove tabs from {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Remove</a></div>';
+
 
         var addToolbarButtons = function (buttons) {
           var toolbar = jq('header.header');
@@ -452,9 +451,34 @@
           return result;
         };
 
+        var getTabsForProducts = function (products) {
+          var result = $.Deferred();
+          var promises = [];
+          var prodProm = {};
+          var tabs = [];
+          showMessage('Loading existing tabs...');
+          for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
+            promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
+              .done(function(r) {
+                for (var idx = 0; idx < r.metafields.length; idx++) {
+                  if (r.metafields[idx].key.indexOf('_') == 0) { continue; }
+                  tabs.push(r.metafields[idx]);
+                }
+              }).promise());
+          }
+
+          jq.when.apply(jq, promises)
+                 .done(function () {
+                    result.resolve(tabs);
+                 });
+
+          return result;
+        };
+
         var loadProducts = function (page) {
           var result = jq.Deferred();
           var products = [];
+          showMessage('Loading products...');
           jq.get('/admin/products.json?limit=250&page=' + (page || 1))
             .done(function (prods) {
               for (var pIdx = 0; pIdx < prods.products.length; pIdx++) {
@@ -482,6 +506,8 @@
             result.resolve(pages);
           }
           else {
+            showMessage('Loading pages...');
+
             jq.get('/admin/pages.json')
               .done(function (pageData) {
                 pages = pageData.pages;
@@ -496,9 +522,10 @@
             result.resolve(snippets);
           }
           else {
+            showMessage('Loading snippets...');
 
-          jq.get('/admin/themes.json?role=main')
-            .done(function (theme) {
+            jq.get('/admin/themes.json?role=main')
+              .done(function (theme) {
               jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json')
                 .done(function (themeData) {
                   snippets = themeData.assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
@@ -514,6 +541,7 @@
 
           jq.when(getPages(), getSnippets(), getSelectedItems())
             .done(function (pages, snippets, selection) {
+                shopify.Flash.hide();
                 var itemsText = selection.length;
                 var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
                 var modalBody = jq(modalContent[1]);
@@ -561,7 +589,46 @@
 
         var bulkRemoveProductTab = function (e) {
           e.preventDefault();
-          alert('2');
+          
+          jq.when(getSelectedItems())
+            .done(function (selection) {
+              jq.when(getTabsForProducts(selection))
+                .done(function (tabs) {
+                  shopify.Flash.hide();
+                  var itemsText = selection.length;
+                  var modalContent = jq(bulkRemoveTabModalContent.replace('{0}', itemsText));
+                  var modalBody = jq(modalContent[1]);
+
+                  var usedKeys = [];
+                  for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
+                      var tab = tabs[tabIdx];
+                      if (usedKeys.indexOf(tab.key) < 0) {
+                        usedKeys.push(tab.key);
+                        modalBody.append(jq(cardInputWrapper).append('<label class="next-label next-label--switch" for="remove-tab-' + tab.id + '">' + tab.key + '</label><input type="checkbox" id="remove-tab-' + tab.id + '" class="next-checkbox" style="opacity: 1;" value="' + tab.key + '" />'))
+                      }
+                  }
+
+                  modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+                  var modal = new shopify.Modal(modalContent.get(0));
+                  var confirmed = false;
+                  modal.show();
+                  
+                  jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+                    confirmed = true;
+                  });
+                  modal.onClose(function (e) { 
+                    if (confirmed) {
+                      var checked = jq(modal.$container()).find('input[type=checkbox]:checked');
+                      for (var checkedIdx = 0; checkedIdx < checked.length; checkedIdx++) {
+                        var matchedTabs = tabs.filter(function (t) { return t.key == jq(checked[checkedIdx]).val(); });
+                        for (var tIdx = 0; tIdx < matchedTabs.length; tIdx++) {
+                          deleteMetafield('product', matchedTabs[tIdx].owner_id, matchedTabs[tIdx].id);
+                        }
+                      }
+                    }
+                  });
+                });
+            });
         };
 
         var bulkChangeProductTabOrder = function (e) {
