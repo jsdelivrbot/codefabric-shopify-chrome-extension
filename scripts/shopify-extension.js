@@ -457,20 +457,15 @@
         var getTabsForProducts = function (products) {
           var result = $.Deferred();
           var promises = [];
+          var prodProm = {};
           var tabs = [];
           for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
-            var promise = $.Deferred();
-            jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
+            promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
               .done(function(r) {
                 for (var idx = 0; idx < r.metafields.length; idx++) {
                   tabs.push(r.metafields[idx]);
                 }
-                promise.resolve(true);
-              })
-              .fail(function (err) {
-                promise.reject(err);
-              });
-            promises.push(promise);
+              }).promise());
           }
 
           jq.when.apply(jq, promises)
