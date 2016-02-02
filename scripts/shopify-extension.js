@@ -961,30 +961,13 @@
     var self = this;
     extensionJs.call(self, s, jq, {});
 
-    jq(window).on('popstate', function(e) { 
-      console.log(e);
-      debugger;
+    jq(window).on('popstate', function(e) {
+      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
     });
     jq(window).on('pushstate', function(e) { 
-      console.log(e);
-      debugger;
+      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
     });
     jq(window).on('replacestate', function(e) { 
-      console.log(e);
-      debugger;
-    });
-
-    jq(document).ready(function () {
-      console.log('document ready called');
-    });
-
-    jq(window).on('message', function (e) {
-      console.log('message: ' + e);
-      debugger;
-    });
-
-    jq('body').on('beforeunload', function() {
-      console.log('before unload...');
       window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
     });
 
