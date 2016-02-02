@@ -110,7 +110,7 @@
           url += 'metafields/' + id + '.json';
 
           apiQueue.push({
-            name: 'Updating metafield ' + namespace + ':' + key + ' on ' + parentType + ' ' + parentId,
+            name: 'Updating metafield ' + id + ' on ' + parentType + ' ' + parentId,
             url: url,
             method: 'PUT',
             data: {
