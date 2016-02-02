@@ -961,7 +961,7 @@
     var self = this;
     extensionJs.call(self, s, jq, {});
 
-    s.MessageBus.registerHandler(function(e) { 
+    jq(window).on('popstate', function(e) { 
       console.log(e);
       debugger;
     });
