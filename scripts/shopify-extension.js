@@ -599,7 +599,7 @@
                       var tab = tabs[tabIdx];
                       if (usedKeys.indexOf(tab.key) < 0) {
                         usedKeys.push(tab.key);
-                        modalBody.append(jq(cardInputWrapper).append('<label class="next-label" for="remove-tab-' + tab.id + '">' + tab.key + '</label><input type="checkbox" id="remove-tab-' + tab.id + '" class="next-input" value="' + tab.key + '" />'))
+                        modalBody.append(jq(cardInputWrapper).append('<label class="next-label next-label--switch" for="remove-tab-' + tab.id + '">' + tab.key + '</label><input type="checkbox" id="remove-tab-' + tab.id + '" class="next-checkbox" style="opacity: 1;" value="' + tab.key + '" />'))
                       }
                   }
 
