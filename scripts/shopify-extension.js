@@ -699,7 +699,7 @@
                       if (addedTabs.indexOf(tabName) < 0) {
                         addedTabs.push(tabName);
                         if (oIdx > 0) {
-                          mergedTabs = mergedTabs.splice(newIdx, 0, tabName);
+                          mergedTabs.splice(newIdx, 0, tabName);
                         } else {
                           mergedTabs.push(tabName);
                         }
