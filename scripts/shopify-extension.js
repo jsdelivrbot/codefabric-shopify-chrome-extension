@@ -392,6 +392,7 @@
 
         var bulkAddTabModalContent = '<header><h2>Add a tab to {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
         var bulkRemoveTabModalContent = '<header><h2>Remove tabs from {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Remove</a></div>';
+        var bulkReOrderTabModalContent = '<header><h2>Change tab order for {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Update</a></div>';
 
 
         var addToolbarButtons = function (buttons) {
@@ -463,6 +464,31 @@
                 for (var idx = 0; idx < r.metafields.length; idx++) {
                   if (r.metafields[idx].key.indexOf('_') == 0) { continue; }
                   tabs.push(r.metafields[idx]);
+                }
+              }).promise());
+          }
+
+          jq.when.apply(jq, promises)
+                 .done(function () {
+                    result.resolve(tabs);
+                 });
+
+          return result;
+        };
+
+        var getTabOrderForProducts = function (products) {
+          var result = $.Deferred();
+          var promises = [];
+          var prodProm = {};
+          var tabs = [];
+          showMessage('Loading tab order...');
+          for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
+            promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab&key=_order')
+              .done(function(r) {
+                for (var idx = 0; idx < r.metafields.length; idx++) {
+                  if (r.metafields[idx].key.indexOf('_') == 0) { 
+                    tabs.push(r.metafields[idx]); 
+                  }
                 }
               }).promise());
           }
@@ -633,7 +659,97 @@
 
         var bulkChangeProductTabOrder = function (e) {
           e.preventDefault();
-          alert('3');
+          
+          jq.when(getSelectedItems())
+            .done(function (selection) {
+              jq.when(getTabsForProducts(selection), getTabOrderForProducts(selection))
+                .done(function (tabs, orderFields) {
+                  shopify.Flash.hide();
+                  var itemsText = selection.length;
+
+                  var modalContent = jq(bulkReOrderTabModalContent.replace('{0}', itemsText));
+                  var modalBody = jq(modalContent[1]);
+
+                  var modalOl = modalBody.append('<ol class="js-product-options reorder-modal__options-list ui-sortable"></ol>').find('ol');
+
+                  var distinctOrders = [];
+                  var splitOrders = [];
+                  var maxLength = 0;
+                  for (var oIdx = 0; oIdx < orderFields.length; oIdx++) {
+                    var order = orderFields[oIdx];
+                    if (distinctOrders.indexOf(order) < 0) {
+                      distinctOrders.push(order);
+                      var splitOrder = order.split(",");
+                      if (splitOrder.length > maxLength) {
+                        maxLength = splitOrder.length;
+                      }
+                      splitOrders.push(splitOrder);
+                    }
+                  }
+
+                  var addedTabs = [];
+                  for (var oIdx = 0; oIdx < maxLength; oIdx++) {
+                    var mergedIndex = [];
+                    for (var mIdx = 0; mIdx < distinctOrders.length; mIdx++) {
+                      var splitOrder = splitOrders[mIdx];
+                      if (splitOrder.length > oIdx) {
+                        mergedIndex.push(splitOrder[oIdx]);
+                      }
+                    }
+
+                    var sorted = mergedIndex.sort(function (a, b) { return a < b ? -1 : (a > b ? 1 : 0); });
+                    for (var sIdx = 0; sIdx < sorted.length; sIdx++) {
+                      if (addedTabs.indexOf(sorted[sIdx]) < 0) {
+                        var reorderItem = jq(reorderTabItem);
+                        reorderItem.attr('data-key', sorted[sIdx]).find('.next-label').text(sorted[sIdx]);
+                        modalOl.append(reorderItem);
+                        addedTabs.push(sorted[sIdx]);
+                      }
+                    }
+                  }
+
+                  var missingTabs = tabs.filter(function(t) { return addedTabs.indexOf(t.key) < 0; })
+                                        .sort(function (a, b) { return a < b ? -1 : (a > b ? 1 : 0); });
+                  for (var mIdx = 0; mIdx < missingTabs.length; mIdx++) {
+                    if (addedTabs.indexOf(missingTabs[mIdx]) < 0) {
+                      var reorderItem = jq(reorderTabItem);
+                      reorderItem.attr('data-key', missingTabs[mIdx]).find('.next-label').text(missingTabs[mIdx]);
+                      modalOl.append(reorderItem);
+                      addedTabs.push(missingTabs[mIdx]);
+                    }
+                  }
+
+                  modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+                  var modal = new shopify.Modal(modalContent.get(0));
+                  var confirmed = false;
+                  modal.show();
+                  jq(modal.$container()).find('ol').sortable({
+                    handle: ".js-product-option-name--is-draggable",
+                    opacity: .8,
+                    axis: "y"
+                  });
+                  jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+                    confirmed = true;
+                  });
+                  modal.onClose(function (e) { 
+                    if (confirmed) {
+                      var newTabOrder = [];
+                      jq(this).find('ol li').each(function (i, el) { newTabOrder.push(jq(el).data('key')); });
+                      for (var pIdx = 0; pIdx < selection.length; pIdx++) {
+                        var matchingTabs = tabs.filter(function (t) { return t.owner_id == selection[pIdx]; }).map(function (t) { return t.key; });
+                        var newOrder = newTabOrder.filter(function (n) { return matchingTabs.indexOf(n) > -1; }).join(',');
+                        var orderField = orderFields.filter(function (f) { return f.owner_id == selection[pIdx]; });
+                        if (orderField.length > 0) {
+                          updateMetafield('product', selection[pIdx], orderField[0].id, newOrder, 'string');
+                        }
+                        else {
+                          addMetafield('product', selection[pIdx], 'tab', '_order', newOrder, 'string')
+                        }
+                      }
+                    }
+                  });
+                });
+            });
         };
 
         /*** END PRODUCT LIST ***/
