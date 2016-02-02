@@ -460,6 +460,7 @@
             promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
               .done(function(r) {
                 for (var idx = 0; idx < r.metafields.length; idx++) {
+                  if (r.metafields[idx].key.indexOf('_') == 0) { continue; }
                   tabs.push(r.metafields[idx]);
                 }
               }).promise());
