@@ -677,9 +677,9 @@
                   var maxLength = 0;
                   for (var oIdx = 0; oIdx < orderFields.length; oIdx++) {
                     var order = orderFields[oIdx];
-                    if (distinctOrders.indexOf(order) < 0) {
-                      distinctOrders.push(order);
-                      var splitOrder = order.split(",");
+                    if (distinctOrders.indexOf(order.value) < 0) {
+                      distinctOrders.push(order.value);
+                      var splitOrder = order.value.split(",");
                       if (splitOrder.length > maxLength) {
                         maxLength = splitOrder.length;
                       }
