@@ -695,10 +695,10 @@
                     var list = splitOrdersByLength[oIdx];
                     for (var sIdx = 0; sIdx < list.length; sIdx++) {
                       var tabName = list[sIdx].trim();
-                      var newIdx = Math.ceil(maxLength / list.length * sIdx);
+                      var newIdx = Math.min(Math.ceil(maxLength / list.length * sIdx) + 1, maxLength);
                       if (addedTabs.indexOf(tabName) < 0) {
                         addedTabs.push(tabName);
-                        if (oIdx > 0) {
+                        if (oIdx > 0 && newIdx < maxLength) {
                           mergedTabs.splice(newIdx, 0, tabName);
                         } else {
                           mergedTabs.push(tabName);
