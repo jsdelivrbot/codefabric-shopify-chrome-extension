@@ -49,6 +49,7 @@
             isProcessing = true;
             var op = apiQueue.pop();
 
+            showMessage('Doing the thing: ' + op.name);
             jq.ajax({
               url: op.url,
               method: op.method,
@@ -63,6 +64,7 @@
             });
           }
           else {
+            showMessage('Done all the things!');
             shopify.Loading.stop();
             isProcessing = false;
           }
@@ -78,6 +80,7 @@
           url += '/metafields.json';
 
           apiQueue.push({
+            name: 'Adding metafield ' + namespace + ':' + key + ' to ' + parentType + ' ' + parentId,
             url: url,
             method: 'POST',
             data: {
@@ -107,6 +110,7 @@
           url += 'metafields/' + id + '.json';
 
           apiQueue.push({
+            name: 'Updating metafield ' + namespace + ':' + key + ' on ' + parentType + ' ' + parentId,
             url: url,
             method: 'PUT',
             data: {
@@ -135,6 +139,7 @@
           url += 'metafields/' + id + '.json';
 
           apiQueue.push({
+            name: 'Removing metafield ' + id + ' from ' + parentType + ' ' + parentId,
             url: url,
             method: 'DELETE'
           });
@@ -377,14 +382,6 @@
           result.resolve();
 
           return result;
-          // jq.get('/admin/themes.json?role=main')
-          //   .done(function (theme) {
-
-          //     jq.when(jq.get('/admin/pages.json'),
-          //             jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json'))
-          //       .done(function (pageData, themeData) {
-          //       });
-          //   });
         };
 
         var toolbarSegmentedButtonList = '<ul class="segmented"></ul>';
@@ -613,7 +610,6 @@
                   });
                   modal.onClose(function (e) { 
                     if (confirmed) {
-                      debugger;
                       var checked = jq(modal.$container()).find('input[type=checkbox]:checked');
                       for (var checkedIdx = 0; checkedIdx < checked.length; checkedIdx++) {
                         var matchedTabs = tabs.filter(function (t) { return t.key == jq(checked[checkedIdx]).val(); });
