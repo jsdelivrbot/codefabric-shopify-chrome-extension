@@ -958,10 +958,31 @@
     };
   }
   utils.ensureDependencies(function (s, jq) {
-    extensionJs.call(this, s, jq, {});
-    jq(document).ready(function () {
-      console.log('document ready called');
+    var self = this;
+    extensionJs.call(self, s, jq, {});
+
+    jq(window).on('popstate', function(e) {
+      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
     });
+    jq(window).on('pushstate', function(e) { 
+      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
+    });
+    jq(window).on('replacestate', function(e) { 
+      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
+    });
+
+    if (window.history) {
+      var pushState = window.history.pushState;
+      window.history.pushState = function(state) {
+          jq(window).trigger('pushstate', state);
+          return pushState.apply(window.history, arguments);
+        };
+      var replaceState = window.history.replaceState;
+      window.history.replaceState = function(state) {
+          jq(window).trigger('replacestate', state);
+          return replaceState.apply(window.history, arguments);
+        };
+    }
   });
 
 })();
