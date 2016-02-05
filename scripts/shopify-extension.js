@@ -388,7 +388,7 @@
         var toolbarSegmentedButton = '<li><a class="btn"></a></li>';
 
         var dropdownMenuItemWithBreak = '<li class="break-top"><a href></a></li>';
-        var dropdownMenuItem = '<li><a href></a></li>';
+        var dropdownMenuItem = '<li><a class="next-list__item" href></a></li>';
 
         var bulkAddTabModalContent = '<header><h2>Add a tab to {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
         var bulkRemoveTabModalContent = '<header><h2>Remove tabs from {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Remove</a></div>';
