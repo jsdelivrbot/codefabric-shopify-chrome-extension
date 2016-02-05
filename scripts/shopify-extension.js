@@ -417,15 +417,19 @@
 
         var addBulkMenuItems = function(items) {
           var bulkMenu = jq('.bulk-actions ul .dropdown ul');
+          if (bulkMenu.length < 1) {
+            bulkMenu = jq('.bulk-actions ul .next-popover ul.next-list');
+            bulkMenu = bulkMenu.append('<div class="next-popover__pane cfb_ext"></div>').find('.cfb_ext');
+          }
           for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
             var item = items[itemIdx];
             var itemEl = null;
-            if (itemIdx == 0) {
-              itemEl = jq(dropdownMenuItemWithBreak);
-            }
-            else {
+            // if (itemIdx == 0) {
+            //   itemEl = jq(dropdownMenuItemWithBreak);
+            // }
+            // else {
               itemEl = jq(dropdownMenuItem);
-            }
+            //}
 
             itemEl.find('a')
                   .text(item.title)
