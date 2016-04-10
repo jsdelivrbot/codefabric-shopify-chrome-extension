@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "extension.js",
+  "sourceRoot": "../src/coffee/",
+  "sources": [
+    "extension.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,MAAA,CAAO,CAAC,MAAD,CAAP,EAAiB,SAAC,IAAD;AAEf,MAAA;SAAM;;;IAEJ,CAAA,SAAA,GAAA,CAAA;;wBAEA,IAAA,GAAM,SAAA,GAAA;;;;;AANO,CAAjB"
+}

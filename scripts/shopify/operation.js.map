@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "operation.js",
+  "sourceRoot": "../../src/coffee/shopify/",
+  "sources": [
+    "operation.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,MAAA,CAAO,SAAA;AAEL,MAAA;SAAM;IAES,mBAAC,IAAD,EAAQ,GAAR,EAAc,IAAd,EAAqB,MAArB;MAAC,IAAC,CAAA,OAAD;MAAO,IAAC,CAAA,MAAD;MAAM,IAAC,CAAA,OAAD;MAAO,IAAC,CAAA,SAAD;IAArB;;wBAEb,MAAA,GAAQ,SAAA;AACN,UAAA;AAAA,aAAO;QACL,GAAA,EAAK,IAAC,CAAA,GADD;QAEL,MAAA,sCAAkB,KAFb;QAGL,QAAA,EAAU,MAHL;QAIL,IAAA,EAAM,IAAC,CAAA,IAJF;;IADD;;;;;AANL,CAAP"
+}

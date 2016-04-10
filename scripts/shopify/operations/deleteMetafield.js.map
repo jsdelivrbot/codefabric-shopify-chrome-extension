@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "deleteMetafield.js",
+  "sourceRoot": "../../../src/coffee/shopify/operations/",
+  "sources": [
+    "deleteMetafield.coffee"
+  ],
+  "names": [],
+  "mappings": "AAAA,IAAA;;;AAAA,MAAA,CAAO,CAAC,mBAAD,CAAP,EAA8B,SAAC,SAAD;AAE5B,MAAA;SAAM;;;IAES,yBAAC,EAAD;MAAC,IAAC,CAAA,KAAD;MACZ,iDAAM,qBAAA,GAAsB,IAAC,CAAA,EAA7B,EACE,aAAA,GAAc,IAAC,CAAA,EADjB,EAEE,IAFF,EAGE,QAHF;IADW;;;;KAFe;AAFF,CAA9B"
+}
