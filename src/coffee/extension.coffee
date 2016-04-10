@@ -1,4 +1,4 @@
-define ['card'], (Card) ->
+define ['controls/card'], (Card) ->
 
   class Extension
 

@@ -1,1031 +1,1052 @@
 (function() {
 
-  var extensionJs = (function(shopify, jq, cardBuilder, extensions) {
-    if (!CodeFabric.Shopify.Extension) {
+  var rootLoadPath = '//rawgit.com/codefabric/codefabric-shopify-chrome-extension/master/scripts';
+  var extensionJs = (function(shopify, jq, r) {
+    
+    requirejs.config({
+      baseUrl: rootLoadPath,
+      path: {
+        jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'
+      }
+    });
 
-      CodeFabric.Shopify.Extension = function () {
-        // Private
-        var self = this;
+    define('shopify', [], function () {
+      return shopify;
+    });
 
-        //Shopify functions
-        var showMessage = function (message, isError) {
-          isError ? shopify.Flash.error(message) : shopify.Flash.notice(message);
-        };
+    define('jquery', [], function () {
+      return jq;
+    });
 
-        var showError = function (error) {
-          showMessage(error, true);
-        };
+    require('main', function(Main) {
+      var main = new Main();
+      main.run();
+    });
 
-        // HTML snippets
-        var cardHtml = '<div class="next-card"></div>';
-        var cardHeader = '<header class="next-card__header card-header"></header>';
-        var cardOuterGrid = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered card-outer"></div>';
-        var cardInnerGrid = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered card-inner"></div>';
-        var cardGridCell = '<div class="next-grid__cell"></div>';
-        var cardGridCellNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
-        var cardHeaderTitle = '<h2 class="next-heading"></h2>';
+    // if (!CodeFabric.Shopify.Extension) {
 
-        var cardContentWrapper = '<div class="next-card__section"></div>';
-        var cardInputWrapper = '<div class="next-input-wrapper"></div>';
-        var cardInputTitle = '<label class="next-label title"></label>';
-        var cardInputTextBox = '<input type="text" class="next-input" size="30" />';
-        var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
-        var cardInputDropdown = '<select></select>';
+    //   CodeFabric.Shopify.Extension = function () {
+    //     // Private
+    //     var self = this;
 
-        var tabOrderField = '<input type="hidden" name="tab-order" />';
+    //     //Shopify functions
+    //     var showMessage = function (message, isError) {
+    //       isError ? shopify.Flash.error(message) : shopify.Flash.notice(message);
+    //     };
 
-        //Modals
-        var addTabModal = '<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
-        var reorderTabItem = '<li class="reorder-modal__options-row js-product-option next-grid next-grid--no-outside-padding"><div class="next-grid__cell next-grid__cell--quarter next-grid__cell--vertically-centered"><div class="js-product-option-name js-product-option-name--is-draggable drag"><div class="next-grid next-grid--no-padding"><div class="next-grid__cell next-grid__cell--no-flex"><i class="ico ico-drag-handle reorder-modal__option-drag-handle"></i></div><div class="next-grid__cell"><span class="next-label next-label--no-margin"></span></div></div></div></div></li>';
-        var reorderTabsModalContent = '<header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body"><p class="ssb">Reorder tabs to change how they appear in on your store.</p><ol class="js-product-options reorder-modal__options-list ui-sortable"></ol></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">OK</a></div>';
-        var modalWrapper = '<script type="text/html" class="modal_source"></script>';
+    //     var showError = function (error) {
+    //       showMessage(error, true);
+    //     };
 
-        //API functions
-        var apiQueue = [];
-        var isProcessing = false;
-        var processApiQueue = function() {
-          if (apiQueue.length > 0) {
-            shopify.Loading.start();
-            isProcessing = true;
-            var op = apiQueue.pop();
+    //     // HTML snippets
+    //     var cardHtml = '<div class="next-card"></div>';
+    //     var cardHeader = '<header class="next-card__header card-header"></header>';
+    //     var cardOuterGrid = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered card-outer"></div>';
+    //     var cardInnerGrid = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered card-inner"></div>';
+    //     var cardGridCell = '<div class="next-grid__cell"></div>';
+    //     var cardGridCellNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
+    //     var cardHeaderTitle = '<h2 class="next-heading"></h2>';
 
-            showMessage('Doing the thing: ' + op.name);
-            jq.ajax({
-              url: op.url,
-              method: op.method,
-              dataType: 'json',
-              data: op.data
-            }).done(function(r) {
+    //     var cardContentWrapper = '<div class="next-card__section"></div>';
+    //     var cardInputWrapper = '<div class="next-input-wrapper"></div>';
+    //     var cardInputTitle = '<label class="next-label title"></label>';
+    //     var cardInputTextBox = '<input type="text" class="next-input" size="30" />';
+    //     var cardInputTextArea = '<textarea class="next-input" size="30" rows="10"></textarea>';
+    //     var cardInputDropdown = '<select></select>';
+
+    //     var tabOrderField = '<input type="hidden" name="tab-order" />';
+
+    //     //Modals
+    //     var addTabModal = '<script type="text/html" class="modal_source"><header><h2>New tab</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"><label for="new-tab-title">Tab name</label><input type="text" id="new-tab-title" class="next-input" /></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div></script>';
+    //     var reorderTabItem = '<li class="reorder-modal__options-row js-product-option next-grid next-grid--no-outside-padding"><div class="next-grid__cell next-grid__cell--quarter next-grid__cell--vertically-centered"><div class="js-product-option-name js-product-option-name--is-draggable drag"><div class="next-grid next-grid--no-padding"><div class="next-grid__cell next-grid__cell--no-flex"><i class="ico ico-drag-handle reorder-modal__option-drag-handle"></i></div><div class="next-grid__cell"><span class="next-label next-label--no-margin"></span></div></div></div></div></li>';
+    //     var reorderTabsModalContent = '<header><h2>Reorder tabs</h2><a href="#" class="close-modal">x</a></header><div class="body"><p class="ssb">Reorder tabs to change how they appear in on your store.</p><ol class="js-product-options reorder-modal__options-list ui-sortable"></ol></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">OK</a></div>';
+    //     var modalWrapper = '<script type="text/html" class="modal_source"></script>';
+
+    //     //API functions
+    //     var apiQueue = [];
+    //     var isProcessing = false;
+    //     var processApiQueue = function() {
+    //       if (apiQueue.length > 0) {
+    //         shopify.Loading.start();
+    //         isProcessing = true;
+    //         var op = apiQueue.pop();
+
+    //         showMessage('Doing the thing: ' + op.name);
+    //         jq.ajax({
+    //           url: op.url,
+    //           method: op.method,
+    //           dataType: 'json',
+    //           data: op.data
+    //         }).done(function(r) {
               
-            }).fail(function(e) {
-              showError(e.responseText);
-            }).always(function() {
-              processApiQueue();
-            });
-          }
-          else {
-            showMessage('Done all the things!');
-            shopify.Loading.stop();
-            isProcessing = false;
-          }
-        };
+    //         }).fail(function(e) {
+    //           showError(e.responseText);
+    //         }).always(function() {
+    //           processApiQueue();
+    //         });
+    //       }
+    //       else {
+    //         showMessage('Done all the things!');
+    //         shopify.Loading.stop();
+    //         isProcessing = false;
+    //       }
+    //     };
 
-        var addMetafield = function (parentType, parentId, namespace, key, value, type) {
-          var url = '/admin/';
-          switch (parentType) {
-            case 'product':
-              url += 'products/' + parentId;
-              break;
-          }
-          url += '/metafields.json';
+    //     var addMetafield = function (parentType, parentId, namespace, key, value, type) {
+    //       var url = '/admin/';
+    //       switch (parentType) {
+    //         case 'product':
+    //           url += 'products/' + parentId;
+    //           break;
+    //       }
+    //       url += '/metafields.json';
 
-          apiQueue.push({
-            name: 'Adding metafield ' + namespace + ':' + key + ' to ' + parentType + ' ' + parentId,
-            url: url,
-            method: 'POST',
-            data: {
-              metafield: {
-                namespace: namespace,
-                key: key,
-                value: value,
-                value_type: type || 'string'
-              }
-            }
-          });
+    //       apiQueue.push({
+    //         name: 'Adding metafield ' + namespace + ':' + key + ' to ' + parentType + ' ' + parentId,
+    //         url: url,
+    //         method: 'POST',
+    //         data: {
+    //           metafield: {
+    //             namespace: namespace,
+    //             key: key,
+    //             value: value,
+    //             value_type: type || 'string'
+    //           }
+    //         }
+    //       });
 
-          if (!isProcessing) {
-            processApiQueue();
-          }
-        };
+    //       if (!isProcessing) {
+    //         processApiQueue();
+    //       }
+    //     };
 
-        var updateMetafield = function(parentType, parentId, id, value, type) {
-          if (!id || id == '') { return; }
+    //     var updateMetafield = function(parentType, parentId, id, value, type) {
+    //       if (!id || id == '') { return; }
 
-          var url = '/admin/';
-          switch (parentType) {
-            case 'product':
-              url += 'products/' + parentId + '/';
-              break;
-          }
-          url += 'metafields/' + id + '.json';
+    //       var url = '/admin/';
+    //       switch (parentType) {
+    //         case 'product':
+    //           url += 'products/' + parentId + '/';
+    //           break;
+    //       }
+    //       url += 'metafields/' + id + '.json';
 
-          apiQueue.push({
-            name: 'Updating metafield ' + id + ' on ' + parentType + ' ' + parentId,
-            url: url,
-            method: 'PUT',
-            data: {
-              metafield: {
-                id: id,
-                value: value,
-                value_type: type || 'string'
-              }
-            }
-          });
+    //       apiQueue.push({
+    //         name: 'Updating metafield ' + id + ' on ' + parentType + ' ' + parentId,
+    //         url: url,
+    //         method: 'PUT',
+    //         data: {
+    //           metafield: {
+    //             id: id,
+    //             value: value,
+    //             value_type: type || 'string'
+    //           }
+    //         }
+    //       });
 
-          if (!isProcessing) {
-            processApiQueue();
-          }
-        };
+    //       if (!isProcessing) {
+    //         processApiQueue();
+    //       }
+    //     };
 
-        var deleteMetafield = function(parentType, parentId, id) {
-          if (!id || id == '') { return; }
+    //     var deleteMetafield = function(parentType, parentId, id) {
+    //       if (!id || id == '') { return; }
 
-          var url = '/admin/';
-          switch (parentType) {
-            case 'product':
-              url += 'products/' + parentId + '/';
-              break;
-          }
-          url += 'metafields/' + id + '.json';
+    //       var url = '/admin/';
+    //       switch (parentType) {
+    //         case 'product':
+    //           url += 'products/' + parentId + '/';
+    //           break;
+    //       }
+    //       url += 'metafields/' + id + '.json';
 
-          apiQueue.push({
-            name: 'Removing metafield ' + id + ' from ' + parentType + ' ' + parentId,
-            url: url,
-            method: 'DELETE'
-          });
+    //       apiQueue.push({
+    //         name: 'Removing metafield ' + id + ' from ' + parentType + ' ' + parentId,
+    //         url: url,
+    //         method: 'DELETE'
+    //       });
 
-          if (!isProcessing) {
-            processApiQueue();
-          }
-        };
+    //       if (!isProcessing) {
+    //         processApiQueue();
+    //       }
+    //     };
 
 
-        // HTML builder functions
-        var addCard = function (cardHandle) {
-          return this.append(jq(cardHtml).addClass(cardHandle)).find('.' + cardHandle);
-        };
+    //     // HTML builder functions
+    //     var addCard = function (cardHandle) {
+    //       return this.append(jq(cardHtml).addClass(cardHandle)).find('.' + cardHandle);
+    //     };
 
-        var addCardHeader = function(headerText, actions) {
-          var header = this.append(cardHeader).find('header');
+    //     var addCardHeader = function(headerText, actions) {
+    //       var header = this.append(cardHeader).find('header');
 
-          if (!actions || actions.length == 0) {
-            header.append(jq(cardHeaderTitle).text(headerText));
-          }
-          else {
-            var grid = header.append(cardOuterGrid).find('.next-grid');
+    //       if (!actions || actions.length == 0) {
+    //         header.append(jq(cardHeaderTitle).text(headerText));
+    //       }
+    //       else {
+    //         var grid = header.append(cardOuterGrid).find('.next-grid');
             
-            grid.append(jq(cardGridCell).append(jq(cardHeaderTitle).text(headerText)));
-
-            var actionsGrid = grid.append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).addClass('actions'))).find('.actions');
-            for (var actionIdx = 0; actionIdx < actions.length; actionIdx++) {
-              var action = actions[actionIdx];
-              var actionLink = actionsGrid.append(jq(cardGridCellNoFlex).append('<a class="action-' + action.handle + '" href>' + action.title + '</a>')).find('.action-' + action.handle);
-              actionLink.on('click', action.onClick);
-            }
-          }
-
-          return this;
-        };
-
-        var addCardContent = function (content) {
-          var wrapper = jq(this).find('.next-card__section');
-          if (!wrapper || wrapper.length == 0) {
-            wrapper = jq(this).append(cardContentWrapper).find('.next-card__section');
-          }
-
-          jq(wrapper).append(content);
-
-          return this;
-        };
-
-        var createRichTextArea = function (title, handle, value) {
-          var wrapper = jq(cardInputWrapper).append(jq(cardInputTitle).text(title))
-                                     .append(jq(cardInputTextArea).val(value)
-                                                                  .attr({'name': handle, 'id': handle}));
-          new shopify.Rte(wrapper);
-          return wrapper;
-        };
-
-        var createTextArea = function (title, handle, value) {
-          return jq(cardInputWrapper).append(jq(cardInputTitle).text(title))
-                                     .append(jq(cardInputTextArea).val(value)
-                                                                  .attr({'name': handle, 'id': handle}));
-        };
-
-        var addDropdown = function (title, handle, options, value) {
-
-        };
-
-        var isShopify = function () {
-          return /^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/.*$/i.test(location.href);
-        };
-
-        var getAdminPage = function () {
-          return location.href.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/\?]+)[\/]?(\d+)*.*$/i);
-        };
-
-        var createInputDropdown = function (type, name, handle, options) {
-          return jq(cardInputDropdown)
-                  .addClass(type)
-                  .data('type', type)
-                  .append(options)
-                  .hide()
-                  .attr({'name': 'tab-' + handle, 'id': 'tab-' + handle + '_' + type });
-        };
-
-        var createInputTextArea = function (type, name, handle, value) {
-          return jq(cardInputTextArea)
-                  .addClass(type)
-                  .data('type', type)
-                  .val(value)
-                  .hide()
-                  .attr({'name': 'tab-' + handle, 'id': 'tab-' + handle + '_' + type });
-        };
-
-        var createTabTypeRadio = function (type, name, handle) {
-          return jq(cardGridCellNoFlex).append('<label for="' + handle +'_type_' + type.toLowerCase() + '" class="next-label next-label--inline">' + type + '</label><input type="radio" name="type-' + handle + '" id="' + handle +'_type_' + type.toLowerCase() + '" value="' + type.toLowerCase() + '" data-type="' + type.toLowerCase() + '" />');
-        };
-
-        var createTab = function (tab, pages, snippets) {
-          var pageOptions = '';
-          for (var pageIdx = 0; pageIdx < pages.length; pageIdx++) {
-            var page = pages[pageIdx];
-            pageOptions += '<option value="' + page.handle + '">' + page.title + '</option>';
-          }
-
-          var snippetOptions = '';
-          for (var snippetIdx = 0; snippetIdx < snippets.length; snippetIdx++) {
-            var snippet = snippets[snippetIdx];
-            snippetOptions += '<option value="' + snippet + '">' + snippet + '</option>';
-          }
-
-          var keyHandle = tab.key.toLowerCase().replace(/ /g, '-');
-
-          var tabTypeRadioGrid = jq(cardInnerGrid)
-                                  .append(createTabTypeRadio('Text', tab.key, keyHandle))
-                                  .append(createTabTypeRadio('Page', tab.key, keyHandle))
-                                  .append(createTabTypeRadio('Snippet', tab.key, keyHandle))
-                                  .append(jq(cardGridCellNoFlex).append('<a class="btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'));
-
-          var tabHeader = jq(cardOuterGrid)
-                            .append(
-                              jq(cardGridCell).append(jq(cardInputTitle).text(tab.key).attr({ 'for': 'tab-' + keyHandle }))
-                            )
-                            .append(
-                              jq(cardGridCellNoFlex).append(tabTypeRadioGrid)
-                            );
-
-          var tabContent = jq(cardInputWrapper).addClass('tab-content-' + tab.id).data('id', tab.id).data('key', tab.key);
-
-          tabContent.append(tabHeader);
-          tabContent.append(createInputTextArea('text', tab.key, keyHandle, tab.value));
-          tabContent.append(createInputDropdown('page', tab.key, keyHandle, pageOptions));
-          tabContent.append(createInputDropdown('snippet', tab.key, keyHandle, snippetOptions));
-
-          return tabContent;
-        };
-
-        var setupTabContentEvents = function (tab, tabContent, hideDelete) {
-          var keyHandle = tab.key.toLowerCase().replace(/ /g, '-');
-
-          var textarea = tabContent.find('#tab-' + keyHandle +'_text');
-          var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
-          var pageDropdown = tabContent.find('#tab-' + keyHandle +'_page');
-
-          var snippetRadio = tabContent.find('#' + keyHandle +'_type_snippet');
-          var pageRadio = tabContent.find('#' + keyHandle +'_type_page');
-          var textRadio = tabContent.find('#' + keyHandle +'_type_text');
-
-          var snippetMatch = tab.value.match(/^\{([^\{\}]+)\}$/);
-          var pageMatch = tab.value.match(/^\[([^\[\]]+)\]$/);
-          if (snippetMatch && snippetMatch.length > 1) {
-            snippetDropdown.val(snippetMatch[1].trim()).show();
-            snippetRadio.prop('checked', true);
-          }
-          else if (pageMatch && pageMatch.length > 1) {
-            pageDropdown.val(pageMatch[1].trim()).show();
-            pageRadio.prop('checked', true);
-          }
-          else {
-            textarea.val(tab.value).prop('required', true).show();
-            textRadio.prop('checked', true);
-          }
-
-          snippetRadio.on('change', function(e) {
-            e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
-            if (this.checked) {
-              jq(this).closest('.next-input-wrapper').find('.snippet').show();
-            }
-          });
-
-          pageRadio.on('change', function(e) {
-            e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
-            if (this.checked) {
-              jq(this).closest('.next-input-wrapper').find('.page').show();
-            }
-          });
-
-          textRadio.on('change', function(e) {
-            e.preventDefault();
-            jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
-            if (this.checked) {
-              jq(this).closest('.next-input-wrapper').find('.text').prop('required', true).show();
-            }
-          });
-
-          var deleteBtn = tabContent.find('.delete-tab-btn').on('click', function(e) {
-            e.preventDefault();
-            if (confirm('Are you sure you wish to delete the tab "' + jq(this).closest('.next-input-wrapper').data('key') + '"?')) {
-              var tabName = jq(this).closest('.next-input-wrapper').data('key');
-
-              var delField = jq(this).closest('.tabs-editor').find('input[name=tabs-deleted]');
-              var ids = delField.val() ? delField.val().split(';') : [];
-              ids.push(jq(this).closest('.next-input-wrapper').data('id'));
-              delField.val(ids.join(';'));
-
-              var orderField = jq(this).closest('.tabs-editor').find('input[name=tab-order]');
-              if (orderField && orderField.length > 0) {
-                var newOrder = orderField.val().split(',').filter(function (e) { return e.trim() != tabName; });
-                orderField.val(newOrder.join(','));
-              }
-              jq(this).closest('form').trigger('change');
-              jq(this).closest('.next-input-wrapper').remove();
-            }
-          });
-          if (hideDelete) {
-            deleteBtn.hide();
-          }
-
-          return tabContent;
-        };
-
-        var reorderTabs = function (container, newOrder) {
-          var orderField = container.find('input[name=tab-order]');
-          if (!orderField || orderField.length == 0) {
-            orderField = container.append(jq(tabOrderField)).find('input[name=tab-order]');
-          }
-
-          var tabEls = container.find('.next-input-wrapper');
-          var inputContainer = tabEls.parent();
-          tabEls.detach();
-
-          orderField.val(newOrder.join(','));
-          for (var oIdx = 0; oIdx < newOrder.length; oIdx++) {
-            var tabName = newOrder[oIdx];
-            var matchingTabEls = tabEls.filter(function() { return jq(this).data('key').trim() == tabName.trim(); });
-            inputContainer.append(matchingTabEls);
-          }
-        };
-
-        /*** PRODUCT LIST ***/
-        var loadProductListExtensions = function() {
-          var result = jq.Deferred();
-
-          addBulkMenuItems([
-            { title: 'Add product tab', click: bulkAddProductTab },
-            { title: 'Remove product tab', click: bulkRemoveProductTab },
-            { title: 'Change product tab order', click: bulkChangeProductTabOrder },
-           ]);
-
-          result.resolve();
-
-          return result;
-        };
-
-        var toolbarSegmentedButtonList = '<ul class="segmented"></ul>';
-        var toolbarSegmentedButton = '<li><a class="btn"></a></li>';
-
-        var dropdownMenuItemWithBreak = '<li class="break-top"><a href></a></li>';
-        var dropdownMenuItem = '<li><a class="next-list__item" href></a></li>';
-
-        var bulkAddTabModalContent = '<header><h2>Add a tab to {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
-        var bulkRemoveTabModalContent = '<header><h2>Remove tabs from {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Remove</a></div>';
-        var bulkReOrderTabModalContent = '<header><h2>Change tab order for {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Update</a></div>';
-
-
-        var addToolbarButtons = function (buttons) {
-          var toolbar = jq('header.header');
-          if (buttons.primary) {
-
-          }
-          else if (buttons.secondary) {
-            var buttonContainer = jq(toolbarSegmentedButtonList);
-            for (var btnIdx = 0; btnIdx < buttons.secondary.length; btnIdx++) {
-              var button = buttons.secondary[btnIdx];
-
-              var buttonEl = jq(toolbarSegmentedButton);
-              buttonEl.find('.btn')
-                      .text(button.title)
-                      .on('click', button.click);
-              buttonContainer.append(buttonEl);
-            }
-            toolbar.find('.header__secondary-actions').append(buttonContainer);
-          }
-        };
-
-        var addBulkMenuItems = function(items) {
-          var bulkMenu = jq('.bulk-actions ul .dropdown ul');
-          if (bulkMenu.length < 1) {
-            bulkMenu = jq('.bulk-actions ul .next-popover ul.next-list');
-            bulkMenu = bulkMenu.append('<div class="next-popover__pane cfb_ext"></div>').find('.cfb_ext');
-          }
-          for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
-            var item = items[itemIdx];
-            var itemEl = null;
-            // if (itemIdx == 0) {
-            //   itemEl = jq(dropdownMenuItemWithBreak);
-            // }
-            // else {
-              itemEl = jq(dropdownMenuItem);
-            //}
-
-            itemEl.find('a')
-                  .text(item.title)
-                  .on('click', item.click);
-
-            bulkMenu.append(itemEl);
-          }
-        };
-
-        var getSelectedItems = function() {
-          var result = jq.Deferred();
-          var products = [];
-          var allSelected = jq('.bulk-select-all .bulk-action-all-selector').find('span').hasClass('hide');
-          if (allSelected) {
-            loadProducts(1)
-              .done(function (prods) {
-                result.resolve(prods);
-              });
-          }
-          else {
-            result.resolve(jq('tbody input:checked').map(function(idx, e) { return $(e).val(); }));
-          }
-
-          return result;
-        };
-
-        var getTabsForProducts = function (products) {
-          var result = $.Deferred();
-          var promises = [];
-          var prodProm = {};
-          var tabs = [];
-          showMessage('Loading existing tabs...');
-          for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
-            promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
-              .done(function(r) {
-                for (var idx = 0; idx < r.metafields.length; idx++) {
-                  if (r.metafields[idx].key.indexOf('_') == 0) { continue; }
-                  tabs.push(r.metafields[idx]);
-                }
-              }).promise());
-          }
-
-          jq.when.apply(jq, promises)
-                 .done(function () {
-                    result.resolve(tabs);
-                 });
-
-          return result;
-        };
-
-        var getTabOrderForProducts = function (products) {
-          var result = $.Deferred();
-          var promises = [];
-          var prodProm = {};
-          var tabs = [];
-          showMessage('Loading tab order...');
-          for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
-            promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab&key=_order')
-              .done(function(r) {
-                for (var idx = 0; idx < r.metafields.length; idx++) {
-                  if (r.metafields[idx].key.indexOf('_') == 0) { 
-                    tabs.push(r.metafields[idx]); 
-                  }
-                }
-              }).promise());
-          }
-
-          jq.when.apply(jq, promises)
-                 .done(function () {
-                    result.resolve(tabs);
-                 });
-
-          return result;
-        };
-
-        var loadProducts = function (page) {
-          var result = jq.Deferred();
-          var products = [];
-          showMessage('Loading products...');
-          jq.get('/admin/products.json?limit=250&page=' + (page || 1))
-            .done(function (prods) {
-              for (var pIdx = 0; pIdx < prods.products.length; pIdx++) {
-                products.push(prods.products[pIdx].id);
-              }
-              if (prods.products.length == 250) {
-                loadProducts((page || 1) + 1)
-                  .done(function (pRes) {
-                    products.push(pRes.products);
-                    result.resolve(products);
-                  });
-              }
-              else {
-                result.resolve(products);
-              }
-            });
-
-          return result;
-        };
-
-        var pages = null, snippets = null;
-        var getPages = function() {
-          var result = $.Deferred();
-          if (pages) {
-            result.resolve(pages);
-          }
-          else {
-            showMessage('Loading pages...');
-
-            jq.get('/admin/pages.json')
-              .done(function (pageData) {
-                pages = pageData.pages;
-                result.resolve(pages);
-              });
-          }
-          return result;
-        };
-        var getSnippets = function() {
-          var result = $.Deferred();
-          if (snippets) {
-            result.resolve(snippets);
-          }
-          else {
-            showMessage('Loading snippets...');
-
-            jq.get('/admin/themes.json?role=main')
-              .done(function (theme) {
-              jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json')
-                .done(function (themeData) {
-                  snippets = themeData.assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
-                  result.resolve(snippets);
-                });
-              });
-          }
-          return result;
-        };
-
-        var bulkAddProductTab = function (e) {
-          e.preventDefault();
-
-          jq.when(getPages(), getSnippets(), getSelectedItems())
-            .done(function (pages, snippets, selection) {
-                shopify.Flash.hide();
-                var itemsText = selection.length;
-                var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
-                var modalBody = jq(modalContent[1]);
-                var tabContent = createTab({ key: 'New Tab', value: '', id: 'new-tab' }, pages, snippets);
-                modalBody.append(tabContent);
-
-                modalBody.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
-
-                modalContent = modalContent.wrapAll(modalWrapper).closest('script');
-                var modal = new shopify.Modal(modalContent.get(0));
-                var confirmed = false;
-                modal.show();
-
-                setupTabContentEvents({ key: 'New Tab', value: '', id: 'new-tab' }, jq(modal.$container()).find('.tab-content-new-tab'), true);
-                jq(modal.$container()).find(".btn-ok").on('click', function (e) {
-                  confirmed = true;
-                });
-                modal.onClose(function (e) { 
-                  if (confirmed) {
-                    var editorRd = jq(modal.$container()).find('.tab-content-new-tab input[type=radio]:checked');
-                    var wrapper = editorRd.closest('.next-input-wrapper');
-                    var textEditor = wrapper.find('.next-input.text');
-                    var pageEditor = wrapper.find('select.page');
-                    var snippetEditor = wrapper.find('select.snippet');
-
-                    var tabName = jq(modal.$container()).find('#new-tab-name');
-                    var tabKey = tabName.val();
-
-                    var value = textEditor.val();
-                    if (editorRd.data('type') == 'snippet') {
-                      value = '{' + snippetEditor.val() + '}';
-                    }
-                    else if (editorRd.data('type') == 'page') {
-                      value = '[' + pageEditor.val() + ']';
-                    }
-
-                    for (var prodIdx = 0; prodIdx < selection.length; prodIdx++) {
-                      addMetafield('product', selection[prodIdx], 'tab', tabKey, value);
-                    }
-                  }
-                });
-            })
+    //         grid.append(jq(cardGridCell).append(jq(cardHeaderTitle).text(headerText)));
+
+    //         var actionsGrid = grid.append(jq(cardGridCellNoFlex).append(jq(cardInnerGrid).addClass('actions'))).find('.actions');
+    //         for (var actionIdx = 0; actionIdx < actions.length; actionIdx++) {
+    //           var action = actions[actionIdx];
+    //           var actionLink = actionsGrid.append(jq(cardGridCellNoFlex).append('<a class="action-' + action.handle + '" href>' + action.title + '</a>')).find('.action-' + action.handle);
+    //           actionLink.on('click', action.onClick);
+    //         }
+    //       }
+
+    //       return this;
+    //     };
+
+    //     var addCardContent = function (content) {
+    //       var wrapper = jq(this).find('.next-card__section');
+    //       if (!wrapper || wrapper.length == 0) {
+    //         wrapper = jq(this).append(cardContentWrapper).find('.next-card__section');
+    //       }
+
+    //       jq(wrapper).append(content);
+
+    //       return this;
+    //     };
+
+    //     var createRichTextArea = function (title, handle, value) {
+    //       var wrapper = jq(cardInputWrapper).append(jq(cardInputTitle).text(title))
+    //                                  .append(jq(cardInputTextArea).val(value)
+    //                                                               .attr({'name': handle, 'id': handle}));
+    //       new shopify.Rte(wrapper);
+    //       return wrapper;
+    //     };
+
+    //     var createTextArea = function (title, handle, value) {
+    //       return jq(cardInputWrapper).append(jq(cardInputTitle).text(title))
+    //                                  .append(jq(cardInputTextArea).val(value)
+    //                                                               .attr({'name': handle, 'id': handle}));
+    //     };
+
+    //     var addDropdown = function (title, handle, options, value) {
+
+    //     };
+
+    //     var isShopify = function () {
+    //       return /^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/.*$/i.test(location.href);
+    //     };
+
+    //     var getAdminPage = function () {
+    //       return location.href.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/\?]+)[\/]?(\d+)*.*$/i);
+    //     };
+
+    //     var createInputDropdown = function (type, name, handle, options) {
+    //       return jq(cardInputDropdown)
+    //               .addClass(type)
+    //               .data('type', type)
+    //               .append(options)
+    //               .hide()
+    //               .attr({'name': 'tab-' + handle, 'id': 'tab-' + handle + '_' + type });
+    //     };
+
+    //     var createInputTextArea = function (type, name, handle, value) {
+    //       return jq(cardInputTextArea)
+    //               .addClass(type)
+    //               .data('type', type)
+    //               .val(value)
+    //               .hide()
+    //               .attr({'name': 'tab-' + handle, 'id': 'tab-' + handle + '_' + type });
+    //     };
+
+    //     var createTabTypeRadio = function (type, name, handle) {
+    //       return jq(cardGridCellNoFlex).append('<label for="' + handle +'_type_' + type.toLowerCase() + '" class="next-label next-label--inline">' + type + '</label><input type="radio" name="type-' + handle + '" id="' + handle +'_type_' + type.toLowerCase() + '" value="' + type.toLowerCase() + '" data-type="' + type.toLowerCase() + '" />');
+    //     };
+
+    //     var createTab = function (tab, pages, snippets) {
+    //       var pageOptions = '';
+    //       for (var pageIdx = 0; pageIdx < pages.length; pageIdx++) {
+    //         var page = pages[pageIdx];
+    //         pageOptions += '<option value="' + page.handle + '">' + page.title + '</option>';
+    //       }
+
+    //       var snippetOptions = '';
+    //       for (var snippetIdx = 0; snippetIdx < snippets.length; snippetIdx++) {
+    //         var snippet = snippets[snippetIdx];
+    //         snippetOptions += '<option value="' + snippet + '">' + snippet + '</option>';
+    //       }
+
+    //       var keyHandle = tab.key.toLowerCase().replace(/ /g, '-');
+
+    //       var tabTypeRadioGrid = jq(cardInnerGrid)
+    //                               .append(createTabTypeRadio('Text', tab.key, keyHandle))
+    //                               .append(createTabTypeRadio('Page', tab.key, keyHandle))
+    //                               .append(createTabTypeRadio('Snippet', tab.key, keyHandle))
+    //                               .append(jq(cardGridCellNoFlex).append('<a class="btn-slim btn--icon delete-tab-btn" href><i class="next-icon next-icon--12 next-icon--delete-blue"></i></a>'));
+
+    //       var tabHeader = jq(cardOuterGrid)
+    //                         .append(
+    //                           jq(cardGridCell).append(jq(cardInputTitle).text(tab.key).attr({ 'for': 'tab-' + keyHandle }))
+    //                         )
+    //                         .append(
+    //                           jq(cardGridCellNoFlex).append(tabTypeRadioGrid)
+    //                         );
+
+    //       var tabContent = jq(cardInputWrapper).addClass('tab-content-' + tab.id).data('id', tab.id).data('key', tab.key);
+
+    //       tabContent.append(tabHeader);
+    //       tabContent.append(createInputTextArea('text', tab.key, keyHandle, tab.value));
+    //       tabContent.append(createInputDropdown('page', tab.key, keyHandle, pageOptions));
+    //       tabContent.append(createInputDropdown('snippet', tab.key, keyHandle, snippetOptions));
+
+    //       return tabContent;
+    //     };
+
+    //     var setupTabContentEvents = function (tab, tabContent, hideDelete) {
+    //       var keyHandle = tab.key.toLowerCase().replace(/ /g, '-');
+
+    //       var textarea = tabContent.find('#tab-' + keyHandle +'_text');
+    //       var snippetDropdown = tabContent.find('#tab-' + keyHandle +'_snippet');
+    //       var pageDropdown = tabContent.find('#tab-' + keyHandle +'_page');
+
+    //       var snippetRadio = tabContent.find('#' + keyHandle +'_type_snippet');
+    //       var pageRadio = tabContent.find('#' + keyHandle +'_type_page');
+    //       var textRadio = tabContent.find('#' + keyHandle +'_type_text');
+
+    //       var snippetMatch = tab.value.match(/^\{([^\{\}]+)\}$/);
+    //       var pageMatch = tab.value.match(/^\[([^\[\]]+)\]$/);
+    //       if (snippetMatch && snippetMatch.length > 1) {
+    //         snippetDropdown.val(snippetMatch[1].trim()).show();
+    //         snippetRadio.prop('checked', true);
+    //       }
+    //       else if (pageMatch && pageMatch.length > 1) {
+    //         pageDropdown.val(pageMatch[1].trim()).show();
+    //         pageRadio.prop('checked', true);
+    //       }
+    //       else {
+    //         textarea.val(tab.value).prop('required', true).show();
+    //         textRadio.prop('checked', true);
+    //       }
+
+    //       snippetRadio.on('change', function(e) {
+    //         e.preventDefault();
+    //         jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
+    //         if (this.checked) {
+    //           jq(this).closest('.next-input-wrapper').find('.snippet').show();
+    //         }
+    //       });
+
+    //       pageRadio.on('change', function(e) {
+    //         e.preventDefault();
+    //         jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
+    //         if (this.checked) {
+    //           jq(this).closest('.next-input-wrapper').find('.page').show();
+    //         }
+    //       });
+
+    //       textRadio.on('change', function(e) {
+    //         e.preventDefault();
+    //         jq(this).closest('.next-input-wrapper').find('.text, .snippet, .page').removeAttr('required').hide();
+    //         if (this.checked) {
+    //           jq(this).closest('.next-input-wrapper').find('.text').prop('required', true).show();
+    //         }
+    //       });
+
+    //       var deleteBtn = tabContent.find('.delete-tab-btn').on('click', function(e) {
+    //         e.preventDefault();
+    //         if (confirm('Are you sure you wish to delete the tab "' + jq(this).closest('.next-input-wrapper').data('key') + '"?')) {
+    //           var tabName = jq(this).closest('.next-input-wrapper').data('key');
+
+    //           var delField = jq(this).closest('.tabs-editor').find('input[name=tabs-deleted]');
+    //           var ids = delField.val() ? delField.val().split(';') : [];
+    //           ids.push(jq(this).closest('.next-input-wrapper').data('id'));
+    //           delField.val(ids.join(';'));
+
+    //           var orderField = jq(this).closest('.tabs-editor').find('input[name=tab-order]');
+    //           if (orderField && orderField.length > 0) {
+    //             var newOrder = orderField.val().split(',').filter(function (e) { return e.trim() != tabName; });
+    //             orderField.val(newOrder.join(','));
+    //           }
+    //           jq(this).closest('form').trigger('change');
+    //           jq(this).closest('.next-input-wrapper').remove();
+    //         }
+    //       });
+    //       if (hideDelete) {
+    //         deleteBtn.hide();
+    //       }
+
+    //       return tabContent;
+    //     };
+
+    //     var reorderTabs = function (container, newOrder) {
+    //       var orderField = container.find('input[name=tab-order]');
+    //       if (!orderField || orderField.length == 0) {
+    //         orderField = container.append(jq(tabOrderField)).find('input[name=tab-order]');
+    //       }
+
+    //       var tabEls = container.find('.next-input-wrapper');
+    //       var inputContainer = tabEls.parent();
+    //       tabEls.detach();
+
+    //       orderField.val(newOrder.join(','));
+    //       for (var oIdx = 0; oIdx < newOrder.length; oIdx++) {
+    //         var tabName = newOrder[oIdx];
+    //         var matchingTabEls = tabEls.filter(function() { return jq(this).data('key').trim() == tabName.trim(); });
+    //         inputContainer.append(matchingTabEls);
+    //       }
+    //     };
+
+    //     /*** PRODUCT LIST ***/
+    //     var loadProductListExtensions = function() {
+    //       var result = jq.Deferred();
+
+    //       addBulkMenuItems([
+    //         { title: 'Add product tab', click: bulkAddProductTab },
+    //         { title: 'Remove product tab', click: bulkRemoveProductTab },
+    //         { title: 'Change product tab order', click: bulkChangeProductTabOrder },
+    //        ]);
+
+    //       result.resolve();
+
+    //       return result;
+    //     };
+
+    //     var toolbarSegmentedButtonList = '<ul class="segmented"></ul>';
+    //     var toolbarSegmentedButton = '<li><a class="btn"></a></li>';
+
+    //     var dropdownMenuItemWithBreak = '<li class="break-top"><a href></a></li>';
+    //     var dropdownMenuItem = '<li><a class="next-list__item" href></a></li>';
+
+    //     var bulkAddTabModalContent = '<header><h2>Add a tab to {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Add</a></div>';
+    //     var bulkRemoveTabModalContent = '<header><h2>Remove tabs from {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Remove</a></div>';
+    //     var bulkReOrderTabModalContent = '<header><h2>Change tab order for {0} products</h2><a href="#" class="close-modal">x</a></header><div class="body clearfix"></div><div class="buttons"><a class="btn close-modal">Cancel</a><a href="#" class="btn btn-primary close-modal btn-ok">Update</a></div>';
+
+
+    //     var addToolbarButtons = function (buttons) {
+    //       var toolbar = jq('header.header');
+    //       if (buttons.primary) {
+
+    //       }
+    //       else if (buttons.secondary) {
+    //         var buttonContainer = jq(toolbarSegmentedButtonList);
+    //         for (var btnIdx = 0; btnIdx < buttons.secondary.length; btnIdx++) {
+    //           var button = buttons.secondary[btnIdx];
+
+    //           var buttonEl = jq(toolbarSegmentedButton);
+    //           buttonEl.find('.btn')
+    //                   .text(button.title)
+    //                   .on('click', button.click);
+    //           buttonContainer.append(buttonEl);
+    //         }
+    //         toolbar.find('.header__secondary-actions').append(buttonContainer);
+    //       }
+    //     };
+
+    //     var addBulkMenuItems = function(items) {
+    //       var bulkMenu = jq('.bulk-actions ul .dropdown ul');
+    //       if (bulkMenu.length < 1) {
+    //         bulkMenu = jq('.bulk-actions ul .next-popover ul.next-list');
+    //         bulkMenu = bulkMenu.append('<div class="next-popover__pane cfb_ext"></div>').find('.cfb_ext');
+    //       }
+    //       for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
+    //         var item = items[itemIdx];
+    //         var itemEl = null;
+    //         // if (itemIdx == 0) {
+    //         //   itemEl = jq(dropdownMenuItemWithBreak);
+    //         // }
+    //         // else {
+    //           itemEl = jq(dropdownMenuItem);
+    //         //}
+
+    //         itemEl.find('a')
+    //               .text(item.title)
+    //               .on('click', item.click);
+
+    //         bulkMenu.append(itemEl);
+    //       }
+    //     };
+
+    //     var getSelectedItems = function() {
+    //       var result = jq.Deferred();
+    //       var products = [];
+    //       var allSelected = jq('.bulk-select-all .bulk-action-all-selector').find('span').hasClass('hide');
+    //       if (allSelected) {
+    //         loadProducts(1)
+    //           .done(function (prods) {
+    //             result.resolve(prods);
+    //           });
+    //       }
+    //       else {
+    //         result.resolve(jq('tbody input:checked').map(function(idx, e) { return $(e).val(); }));
+    //       }
+
+    //       return result;
+    //     };
+
+    //     var getTabsForProducts = function (products) {
+    //       var result = $.Deferred();
+    //       var promises = [];
+    //       var prodProm = {};
+    //       var tabs = [];
+    //       showMessage('Loading existing tabs...');
+    //       for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
+    //         promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab')
+    //           .done(function(r) {
+    //             for (var idx = 0; idx < r.metafields.length; idx++) {
+    //               if (r.metafields[idx].key.indexOf('_') == 0) { continue; }
+    //               tabs.push(r.metafields[idx]);
+    //             }
+    //           }).promise());
+    //       }
+
+    //       jq.when.apply(jq, promises)
+    //              .done(function () {
+    //                 result.resolve(tabs);
+    //              });
+
+    //       return result;
+    //     };
+
+    //     var getTabOrderForProducts = function (products) {
+    //       var result = $.Deferred();
+    //       var promises = [];
+    //       var prodProm = {};
+    //       var tabs = [];
+    //       showMessage('Loading tab order...');
+    //       for (var prodIdx = 0; prodIdx < products.length; prodIdx++) {
+    //         promises.push(jq.get('/admin/products/' + products[prodIdx] + '/metafields.json?limit=250&namespace=tab&key=_order')
+    //           .done(function(r) {
+    //             for (var idx = 0; idx < r.metafields.length; idx++) {
+    //               if (r.metafields[idx].key.indexOf('_') == 0) { 
+    //                 tabs.push(r.metafields[idx]); 
+    //               }
+    //             }
+    //           }).promise());
+    //       }
+
+    //       jq.when.apply(jq, promises)
+    //              .done(function () {
+    //                 result.resolve(tabs);
+    //              });
+
+    //       return result;
+    //     };
+
+    //     var loadProducts = function (page) {
+    //       var result = jq.Deferred();
+    //       var products = [];
+    //       showMessage('Loading products...');
+    //       jq.get('/admin/products.json?limit=250&page=' + (page || 1))
+    //         .done(function (prods) {
+    //           for (var pIdx = 0; pIdx < prods.products.length; pIdx++) {
+    //             products.push(prods.products[pIdx].id);
+    //           }
+    //           if (prods.products.length == 250) {
+    //             loadProducts((page || 1) + 1)
+    //               .done(function (pRes) {
+    //                 products.push(pRes.products);
+    //                 result.resolve(products);
+    //               });
+    //           }
+    //           else {
+    //             result.resolve(products);
+    //           }
+    //         });
+
+    //       return result;
+    //     };
+
+    //     var pages = null, snippets = null;
+    //     var getPages = function() {
+    //       var result = $.Deferred();
+    //       if (pages) {
+    //         result.resolve(pages);
+    //       }
+    //       else {
+    //         showMessage('Loading pages...');
+
+    //         jq.get('/admin/pages.json')
+    //           .done(function (pageData) {
+    //             pages = pageData.pages;
+    //             result.resolve(pages);
+    //           });
+    //       }
+    //       return result;
+    //     };
+    //     var getSnippets = function() {
+    //       var result = $.Deferred();
+    //       if (snippets) {
+    //         result.resolve(snippets);
+    //       }
+    //       else {
+    //         showMessage('Loading snippets...');
+
+    //         jq.get('/admin/themes.json?role=main')
+    //           .done(function (theme) {
+    //           jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json')
+    //             .done(function (themeData) {
+    //               snippets = themeData.assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
+    //               result.resolve(snippets);
+    //             });
+    //           });
+    //       }
+    //       return result;
+    //     };
+
+    //     var bulkAddProductTab = function (e) {
+    //       e.preventDefault();
+
+    //       jq.when(getPages(), getSnippets(), getSelectedItems())
+    //         .done(function (pages, snippets, selection) {
+    //             shopify.Flash.hide();
+    //             var itemsText = selection.length;
+    //             var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
+    //             var modalBody = jq(modalContent[1]);
+    //             var tabContent = createTab({ key: 'New Tab', value: '', id: 'new-tab' }, pages, snippets);
+    //             modalBody.append(tabContent);
+
+    //             modalBody.prepend(jq(cardInputWrapper).append('<label class="next-label" for="new-tab-name">Tab Name</label><input type="text" id="new-tab-name" class="next-input" required />'));
+
+    //             modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+    //             var modal = new shopify.Modal(modalContent.get(0));
+    //             var confirmed = false;
+    //             modal.show();
+
+    //             setupTabContentEvents({ key: 'New Tab', value: '', id: 'new-tab' }, jq(modal.$container()).find('.tab-content-new-tab'), true);
+    //             jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+    //               confirmed = true;
+    //             });
+    //             modal.onClose(function (e) { 
+    //               if (confirmed) {
+    //                 var editorRd = jq(modal.$container()).find('.tab-content-new-tab input[type=radio]:checked');
+    //                 var wrapper = editorRd.closest('.next-input-wrapper');
+    //                 var textEditor = wrapper.find('.next-input.text');
+    //                 var pageEditor = wrapper.find('select.page');
+    //                 var snippetEditor = wrapper.find('select.snippet');
+
+    //                 var tabName = jq(modal.$container()).find('#new-tab-name');
+    //                 var tabKey = tabName.val();
+
+    //                 var value = textEditor.val();
+    //                 if (editorRd.data('type') == 'snippet') {
+    //                   value = '{' + snippetEditor.val() + '}';
+    //                 }
+    //                 else if (editorRd.data('type') == 'page') {
+    //                   value = '[' + pageEditor.val() + ']';
+    //                 }
+
+    //                 for (var prodIdx = 0; prodIdx < selection.length; prodIdx++) {
+    //                   addMetafield('product', selection[prodIdx], 'tab', tabKey, value);
+    //                 }
+    //               }
+    //             });
+    //         })
          
-        };
+    //     };
 
-        var bulkRemoveProductTab = function (e) {
-          e.preventDefault();
+    //     var bulkRemoveProductTab = function (e) {
+    //       e.preventDefault();
           
-          jq.when(getSelectedItems())
-            .done(function (selection) {
-              jq.when(getTabsForProducts(selection))
-                .done(function (tabs) {
-                  shopify.Flash.hide();
-                  var itemsText = selection.length;
-                  var modalContent = jq(bulkRemoveTabModalContent.replace('{0}', itemsText));
-                  var modalBody = jq(modalContent[1]);
+    //       jq.when(getSelectedItems())
+    //         .done(function (selection) {
+    //           jq.when(getTabsForProducts(selection))
+    //             .done(function (tabs) {
+    //               shopify.Flash.hide();
+    //               var itemsText = selection.length;
+    //               var modalContent = jq(bulkRemoveTabModalContent.replace('{0}', itemsText));
+    //               var modalBody = jq(modalContent[1]);
 
-                  var usedKeys = [];
-                  for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
-                      var tab = tabs[tabIdx];
-                      if (usedKeys.indexOf(tab.key) < 0) {
-                        usedKeys.push(tab.key);
-                        modalBody.append(jq(cardInputWrapper).append('<label class="next-label next-label--switch" for="remove-tab-' + tab.id + '">' + tab.key + '</label><input type="checkbox" id="remove-tab-' + tab.id + '" class="next-checkbox" style="opacity: 1;" value="' + tab.key + '" />'))
-                      }
-                  }
+    //               var usedKeys = [];
+    //               for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
+    //                   var tab = tabs[tabIdx];
+    //                   if (usedKeys.indexOf(tab.key) < 0) {
+    //                     usedKeys.push(tab.key);
+    //                     modalBody.append(jq(cardInputWrapper).append('<label class="next-label next-label--switch" for="remove-tab-' + tab.id + '">' + tab.key + '</label><input type="checkbox" id="remove-tab-' + tab.id + '" class="next-checkbox" style="opacity: 1;" value="' + tab.key + '" />'))
+    //                   }
+    //               }
 
-                  modalContent = modalContent.wrapAll(modalWrapper).closest('script');
-                  var modal = new shopify.Modal(modalContent.get(0));
-                  var confirmed = false;
-                  modal.show();
+    //               modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+    //               var modal = new shopify.Modal(modalContent.get(0));
+    //               var confirmed = false;
+    //               modal.show();
                   
-                  jq(modal.$container()).find(".btn-ok").on('click', function (e) {
-                    confirmed = true;
-                  });
-                  modal.onClose(function (e) { 
-                    if (confirmed) {
-                      var checked = jq(modal.$container()).find('input[type=checkbox]:checked');
-                      for (var checkedIdx = 0; checkedIdx < checked.length; checkedIdx++) {
-                        var matchedTabs = tabs.filter(function (t) { return t.key == jq(checked[checkedIdx]).val(); });
-                        for (var tIdx = 0; tIdx < matchedTabs.length; tIdx++) {
-                          deleteMetafield('product', matchedTabs[tIdx].owner_id, matchedTabs[tIdx].id);
-                        }
-                      }
-                    }
-                  });
-                });
-            });
-        };
+    //               jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+    //                 confirmed = true;
+    //               });
+    //               modal.onClose(function (e) { 
+    //                 if (confirmed) {
+    //                   var checked = jq(modal.$container()).find('input[type=checkbox]:checked');
+    //                   for (var checkedIdx = 0; checkedIdx < checked.length; checkedIdx++) {
+    //                     var matchedTabs = tabs.filter(function (t) { return t.key == jq(checked[checkedIdx]).val(); });
+    //                     for (var tIdx = 0; tIdx < matchedTabs.length; tIdx++) {
+    //                       deleteMetafield('product', matchedTabs[tIdx].owner_id, matchedTabs[tIdx].id);
+    //                     }
+    //                   }
+    //                 }
+    //               });
+    //             });
+    //         });
+    //     };
 
-        var bulkChangeProductTabOrder = function (e) {
-          e.preventDefault();
+    //     var bulkChangeProductTabOrder = function (e) {
+    //       e.preventDefault();
           
-          jq.when(getSelectedItems())
-            .done(function (selection) {
-              jq.when(getTabsForProducts(selection), getTabOrderForProducts(selection))
-                .done(function (tabs, orderFields) {
-                  shopify.Flash.hide();
-                  var itemsText = selection.length;
+    //       jq.when(getSelectedItems())
+    //         .done(function (selection) {
+    //           jq.when(getTabsForProducts(selection), getTabOrderForProducts(selection))
+    //             .done(function (tabs, orderFields) {
+    //               shopify.Flash.hide();
+    //               var itemsText = selection.length;
 
-                  var modalContent = jq(bulkReOrderTabModalContent.replace('{0}', itemsText));
-                  var modalBody = jq(modalContent[1]);
+    //               var modalContent = jq(bulkReOrderTabModalContent.replace('{0}', itemsText));
+    //               var modalBody = jq(modalContent[1]);
 
-                  var modalOl = modalBody.append('<ol class="js-product-options reorder-modal__options-list ui-sortable"></ol>').find('ol');
+    //               var modalOl = modalBody.append('<ol class="js-product-options reorder-modal__options-list ui-sortable"></ol>').find('ol');
 
-                  var distinctOrders = [];
-                  var splitOrders = [];
-                  var maxLength = 0;
-                  for (var oIdx = 0; oIdx < orderFields.length; oIdx++) {
-                    var order = orderFields[oIdx];
-                    if (distinctOrders.indexOf(order.value) < 0) {
-                      distinctOrders.push(order.value);
-                      var splitOrder = order.value.split(",");
-                      if (splitOrder.length > maxLength) {
-                        maxLength = splitOrder.length;
-                      }
-                      splitOrders.push(splitOrder);
-                    }
-                  }
+    //               var distinctOrders = [];
+    //               var splitOrders = [];
+    //               var maxLength = 0;
+    //               for (var oIdx = 0; oIdx < orderFields.length; oIdx++) {
+    //                 var order = orderFields[oIdx];
+    //                 if (distinctOrders.indexOf(order.value) < 0) {
+    //                   distinctOrders.push(order.value);
+    //                   var splitOrder = order.value.split(",");
+    //                   if (splitOrder.length > maxLength) {
+    //                     maxLength = splitOrder.length;
+    //                   }
+    //                   splitOrders.push(splitOrder);
+    //                 }
+    //               }
 
-                  var splitOrdersByLength = splitOrders.sort(function (a, b) { return a.length > b.length ? -1 : ( a.length < b.length ? 1 : 0); });
+    //               var splitOrdersByLength = splitOrders.sort(function (a, b) { return a.length > b.length ? -1 : ( a.length < b.length ? 1 : 0); });
 
-                  var addedTabs = [];
-                  var mergedTabs = [];
-                  for (var oIdx = 0; oIdx < splitOrdersByLength.length; oIdx++) {
-                    var list = splitOrdersByLength[oIdx];
-                    for (var sIdx = 0; sIdx < list.length; sIdx++) {
-                      var tabName = list[sIdx].trim();
-                      var newIdx = Math.min(Math.ceil(maxLength / list.length * sIdx) + 1, maxLength);
-                      if (addedTabs.indexOf(tabName) < 0) {
-                        addedTabs.push(tabName);
-                        if (oIdx > 0 && newIdx < maxLength) {
-                          mergedTabs.splice(newIdx, 0, tabName);
-                        } else {
-                          mergedTabs.push(tabName);
-                        }
-                      }
-                    }
-                  }
+    //               var addedTabs = [];
+    //               var mergedTabs = [];
+    //               for (var oIdx = 0; oIdx < splitOrdersByLength.length; oIdx++) {
+    //                 var list = splitOrdersByLength[oIdx];
+    //                 for (var sIdx = 0; sIdx < list.length; sIdx++) {
+    //                   var tabName = list[sIdx].trim();
+    //                   var newIdx = Math.min(Math.ceil(maxLength / list.length * sIdx) + 1, maxLength);
+    //                   if (addedTabs.indexOf(tabName) < 0) {
+    //                     addedTabs.push(tabName);
+    //                     if (oIdx > 0 && newIdx < maxLength) {
+    //                       mergedTabs.splice(newIdx, 0, tabName);
+    //                     } else {
+    //                       mergedTabs.push(tabName);
+    //                     }
+    //                   }
+    //                 }
+    //               }
 
-                  for (var oIdx = 0; oIdx < mergedTabs.length; oIdx++) {
-                    var reorderItem = jq(reorderTabItem);
-                    reorderItem.attr('data-key', mergedTabs[oIdx]).find('.next-label').text(mergedTabs[oIdx]);
-                    modalOl.append(reorderItem);
-                  }
+    //               for (var oIdx = 0; oIdx < mergedTabs.length; oIdx++) {
+    //                 var reorderItem = jq(reorderTabItem);
+    //                 reorderItem.attr('data-key', mergedTabs[oIdx]).find('.next-label').text(mergedTabs[oIdx]);
+    //                 modalOl.append(reorderItem);
+    //               }
 
-                  var missingTabs = tabs.map(function (t) { return t.key.trim(); })
-                                        .filter(function(n) { return addedTabs.indexOf(n) < 0; })
-                                        .sort(function (a, b) { return a < b ? -1 : (a > b ? 1 : 0); });
-                  for (var mIdx = 0; mIdx < missingTabs.length; mIdx++) {
-                    if (addedTabs.indexOf(missingTabs[mIdx]) < 0) {
-                      var reorderItem = jq(reorderTabItem);
-                      reorderItem.attr('data-key', missingTabs[mIdx]).find('.next-label').text(missingTabs[mIdx]);
-                      modalOl.append(reorderItem);
-                      addedTabs.push(missingTabs[mIdx]);
-                    }
-                  }
+    //               var missingTabs = tabs.map(function (t) { return t.key.trim(); })
+    //                                     .filter(function(n) { return addedTabs.indexOf(n) < 0; })
+    //                                     .sort(function (a, b) { return a < b ? -1 : (a > b ? 1 : 0); });
+    //               for (var mIdx = 0; mIdx < missingTabs.length; mIdx++) {
+    //                 if (addedTabs.indexOf(missingTabs[mIdx]) < 0) {
+    //                   var reorderItem = jq(reorderTabItem);
+    //                   reorderItem.attr('data-key', missingTabs[mIdx]).find('.next-label').text(missingTabs[mIdx]);
+    //                   modalOl.append(reorderItem);
+    //                   addedTabs.push(missingTabs[mIdx]);
+    //                 }
+    //               }
 
-                  modalContent = modalContent.wrapAll(modalWrapper).closest('script');
-                  var modal = new shopify.Modal(modalContent.get(0));
-                  var confirmed = false;
-                  modal.show();
-                  jq(modal.$container()).find('ol').sortable({
-                    handle: ".js-product-option-name--is-draggable",
-                    opacity: .8,
-                    axis: "y"
-                  });
-                  jq(modal.$container()).find(".btn-ok").on('click', function (e) {
-                    confirmed = true;
-                  });
-                  modal.onClose(function (e) { 
-                    if (confirmed) {
-                      var newTabOrder = [];
-                      jq(this).find('ol li').each(function (i, el) { newTabOrder.push(jq(el).data('key')); });
-                      for (var pIdx = 0; pIdx < selection.length; pIdx++) {
-                        var matchingTabs = tabs.filter(function (t) { return t.owner_id == selection[pIdx]; }).map(function (t) { return t.key; });
-                        var newOrder = newTabOrder.filter(function (n) { return matchingTabs.indexOf(n) > -1; }).join(',');
-                        var orderField = orderFields.filter(function (f) { return f.owner_id == selection[pIdx]; });
-                        if (orderField.length > 0) {
-                          updateMetafield('product', selection[pIdx], orderField[0].id, newOrder, 'string');
-                        }
-                        else {
-                          addMetafield('product', selection[pIdx], 'tab', '_order', newOrder, 'string')
-                        }
-                      }
-                    }
-                  });
-                });
-            });
-        };
+    //               modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+    //               var modal = new shopify.Modal(modalContent.get(0));
+    //               var confirmed = false;
+    //               modal.show();
+    //               jq(modal.$container()).find('ol').sortable({
+    //                 handle: ".js-product-option-name--is-draggable",
+    //                 opacity: .8,
+    //                 axis: "y"
+    //               });
+    //               jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+    //                 confirmed = true;
+    //               });
+    //               modal.onClose(function (e) { 
+    //                 if (confirmed) {
+    //                   var newTabOrder = [];
+    //                   jq(this).find('ol li').each(function (i, el) { newTabOrder.push(jq(el).data('key')); });
+    //                   for (var pIdx = 0; pIdx < selection.length; pIdx++) {
+    //                     var matchingTabs = tabs.filter(function (t) { return t.owner_id == selection[pIdx]; }).map(function (t) { return t.key; });
+    //                     var newOrder = newTabOrder.filter(function (n) { return matchingTabs.indexOf(n) > -1; }).join(',');
+    //                     var orderField = orderFields.filter(function (f) { return f.owner_id == selection[pIdx]; });
+    //                     if (orderField.length > 0) {
+    //                       updateMetafield('product', selection[pIdx], orderField[0].id, newOrder, 'string');
+    //                     }
+    //                     else {
+    //                       addMetafield('product', selection[pIdx], 'tab', '_order', newOrder, 'string')
+    //                     }
+    //                   }
+    //                 }
+    //               });
+    //             });
+    //         });
+    //     };
 
-        /*** END PRODUCT LIST ***/
+    //     /*** END PRODUCT LIST ***/
 
-        /*** PRODUCT ***/
-        var loadProductExtensions = function(productId) {
-          var result = jq.Deferred();
+    //     /*** PRODUCT ***/
+    //     var loadProductExtensions = function(productId) {
+    //       var result = jq.Deferred();
 
-          var productForm = jq('form#edit_product_' + productId);
-          if (!productForm || productForm.length == 0) {
-            return;
-          }
-          else {
-            var isLoadedField = productForm.find('#codefabric_extension_loaded');
-            if (!isLoadedField || isLoadedField.length == 0) {
-              productForm.append('<input type="hidden" id="codefabric_extension_loaded" value="true" />');
-              productForm.on('submit', function() {
-                window.setTimeout(function() { loadProductExtensions(productId); }, 2000);
-              }); 
-            }
-            else {
-              return;
-            }
-          }
+    //       var productForm = jq('form#edit_product_' + productId);
+    //       if (!productForm || productForm.length == 0) {
+    //         return;
+    //       }
+    //       else {
+    //         var isLoadedField = productForm.find('#codefabric_extension_loaded');
+    //         if (!isLoadedField || isLoadedField.length == 0) {
+    //           productForm.append('<input type="hidden" id="codefabric_extension_loaded" value="true" />');
+    //           productForm.on('submit', function() {
+    //             window.setTimeout(function() { loadProductExtensions(productId); }, 2000);
+    //           }); 
+    //         }
+    //         else {
+    //           return;
+    //         }
+    //       }
 
-          jq.get('/admin/themes.json?role=main')
-            .done(function (theme) {
+    //       jq.get('/admin/themes.json?role=main')
+    //         .done(function (theme) {
 
-              jq.when(jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab'),
-                      jq.get('/admin/pages.json'),
-                      jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json'))
-                .done(function (productData, pageData, themeData) {
-                  var snippets = themeData[0].assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
-                  var tabsCard = jq(cardHtml).addClass('tabs-editor');
+    //           jq.when(jq.get('/admin/products/' + productId + '/metafields.json?namespace=tab'),
+    //                   jq.get('/admin/pages.json'),
+    //                   jq.get('/admin/themes/' + theme.themes[0].id + '/assets.json'))
+    //             .done(function (productData, pageData, themeData) {
+    //               var snippets = themeData[0].assets.filter(function(e) { return /^snippets\/.+\.liquid$/i.test(e.key); }).map(function(e) { return e.key.match(/^snippets\/(.+)\.liquid$/i)[1]; });
+    //               var tabsCard = jq(cardHtml).addClass('tabs-editor');
 
-                  tabsCard.append('<input type="hidden" name="tabs-deleted" />');
-                  productForm.on('submit', function() {
-                    //Save the metafields
-                    var tabEditors = jq(this).find('.tabs-editor').find('input[type=radio]:checked');
-                    for (var editorIdx = 0; editorIdx < tabEditors.length; editorIdx++) {
-                      var editorRd = jq(tabEditors[editorIdx]);
+    //               tabsCard.append('<input type="hidden" name="tabs-deleted" />');
+    //               productForm.on('submit', function() {
+    //                 //Save the metafields
+    //                 var tabEditors = jq(this).find('.tabs-editor').find('input[type=radio]:checked');
+    //                 for (var editorIdx = 0; editorIdx < tabEditors.length; editorIdx++) {
+    //                   var editorRd = jq(tabEditors[editorIdx]);
 
-                      var wrapper = editorRd.closest('.next-input-wrapper');
-                      var textEditor = wrapper.find('.next-input.text');
-                      var pageEditor = wrapper.find('select.page');
-                      var snippetEditor = wrapper.find('select.snippet');
+    //                   var wrapper = editorRd.closest('.next-input-wrapper');
+    //                   var textEditor = wrapper.find('.next-input.text');
+    //                   var pageEditor = wrapper.find('select.page');
+    //                   var snippetEditor = wrapper.find('select.snippet');
 
-                      var tabId = wrapper.data('id');
-                      var tabKey = wrapper.data('key');
+    //                   var tabId = wrapper.data('id');
+    //                   var tabKey = wrapper.data('key');
 
-                      var value = textEditor.val();
-                      if (editorRd.data('type') == 'snippet') {
-                        value = '{' + snippetEditor.val() + '}';
-                      }
-                      else if (editorRd.data('type') == 'page') {
-                        value = '[' + pageEditor.val() + ']';
-                      }
+    //                   var value = textEditor.val();
+    //                   if (editorRd.data('type') == 'snippet') {
+    //                     value = '{' + snippetEditor.val() + '}';
+    //                   }
+    //                   else if (editorRd.data('type') == 'page') {
+    //                     value = '[' + pageEditor.val() + ']';
+    //                   }
 
-                      if (tabId) {
-                        updateMetafield('product', productId, tabId, value);
-                      }
-                      else {
-                        addMetafield('product', productId, 'tab', tabKey, value);
-                      }
-                    }
+    //                   if (tabId) {
+    //                     updateMetafield('product', productId, tabId, value);
+    //                   }
+    //                   else {
+    //                     addMetafield('product', productId, 'tab', tabKey, value);
+    //                   }
+    //                 }
 
-                    var tabOrder = jq(this).find('input[name=tab-order]');
-                    if (tabOrder && tabOrder.length > 0) {
-                      var orderId = tabOrder.data('id');
-                      if (orderId) {
-                        updateMetafield('product', productId, orderId, tabOrder.val());
-                      }
-                      else {
-                        addMetafield('product', productId, 'tab', '_order', tabOrder.val());
-                      }
-                    }
+    //                 var tabOrder = jq(this).find('input[name=tab-order]');
+    //                 if (tabOrder && tabOrder.length > 0) {
+    //                   var orderId = tabOrder.data('id');
+    //                   if (orderId) {
+    //                     updateMetafield('product', productId, orderId, tabOrder.val());
+    //                   }
+    //                   else {
+    //                     addMetafield('product', productId, 'tab', '_order', tabOrder.val());
+    //                   }
+    //                 }
 
-                    var deletedTabs = jq(this).find('.tabs-editor input[name=tabs-deleted]').val().split(';');
-                    for (var delIdx = 0; delIdx < deletedTabs.length; delIdx++) {
-                      var delId = deletedTabs[delIdx];
-                      deleteMetafield('product', productId, delId);
-                    }
-                  });
+    //                 var deletedTabs = jq(this).find('.tabs-editor input[name=tabs-deleted]').val().split(';');
+    //                 for (var delIdx = 0; delIdx < deletedTabs.length; delIdx++) {
+    //                   var delId = deletedTabs[delIdx];
+    //                   deleteMetafield('product', productId, delId);
+    //                 }
+    //               });
 
-                  addCardHeader.call(tabsCard, 'Tabs', [ 
-                    { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
-                        e.preventDefault();
-                        var modal = new shopify.Modal(jq(addTabModal).get(0));
-                        var confirmed = false;
-                        modal.show();
-                        jq(modal.$container()).find(".btn-ok").on('click', function (e) {
-                          confirmed = true;
-                        });
-                        modal.onClose(function (e) { 
-                          if (confirmed) {
-                            var tabName = jq(this).find('#new-tab-title').val();
-                            if (tabName && tabName.length > 0) {
-                              var newTab = {
-                                namespace: 'tab',
-                                key: tabName,
-                                value: ''
-                              };
+    //               addCardHeader.call(tabsCard, 'Tabs', [ 
+    //                 { handle: 'add-tab', title: 'Add a new tab', onClick: function(e) {
+    //                     e.preventDefault();
+    //                     var modal = new shopify.Modal(jq(addTabModal).get(0));
+    //                     var confirmed = false;
+    //                     modal.show();
+    //                     jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+    //                       confirmed = true;
+    //                     });
+    //                     modal.onClose(function (e) { 
+    //                       if (confirmed) {
+    //                         var tabName = jq(this).find('#new-tab-title').val();
+    //                         if (tabName && tabName.length > 0) {
+    //                           var newTab = {
+    //                             namespace: 'tab',
+    //                             key: tabName,
+    //                             value: ''
+    //                           };
 
-                              var newTabElement = createTab(newTab, pageData[0].pages, snippets);
-                              newTabElement = setupTabContentEvents(newTab, newTabElement);
-                              addCardContent.call(tabsCard, newTabElement);
+    //                           var newTabElement = createTab(newTab, pageData[0].pages, snippets);
+    //                           newTabElement = setupTabContentEvents(newTab, newTabElement);
+    //                           addCardContent.call(tabsCard, newTabElement);
 
-                              var orderField = tabsCard.find('input[name=tab-order]');
-                              if (orderField && orderField.length > 0) {
-                                var newOrder = orderField.val().split(',');
-                                newOrder.push(tabName);
-                                orderField.val(newOrder.join(','));
-                              }
+    //                           var orderField = tabsCard.find('input[name=tab-order]');
+    //                           if (orderField && orderField.length > 0) {
+    //                             var newOrder = orderField.val().split(',');
+    //                             newOrder.push(tabName);
+    //                             orderField.val(newOrder.join(','));
+    //                           }
 
-                              productForm.trigger('change');
-                            }
-                          }
-                        });
-                    } },
-                    { handle: 'tab-order', title: 'Change tab order', onClick: function(e) {
-                        e.preventDefault();
+    //                           productForm.trigger('change');
+    //                         }
+    //                       }
+    //                     });
+    //                 } },
+    //                 { handle: 'tab-order', title: 'Change tab order', onClick: function(e) {
+    //                     e.preventDefault();
 
-                        var modalContent = jq(reorderTabsModalContent);
-                        var modalOl = modalContent.find('ol');
+    //                     var modalContent = jq(reorderTabsModalContent);
+    //                     var modalOl = modalContent.find('ol');
 
-                        var currentTabs = productForm.find('.tabs-editor').find('.next-input-wrapper');
-                        for (var oTabIdx = 0; oTabIdx < currentTabs.length; oTabIdx++) {
-                          var tabEl = jq(currentTabs[oTabIdx]);
-                          var tabName = tabEl.data('key');
-                          var tabId = tabEl.data('id');
+    //                     var currentTabs = productForm.find('.tabs-editor').find('.next-input-wrapper');
+    //                     for (var oTabIdx = 0; oTabIdx < currentTabs.length; oTabIdx++) {
+    //                       var tabEl = jq(currentTabs[oTabIdx]);
+    //                       var tabName = tabEl.data('key');
+    //                       var tabId = tabEl.data('id');
 
-                          var reorderItem = jq(reorderTabItem);
-                          reorderItem.attr('data-key', tabName).find('.next-label').text(tabName);
-                          modalOl.append(reorderItem);
-                        }
+    //                       var reorderItem = jq(reorderTabItem);
+    //                       reorderItem.attr('data-key', tabName).find('.next-label').text(tabName);
+    //                       modalOl.append(reorderItem);
+    //                     }
 
-                        modalContent = modalContent.wrapAll(modalWrapper).closest('script');
-                        var modal = new shopify.Modal(modalContent.get(0));
-                        var confirmed = false;
-                        modal.show();
-                        jq(modal.$container()).find('ol').sortable({
-                          handle: ".js-product-option-name--is-draggable",
-                          opacity: .8,
-                          axis: "y"
-                        });
-                        jq(modal.$container()).find(".btn-ok").on('click', function (e) {
-                          confirmed = true;
-                        });
-                        modal.onClose(function (e) { 
-                          if (confirmed) {
-                            var newTabOrder = [];
-                            jq(this).find('ol li').each(function (i, el) { newTabOrder.push(jq(el).data('key')); });
-                            reorderTabs(productForm.find('.tabs-editor'), newTabOrder);
-                            productForm.trigger('change');
-                          }
-                        });
-                    } } 
-                  ]);
+    //                     modalContent = modalContent.wrapAll(modalWrapper).closest('script');
+    //                     var modal = new shopify.Modal(modalContent.get(0));
+    //                     var confirmed = false;
+    //                     modal.show();
+    //                     jq(modal.$container()).find('ol').sortable({
+    //                       handle: ".js-product-option-name--is-draggable",
+    //                       opacity: .8,
+    //                       axis: "y"
+    //                     });
+    //                     jq(modal.$container()).find(".btn-ok").on('click', function (e) {
+    //                       confirmed = true;
+    //                     });
+    //                     modal.onClose(function (e) { 
+    //                       if (confirmed) {
+    //                         var newTabOrder = [];
+    //                         jq(this).find('ol li').each(function (i, el) { newTabOrder.push(jq(el).data('key')); });
+    //                         reorderTabs(productForm.find('.tabs-editor'), newTabOrder);
+    //                         productForm.trigger('change');
+    //                       }
+    //                     });
+    //                 } } 
+    //               ]);
 
-                  var tabs = productData[0].metafields;
-                  var order = [];
-                  if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
-                    var orderTab = tabs.filter(function(e, i) { return e.key == '_order'; })[0];
-                    order = orderTab.value.split(',');
-                    var orderField = tabsCard.find('input[name=tab-order]');
-                    if (!orderField || orderField.length == 0) {
-                      orderField = tabsCard.append(jq(tabOrderField).data('id', orderTab.id)).find('input[name=tab-order]');
-                    }
-                    orderField.val(order.join(','));
-                  }
+    //               var tabs = productData[0].metafields;
+    //               var order = [];
+    //               if (tabs.filter(function(e, i) { return e.key == '_order'; }).length > 0) {
+    //                 var orderTab = tabs.filter(function(e, i) { return e.key == '_order'; })[0];
+    //                 order = orderTab.value.split(',');
+    //                 var orderField = tabsCard.find('input[name=tab-order]');
+    //                 if (!orderField || orderField.length == 0) {
+    //                   orderField = tabsCard.append(jq(tabOrderField).data('id', orderTab.id)).find('input[name=tab-order]');
+    //                 }
+    //                 orderField.val(order.join(','));
+    //               }
 
-                  if (order) {
-                    for (var orderIdx = 0; orderIdx < order.length; orderIdx++) {
-                      var tabName = order[orderIdx].trim();
-                      var tab = tabs.filter(function(e, i) { return e.key == tabName; });
-                      if (tab.length > 0) {
-                        tab = tab[0];
-                        var tabElement = createTab(tab, pageData[0].pages, snippets);
-                        tabElement = setupTabContentEvents(tab, tabElement);
-                        addCardContent.call(tabsCard, tabElement);
-                      }
-                    }
+    //               if (order) {
+    //                 for (var orderIdx = 0; orderIdx < order.length; orderIdx++) {
+    //                   var tabName = order[orderIdx].trim();
+    //                   var tab = tabs.filter(function(e, i) { return e.key == tabName; });
+    //                   if (tab.length > 0) {
+    //                     tab = tab[0];
+    //                     var tabElement = createTab(tab, pageData[0].pages, snippets);
+    //                     tabElement = setupTabContentEvents(tab, tabElement);
+    //                     addCardContent.call(tabsCard, tabElement);
+    //                   }
+    //                 }
 
-                    for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
-                      var tab = tabs[tabIdx];
-                      if (tab.key == '_order') {
-                        continue;
-                      }
+    //                 for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
+    //                   var tab = tabs[tabIdx];
+    //                   if (tab.key == '_order') {
+    //                     continue;
+    //                   }
 
-                      if (order.filter(function (e, i) { return e.trim() == tab.key; }) == 0) {
-                        var tabElement = createTab(tab, pageData[0].pages, snippets);
-                        tabElement = setupTabContentEvents(tab, tabElement);
-                        addCardContent.call(tabsCard, tabElement);
-                      }
-                    }
-                  }
-                  else {
-                    for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
-                      var tab = tabs[tabIdx];
-                      var tabElement = createTab(tab, pageData[0].pages, snippets);
-                      tabElement = setupTabContentEvents(tab, tabElement);
-                      addCardContent.call(tabsCard, tabElement);
-                    }
-                  }
+    //                   if (order.filter(function (e, i) { return e.trim() == tab.key; }) == 0) {
+    //                     var tabElement = createTab(tab, pageData[0].pages, snippets);
+    //                     tabElement = setupTabContentEvents(tab, tabElement);
+    //                     addCardContent.call(tabsCard, tabElement);
+    //                   }
+    //                 }
+    //               }
+    //               else {
+    //                 for (var tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
+    //                   var tab = tabs[tabIdx];
+    //                   var tabElement = createTab(tab, pageData[0].pages, snippets);
+    //                   tabElement = setupTabContentEvents(tab, tabElement);
+    //                   addCardContent.call(tabsCard, tabElement);
+    //                 }
+    //               }
 
-                  jq('.next-card.images').before(tabsCard);
+    //               jq('.next-card.images').before(tabsCard);
 
-                  result.resolve();
-                });
-          });
+    //               result.resolve();
+    //             });
+    //       });
 
-          /*** END PRODUCT ***/
+    //       /*** END PRODUCT ***/
 
-          return result;
-        };
+    //       return result;
+    //     };
 
-        // Public
-        return {
-          init: function () {
-            if (!isShopify()) {
-              showError('CodeFabric Shopify extensions cannot be used outside of Shopify Admin!');
-              return;
-            }
+    //     // Public
+    //     return {
+    //       init: function () {
+    //         if (!isShopify()) {
+    //           showError('CodeFabric Shopify extensions cannot be used outside of Shopify Admin!');
+    //           return;
+    //         }
 
-            var adminPage = getAdminPage();
-            if (adminPage && adminPage.length > 1)
-            {
-              var promise = null;
-              switch (adminPage[1]) {
-                case 'products':
-                  if (adminPage[2]) {
-                    promise = loadProductExtensions(adminPage[2]);
-                  }
-                  else {
-                    promise = loadProductListExtensions();
-                  }
-                  break;
+    //         var adminPage = getAdminPage();
+    //         if (adminPage && adminPage.length > 1)
+    //         {
+    //           var promise = null;
+    //           switch (adminPage[1]) {
+    //             case 'products':
+    //               if (adminPage[2]) {
+    //                 promise = loadProductExtensions(adminPage[2]);
+    //               }
+    //               else {
+    //                 promise = loadProductListExtensions();
+    //               }
+    //               break;
 
-                default:
-                  console.log("Don't have any extensions to load for " + adminPage[1] + "!");
-                  break;
-              }
-            }
+    //             default:
+    //               console.log("Don't have any extensions to load for " + adminPage[1] + "!");
+    //               break;
+    //           }
+    //         }
 
-            if (promise) {
-              promise.done(function () {
-                showMessage('CodeFabric Shopify extensions loaded!');
-              });
-            }
-            else {
-              showMessage('CodeFabric Shopify extensions loaded!');
-            }
+    //         if (promise) {
+    //           promise.done(function () {
+    //             showMessage('CodeFabric Shopify extensions loaded!');
+    //           });
+    //         }
+    //         else {
+    //           showMessage('CodeFabric Shopify extensions loaded!');
+    //         }
             
-          }
-        };
+    //       }
+    //     };
 
-      };
-    }
+    //   };
+    // }
 
-    var extension = new CodeFabric.Shopify.Extension();
-    extension.init();
+    // var extension = new CodeFabric.Shopify.Extension();
+    // extension.init();
+
   });
 
   /** Utilities and loading **/
-
-  var rootLoadPath = 'https://rawgit.com/codefabric/codefabric-shopify-chrome-extension/master/scripts/';
 
   var utils = {
     loadScript: function (url, callback) {
@@ -1127,6 +1148,16 @@
       }
     },
 
+    ensureRequire: function (callback) {
+      if (typeof require === 'undefined') {
+        utils.loadScript('//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js', function() {
+          callback(require);
+        });
+      } else {
+        callback(require);
+      }
+    },
+
     loadExtensions: function(callback) {
       callback();
       //utils.loadScripts(rootLoadPath, ['shopify-card-builder', 'tabs-extension', 'product-attributes-extension'], callback);
@@ -1136,8 +1167,10 @@
       utils.ensureCss(function() {
         utils.ensureJQuery(1.9, '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
           function ($) {
-            utils.ensureShopify(function(shopify) {
-              utils.loadExtensions(function() { callback(shopify, $); });
+            utils.ensureRequire(function (r) {
+              utils.ensureShopify(function(shopify) {
+                utils.loadExtensions(function() { callback(shopify, $, r); });
+              });
             });
           }
         );
@@ -1150,18 +1183,18 @@
       Shopify: { }
     };
   }
-  utils.ensureDependencies(function (s, jq) {
+  utils.ensureDependencies(function (s, jq, r) {
     var self = this;
-    extensionJs.call(self, s, jq, {});
+    extensionJs.call(self, s, jq, r, {});
 
     jq(window).on('popstate', function(e) {
-      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
+      window.setTimeout(function() { extensionJs.call(self, s, jq, r, {}); }, 2000);
     });
     jq(window).on('pushstate', function(e) { 
-      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
+      window.setTimeout(function() { extensionJs.call(self, s, jq, r, {}); }, 2000);
     });
     jq(window).on('replacestate', function(e) { 
-      window.setTimeout(function() { extensionJs.call(self, s, jq, {}); }, 2000);
+      window.setTimeout(function() { extensionJs.call(self, s, jq, r, {}); }, 2000);
     });
 
     if (window.history) {

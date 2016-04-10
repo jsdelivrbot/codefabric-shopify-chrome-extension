@@ -1,4 +1,4 @@
-define(['card'], function(Card) {
+define(['controls/card'], function(Card) {
   var Extension;
   return Extension = (function() {
     function Extension() {}
