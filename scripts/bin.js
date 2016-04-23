@@ -12093,9 +12093,13 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Chrome', function(ns) {
   var ExtensionFactory;
   return ExtensionFactory = (function() {
-    var getAdminPage;
+    var TabEditorExtension, getAdminPage;
 
-    function ExtensionFactory() {}
+    TabEditorExtension = null;
+
+    function ExtensionFactory() {
+      TabEditorExtension = using('CodeFabric.Chrome.Products.TabEditorExtension');
+    }
 
     ExtensionFactory.prototype.create = function(url) {
       var adminPage, extensions;
@@ -12105,6 +12109,11 @@ if (!namespace) {
         switch (adminPage[1]) {
           case 'products':
             console.log("Load product extensions");
+            if (adminPage[2]) {
+              console.log('nothing');
+            } else {
+              extensions.push(new TabEditorExtension());
+            }
             break;
           default:
             console.log("Don't have any extensions to load for " + adminPage[1] + "!");
@@ -12120,6 +12129,33 @@ if (!namespace) {
     return ExtensionFactory;
 
   })();
+});
+ })(using, namespace);
+(function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Chrome.Products', function(ns) {
+  var Extension, TabEditorExtension;
+  Extension = using('CodeFabric.Chrome.Extension');
+  return TabEditorExtension = (function(superClass) {
+    var Logger;
+
+    extend(TabEditorExtension, superClass);
+
+    Logger = null;
+
+    function TabEditorExtension() {
+      Logger = using('CodeFabric.Utils.Logger');
+    }
+
+    TabEditorExtension.prototype.load = function() {
+      TabEditorExtension.__super__.load.call(this);
+      return Logger.showMessage('Loaded tab editor!');
+    };
+
+    return TabEditorExtension;
+
+  })(Extension);
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Chrome', function(ns) {
