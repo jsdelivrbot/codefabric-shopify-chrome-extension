@@ -12075,8 +12075,6 @@ if (!namespace) {
 
   })();
 });
-
-//# sourceMappingURL=card.js.map
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Chrome', function(ns) {
   var Extension;
@@ -12091,30 +12089,64 @@ if (!namespace) {
 
   })();
 });
+ })(using, namespace);
+(function (using, namespace) { namespace('CodeFabric.Chrome', function(ns) {
+  var ExtensionFactory;
+  return ExtensionFactory = (function() {
+    var getAdminPage;
 
-//# sourceMappingURL=extension.js.map
+    function ExtensionFactory() {}
+
+    ExtensionFactory.prototype.create = function(url) {
+      var adminPage, extensions;
+      adminPage = getAdminPage(url);
+      extensions = [];
+      if (adminPage && adminPage.length > 1) {
+        switch (adminPage[1]) {
+          case 'products':
+            console.log("Load product extensions");
+            break;
+          default:
+            console.log("Don't have any extensions to load for " + adminPage[1] + "!");
+        }
+      }
+      return extensions;
+    };
+
+    getAdminPage = function(url) {
+      return url.match(/^http[s]?\:\/\/[^\\\/]+\.myshopify\.com\/admin\/([^\\\/\?]+)[\/]?(\d+)*.*$/i);
+    };
+
+    return ExtensionFactory;
+
+  })();
+});
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Chrome', function(ns) {
   var Main;
   return Main = (function() {
-    var Logger;
+    var ExtensionFactory, Logger;
 
     Logger = null;
 
+    ExtensionFactory = null;
+
     function Main() {
       Logger = using('CodeFabric.Utils.Logger');
+      ExtensionFactory = using('CodeFabric.Chrome.ExtensionFactory');
     }
 
     Main.prototype.run = function() {
-      return Logger.showMessage('Hoorah!');
+      var extensions, factory;
+      Logger.showMessage('Hoorah!');
+      factory = new ExtensionFactory();
+      return extensions = factory.create(window.location.href);
     };
 
     return Main;
 
   })();
 });
-
-//# sourceMappingURL=main.js.map
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Api;
@@ -12169,8 +12201,6 @@ if (!namespace) {
 
   })();
 });
-
-//# sourceMappingURL=api.js.map
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Operation;
@@ -12196,8 +12226,6 @@ if (!namespace) {
 
   })();
 });
-
-//# sourceMappingURL=operation.js.map
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -12228,8 +12256,6 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
   })(Operation);
 });
-
-//# sourceMappingURL=createMetafield.js.map
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -12260,8 +12286,6 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
   })(CodeFabric.Shopify.Operation);
 });
-
-//# sourceMappingURL=createProductMetafield.js.map
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -12280,8 +12304,6 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
   })(CodeFabric.Shopify.Operation);
 });
-
-//# sourceMappingURL=deleteMetafield.js.map
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -12301,8 +12323,6 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
   })(CodeFabric.Shopify.Operation);
 });
-
-//# sourceMappingURL=deleteProductMetafield.js.map
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -12327,8 +12347,6 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
   })(CodeFabric.Shopify.Operation);
 });
-
-//# sourceMappingURL=updateMetafield.js.map
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -12354,14 +12372,10 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
   })(CodeFabric.Shopify.Operation);
 });
-
-//# sourceMappingURL=updateProductMetafield.js.map
  })(using, namespace);
 (function (using, namespace) { namespace('Shopify', function(ns) {
   return window.shopify;
 });
-
-//# sourceMappingURL=shopify.js.map
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Utils', function(ns) {
   var Logger;
@@ -12392,8 +12406,6 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
   })();
 });
-
-//# sourceMappingURL=logger.js.map
  })(using, namespace);
 (function (using, namespace) { 
 namespace.init();
