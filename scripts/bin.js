@@ -12079,11 +12079,17 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Chrome', function(ns) {
   var Extension;
   return Extension = (function() {
-    function Extension() {}
+    var $;
 
-    (function() {});
+    $ = null;
 
-    Extension.prototype.load = function() {};
+    function Extension() {
+      $ = using('jQuery');
+    }
+
+    Extension.prototype.load = function() {
+      return $.Deferred();
+    };
 
     return Extension;
 
@@ -12144,13 +12150,16 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 
     Logger = null;
 
-    function TabEditorExtension() {
+    function TabEditorExtension(productId) {
+      this.productId = productId;
       Logger = using('CodeFabric.Utils.Logger');
     }
 
     TabEditorExtension.prototype.load = function() {
-      TabEditorExtension.__super__.load.call(this);
-      return Logger.showMessage('Loaded tab editor!');
+      var promise;
+      promise = TabEditorExtension.__super__.load.call(this);
+      Logger.showMessage("Loaded the tab editor for product id " + this.productId);
+      return promise.resolve();
     };
 
     return TabEditorExtension;
@@ -12161,22 +12170,32 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Chrome', function(ns) {
   var Main;
   return Main = (function() {
-    var ExtensionFactory, Logger;
+    var $, ExtensionFactory, Logger;
 
     Logger = null;
 
     ExtensionFactory = null;
 
+    $ = null;
+
     function Main() {
       Logger = using('CodeFabric.Utils.Logger');
       ExtensionFactory = using('CodeFabric.Chrome.ExtensionFactory');
+      $ = using('jQuery');
     }
 
     Main.prototype.run = function() {
-      var extensions, factory;
+      var e, extensions, factory, i, len, promises;
       Logger.showMessage('Hoorah!');
       factory = new ExtensionFactory();
-      return extensions = factory.create(window.location.href);
+      extensions = factory.create(window.location.href);
+      for (i = 0, len = extensions.length; i < len; i++) {
+        e = extensions[i];
+        promises = e.load();
+      }
+      return $.when(promises).then(function(results) {
+        return Logger.showMessage('All extensions loaded!');
+      });
     };
 
     return Main;
