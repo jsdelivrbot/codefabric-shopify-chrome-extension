@@ -12116,9 +12116,9 @@ if (!namespace) {
           case 'products':
             console.log("Load product extensions");
             if (adminPage[2]) {
-              console.log('nothing');
+              extensions.push(new TabEditorExtension(adminPage[2]));
             } else {
-              extensions.push(new TabEditorExtension());
+
             }
             break;
           default:
