@@ -4,10 +4,7 @@
   var extensionJs = (function(shopify, jq, r) {
     
     requirejs.config({
-      baseUrl: rootLoadPath,
-      path: {
-        jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'
-      }
+      baseUrl: rootLoadPath
     });
 
     define('shopify', [], function () {
@@ -1150,7 +1147,7 @@
 
     ensureRequire: function (callback) {
       if (typeof require === 'undefined') {
-        utils.loadScript('//cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js', function() {
+        utils.loadScript('script/vendor.js', function() {
           callback(require);
         });
       } else {

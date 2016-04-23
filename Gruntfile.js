@@ -16,7 +16,8 @@ module.exports = function(grunt) {
       ],
       tasks: [
         // 'sass:dev',
-        'coffee:compile'
+        'coffee:compile',
+        'bower_concat'
       ],
       options: {
         livereload: true,
@@ -55,6 +56,11 @@ module.exports = function(grunt) {
         cwd: 'src/coffee',
         dest: 'scripts',
         ext: '.js'
+      }
+    },
+    bower_concat: {
+      concat: {
+        dest: 'scripts/vendor.js'
       }
     },
     // autoprefixer: {

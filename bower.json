@@ -1,0 +1,21 @@
+{
+  "name": "shopify-chrome-extension",
+  "description": "",
+  "main": "",
+  "authors": [
+    "David Else <david@codefabric.co.uk>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/codefabric/codefabric-shopify-chrome-extension",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "requirejs": "^2.2.0"
+  }
+}
