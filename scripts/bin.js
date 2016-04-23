@@ -12152,6 +12152,7 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 
     function TabEditorExtension(productId) {
       this.productId = productId;
+      TabEditorExtension.__super__.constructor.call(this);
       Logger = using('CodeFabric.Utils.Logger');
     }
 
