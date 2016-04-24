@@ -12071,7 +12071,7 @@ if (!namespace) {
 
     Card.cardHtml = '<div class="next-card"></div>';
 
-    Card.cardHeader = '<header class="next-card__header card-header"></head>';
+    Card.cardHeader = '<header class="next-card__header card-header"></header>';
 
     Card.cardHeaderTitle = '<h2 class="next-heading"></h2>';
 
@@ -12095,7 +12095,7 @@ if (!namespace) {
     Card.prototype.render = function(parent) {
       var button, buttonsGrid, card, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
       card = $(Card.cardHtml).addClass(this.cssClass);
-      header = card.append(Card.cardHeader).find('header');
+      header = card.append(Card.cardHeader);
       headerTextHtml = new Html($(Card.cardHeaderTitle).text(this.headerText));
       if (!this.headerButtons || this.headerButtons.length === 0) {
         headerTextHtml.render(header);
@@ -12111,7 +12111,7 @@ if (!namespace) {
         headerGrid.addCell(buttonsGrid, true, 'actions');
         headerGrid.render(header);
       }
-      contentWrapper = card.append(Card.cardContentWrapper).find('.next-card__section');
+      contentWrapper = card.append(Card.cardContentWrapper);
       ref1 = this.cardContent;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         content = ref1[j];
@@ -12224,7 +12224,7 @@ if (!namespace) {
 
     Grid.prototype.render = function(parent) {
       var cell, element, grid, i, len, ref;
-      grid = $(Grid.html).find('.next-grid');
+      grid = $(Grid.html);
       ref = this.cells;
       for (i = 0, len = ref.length; i < len; i++) {
         cell = ref[i];
@@ -12237,7 +12237,6 @@ if (!namespace) {
         if (cell.cssClass) {
           element.addClass(cell.cssClass);
         }
-        element = element.find('.next-grid__cell');
         cell.content.render(element);
         grid.append(element);
       }
