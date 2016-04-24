@@ -12171,15 +12171,15 @@ if (!namespace) {
 
     ChildGrid.prototype.render = function(parent) {
       var cell, element, grid, i, len, ref;
-      grid = $(Grid.html).find('.next-grid');
+      grid = $(ChildGrid.html).find('.next-grid');
       ref = this.cells;
       for (i = 0, len = ref.length; i < len; i++) {
         cell = ref[i];
         element = null;
         if (cell.noFlex) {
-          element = $(Grid.cellHtmlNoFlex);
+          element = $(ChildGrid.cellHtmlNoFlex);
         } else {
-          element = $(Grid.cellHtml);
+          element = $(ChildGrid.cellHtml);
         }
         if (cell.cssClass) {
           element.addClass(cell.cssClass);
