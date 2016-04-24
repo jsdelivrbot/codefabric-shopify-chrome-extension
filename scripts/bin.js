@@ -12065,6 +12065,10 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Card;
   return Card = (function() {
+    var $, ChildGrid, Grid, Html;
+
+    $ = Html = Grid = ChildGrid = null;
+
     Card.cardHtml = '<div class="next-tab"></div>';
 
     Card.cardHeader = '<header class="next-card__header card-header"></head>';
@@ -12077,10 +12081,10 @@ if (!namespace) {
       this.cssClass = cssClass;
       this.headerText = headerText1;
       this.headerButtons = headerButtons;
-      this.$ = using('jQuery');
-      this.Html = using('CodeFabric.Shopify.Controls.Html');
-      this.Grid = using('CodeFabric.Shopify.Controls.Grid');
-      this.ChildGrid = using('CodeFabric.Shopify.Controls.ChildGrid');
+      $ = using('jQuery');
+      Html = using('CodeFabric.Shopify.Controls.Html');
+      Grid = using('CodeFabric.Shopify.Controls.Grid');
+      ChildGrid = using('CodeFabric.Shopify.Controls.ChildGrid');
       this.cardContent = [];
     }
 
@@ -12142,6 +12146,10 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var ChildGrid;
   return ChildGrid = (function() {
+    var $;
+
+    $ = null;
+
     ChildGrid.html = '<div class="next-grid next-grid--no-outside-padding next-grid--vertically-centered card-inner"></div>';
 
     ChildGrid.cellHtml = '<div class="next-grid__cell"></div>';
@@ -12149,7 +12157,7 @@ if (!namespace) {
     ChildGrid.cellHtmlNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
 
     function ChildGrid() {
-      this.$ = using('jQuery');
+      $ = using('jQuery');
       this.cells = [];
     }
 
@@ -12191,6 +12199,10 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Grid;
   return Grid = (function() {
+    var $;
+
+    $ = null;
+
     Grid.html = '<div class="next-grid next-grid--inner-grid next-grid--no-padding next-grid--vertically-centered card-outer"></div>';
 
     Grid.cellHtml = '<div class="next-grid__cell"></div>';
@@ -12198,7 +12210,7 @@ if (!namespace) {
     Grid.cellHtmlNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
 
     function Grid() {
-      this.$ = using('jQuery');
+      $ = using('jQuery');
       this.cells = [];
     }
 
@@ -12273,14 +12285,16 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function() {
-    var onAddTabClick, onReorderTabsClick;
+    var $, Card, CardHeaderButton, InputField, onAddTabClick, onReorderTabsClick;
+
+    $ = Card = CardHeaderButton = InputField = null;
 
     function TabEditor(productId) {
       this.productId = productId;
-      this.$ = using('jQuery');
-      this.Card = using('CodeFabric.Shopify.Controls.Card');
-      this.CardHeaderButton = using('CodeFabric.Shopify.Controls.CardHeaderButton');
-      this.InputField = using('CodeFabric.Shopify.Controls.InputField');
+      $ = using('jQuery');
+      Card = using('CodeFabric.Shopify.Controls.Card');
+      CardHeaderButton = using('CodeFabric.Shopify.Controls.CardHeaderButton');
+      InputField = using('CodeFabric.Shopify.Controls.InputField');
     }
 
     TabEditor.prototype.addToForm = function(productForm) {
@@ -12323,10 +12337,12 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Chrome', function(ns) {
   var ExtensionFactory;
   return ExtensionFactory = (function() {
-    var getAdminPage;
+    var TabEditorExtension, getAdminPage;
+
+    TabEditorExtension = null;
 
     function ExtensionFactory() {
-      this.TabEditorExtension = using('CodeFabric.Chrome.Products.TabEditorExtension');
+      TabEditorExtension = using('CodeFabric.Chrome.Products.TabEditorExtension');
     }
 
     ExtensionFactory.prototype.create = function(url) {
@@ -12366,14 +12382,18 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
   var Extension, TabEditorExtension;
   Extension = using('CodeFabric.Chrome.Extension');
   return TabEditorExtension = (function(superClass) {
+    var $, Logger, TabEditor;
+
     extend(TabEditorExtension, superClass);
+
+    $ = Logger = TabEditor = null;
 
     function TabEditorExtension(productId) {
       this.productId = productId;
       TabEditorExtension.__super__.constructor.call(this);
-      this.$ = using('jQuery');
-      this.Logger = using('CodeFabric.Utils.Logger');
-      this.TabEditor = using('CodeFabric.Shopify.Controls.TabEditor');
+      $ = using('jQuery');
+      Logger = using('CodeFabric.Utils.Logger');
+      TabEditor = using('CodeFabric.Shopify.Controls.TabEditor');
     }
 
     TabEditorExtension.prototype.load = function() {
@@ -12392,12 +12412,21 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Chrome', function(ns) {
-  var $, ExtensionFactory, Logger, Main;
-  Logger = using('CodeFabric.Utils.Logger');
-  ExtensionFactory = using('CodeFabric.Chrome.ExtensionFactory');
-  $ = using('jQuery');
+  var Main;
   return Main = (function() {
-    function Main() {}
+    var $, ExtensionFactory, Logger;
+
+    Logger = null;
+
+    ExtensionFactory = null;
+
+    $ = null;
+
+    function Main() {
+      Logger = using('CodeFabric.Utils.Logger');
+      ExtensionFactory = using('CodeFabric.Chrome.ExtensionFactory');
+      $ = using('jQuery');
+    }
 
     Main.prototype.run = function() {
       var e, extensions, factory, i, len, promises;
@@ -12421,15 +12450,17 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Api;
   return Api = (function() {
-    var processQueue;
+    var Logger, processQueue, shopify;
+
+    shopify = Logger = null;
 
     Api.isProcessing = false;
 
     Api.queue = [];
 
     function Api() {
-      this.shopify = using('Shopify');
-      this.Logger = using('CodeFabric.Utils.Logger');
+      shopify = using('Shopify');
+      Logger = using('CodeFabric.Utils.Logger');
     }
 
     Api.prototype.execute = function(operation) {
