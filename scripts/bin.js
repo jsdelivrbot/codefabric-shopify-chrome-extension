@@ -12069,7 +12069,7 @@ if (!namespace) {
 
     $ = Html = Grid = ChildGrid = null;
 
-    Card.cardHtml = '<div class="next-tab"></div>';
+    Card.cardHtml = '<div class="next-card"></div>';
 
     Card.cardHeader = '<header class="next-card__header card-header"></head>';
 
@@ -12077,9 +12077,9 @@ if (!namespace) {
 
     Card.cardContentWrapper = '<div class="next-card__section"></div>';
 
-    function Card(cssClass, headerText1, headerButtons) {
+    function Card(cssClass, headerText, headerButtons) {
       this.cssClass = cssClass;
-      this.headerText = headerText1;
+      this.headerText = headerText;
       this.headerButtons = headerButtons;
       $ = using('jQuery');
       Html = using('CodeFabric.Shopify.Controls.Html');
@@ -12093,15 +12093,15 @@ if (!namespace) {
     };
 
     Card.prototype.render = function(parent) {
-      var button, buttonsGrid, card, content, contentWrapper, header, headerGrid, headerText, i, j, len, len1, ref, ref1;
+      var button, buttonsGrid, card, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
       card = $(Card.cardHtml).addClass(this.cssClass);
       header = card.append(Card.cardHeader).find('header');
-      headerText = new Html($(Card.cardHeaderTitle).text(this.headerText));
+      headerTextHtml = new Html($(Card.cardHeaderTitle).text(this.headerText));
       if (!this.headerButtons || this.headerButtons.length === 0) {
-        headerText.render(header);
+        headerTextHtml.render(header);
       } else {
         headerGrid = new Grid();
-        headerGrid.addCell(headerText);
+        headerGrid.addCell(headerTextHtml);
         buttonsGrid = new ChildGrid();
         ref = this.headerButtons;
         for (i = 0, len = ref.length; i < len; i++) {
