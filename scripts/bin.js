@@ -12182,7 +12182,7 @@ if (!namespace) {
           element = $(Grid.cellHtml);
         }
         if (cell.cssClass) {
-          element.addCell(cell.cssClass);
+          element.addClass(cell.cssClass);
         }
         element = element.find('.next-grid__cell');
         cell.content.render(element);
@@ -12235,7 +12235,7 @@ if (!namespace) {
           element = $(Grid.cellHtml);
         }
         if (cell.cssClass) {
-          element.addCell(cell.cssClass);
+          element.addClass(cell.cssClass);
         }
         element = element.find('.next-grid__cell');
         cell.content.render(element);
