@@ -12298,11 +12298,12 @@ if (!namespace) {
     }
 
     TabEditor.prototype.addToForm = function(productForm) {
-      var form, tabsCard;
+      var cardsCell, form, tabsCard;
       form = productForm;
       tabsCard = new Card('tabs-editor', 'Tabs', [new CardHeaderButton('add-tab', 'Add a new tab', onAddTabClick), new CardHeaderButton('tab-order', 'Change tab order', onReorderTabsClick)]);
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
-      return tabsCard.render(form);
+      cardsCell = form.find('div.section .next-card.images').parent('.next-grid__cell');
+      return tabsCard.render(cardsCell);
     };
 
     onAddTabClick = function(e) {};
