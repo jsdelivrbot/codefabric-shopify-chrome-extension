@@ -12302,7 +12302,7 @@ if (!namespace) {
       form = productForm;
       tabsCard = new Card('tabs-editor', 'Tabs', [new CardHeaderButton('add-tab', 'Add a new tab', onAddTabClick), new CardHeaderButton('tab-order', 'Change tab order', onReorderTabsClick)]);
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
-      return form.append(tabsCard);
+      return tabsCard.render(form);
     };
 
     onAddTabClick = function(e) {};
