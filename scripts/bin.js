@@ -12392,13 +12392,12 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Chrome', function(ns) {
-  var Main;
+  var $, ExtensionFactory, Logger, Main;
+  Logger = using('CodeFabric.Utils.Logger');
+  ExtensionFactory = using('CodeFabric.Chrome.ExtensionFactory');
+  $ = using('jQuery');
   return Main = (function() {
-    function Main() {
-      this.Logger = using('CodeFabric.Utils.Logger');
-      this.ExtensionFactory = using('CodeFabric.Chrome.ExtensionFactory');
-      this.$ = using('jQuery');
-    }
+    function Main() {}
 
     Main.prototype.run = function() {
       var e, extensions, factory, i, len, promises;
