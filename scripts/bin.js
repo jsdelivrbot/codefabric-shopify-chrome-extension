@@ -12296,13 +12296,33 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function() {
-    function TabEditor(name, type, value) {
+    var $;
+
+    $ = null;
+
+    function TabEditor(name, type, value1) {
       this.name = name;
       this.type = type;
-      this.value = value;
+      this.value = value1;
+      $ = using('jQuery');
     }
 
-    TabEditor.prototype.render = function(parent) {};
+    TabEditor.prototype.render = function(parent) {
+      return parent.append($("<p>" + this.name + "</p>"));
+    };
+
+    TabEditor.getType = function(value) {
+      var pageMatch, snippetMatch;
+      snippetMatch = value.match(/^\{([^\{\}]+)\}$/);
+      pageMatch = value.match(/^\[([^\[\]]+)\]$/);
+      if (snippetMatch) {
+        return 'snippet';
+      }
+      if (pageMatch) {
+        return 'page';
+      }
+      return 'text';
+    };
 
     return TabEditor;
 
@@ -12312,9 +12332,9 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabsCard;
   return TabsCard = (function() {
-    var $, API, Button, Card, GetProductMetafieldsByNamespace, InputField, onAddTabClick, onReorderTabsClick;
+    var $, API, Button, Card, GetProductMetafieldsByNamespace, InputField, TabEditor, onAddTabClick, onReorderTabsClick;
 
-    $ = Card = Button = InputField = GetProductMetafieldsByNamespace = API = null;
+    $ = Card = Button = InputField = TabEditor = GetProductMetafieldsByNamespace = API = null;
 
     function TabsCard(productId) {
       this.productId = productId;
@@ -12324,6 +12344,7 @@ if (!namespace) {
       InputField = using('CodeFabric.Shopify.Controls.InputField');
       GetProductMetafieldsByNamespace = using('CodeFabric.Shopify.Operations.GetProductMetafieldsByNamespace');
       API = using('CodeFabric.Shopify.Api');
+      TabEditor = using('CodeFabric.Shopify.Controls.TabEditor');
     }
 
     TabsCard.prototype.render = function(parent) {
@@ -12335,6 +12356,14 @@ if (!namespace) {
       promise = $.Deferred();
       getOperation = new GetProductMetafieldsByNamespace(this.productId, 'tab', function(r) {
         debugger;
+        var i, len, ref, tab;
+        ref = r.metafields;
+        for (i = 0, len = ref.length; i < len; i++) {
+          tab = ref[i];
+          if (tab.name !== '_order') {
+            cardsCell.addContent(new TabEditor(tab.name, TabEditor.getType(tab.type, tab.value)));
+          }
+        }
         tabsCard.render(cardsCell);
         return promise.resolve();
       });
