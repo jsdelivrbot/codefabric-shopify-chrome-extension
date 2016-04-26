@@ -12300,6 +12300,10 @@ if (!namespace) {
 
     $ = null;
 
+    TabEditor.snippetRegex = /^\{([^\{\}]+)\}$/;
+
+    TabEditor.pageRegex = /^\[([^\[\]]+)\]$/;
+
     function TabEditor(name, type, value1) {
       this.name = name;
       this.type = type;
@@ -12312,14 +12316,13 @@ if (!namespace) {
     };
 
     TabEditor.getType = function(value) {
-      var pageMatch, snippetMatch;
-      snippetMatch = value.match(/^\{([^\{\}]+)\}$/);
-      pageMatch = value.match(/^\[([^\[\]]+)\]$/);
-      if (snippetMatch) {
-        return 'snippet';
-      }
-      if (pageMatch) {
-        return 'page';
+      if (value) {
+        if (value.match(TabEditor.snippetRegex)) {
+          return 'snippet';
+        }
+        if (value.match(TabEditor.pageRegex)) {
+          return 'page';
+        }
       }
       return 'text';
     };
@@ -12361,7 +12364,7 @@ if (!namespace) {
         for (i = 0, len = ref.length; i < len; i++) {
           tab = ref[i];
           if (tab.name !== '_order') {
-            cardsCell.addContent(new TabEditor(tab.name, TabEditor.getType(tab.type, tab.value)));
+            cardsCell.addContent(new TabEditor(tab.name, TabEditor.getType(tab.type), tab.value));
           }
         }
         tabsCard.render(cardsCell);
