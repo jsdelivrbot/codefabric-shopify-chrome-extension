@@ -12317,12 +12317,13 @@ if (!namespace) {
     $ = Card = Button = InputField = GetOperation = API = null;
 
     function TabsCard(productId) {
+      var GetProductMetafieldsByNamespace;
       this.productId = productId;
       $ = using('jQuery');
       Card = using('CodeFabric.Shopify.Controls.Card');
       Button = using('CodeFabric.Shopify.Controls.Button');
       InputField = using('CodeFabric.Shopify.Controls.InputField');
-      GetOperation = using('CodeFabric.Shopify.Operations.GetProductMetafieldsByNamespace');
+      GetProductMetafieldsByNamespace = using('CodeFabric.Shopify.Operations.GetProductMetafieldsByNamespace');
       API = using('CodeFabric.Shopify.Api');
     }
 
@@ -12333,7 +12334,7 @@ if (!namespace) {
       cardsCell = parent.find('div.section .next-card.images').parent('.next-grid__cell');
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
       promise = $.Deferred();
-      getOperation = new GetOperation('tab', function(r) {
+      getOperation = new GetProductMetafieldsByNamespace(this.productId, 'tab', function(r) {
         debugger;
         tabsCard.render(cardsCell);
         return promise.resolve();
