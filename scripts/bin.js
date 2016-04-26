@@ -12358,13 +12358,12 @@ if (!namespace) {
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
       promise = $.Deferred();
       getOperation = new GetProductMetafieldsByNamespace(this.productId, 'tab', function(r) {
-        debugger;
         var i, len, ref, tab;
         ref = r.metafields;
         for (i = 0, len = ref.length; i < len; i++) {
           tab = ref[i];
-          if (tab.name !== '_order') {
-            cardsCell.addContent(new TabEditor(tab.name, TabEditor.getType(tab.type), tab.value));
+          if (tab.key !== '_order') {
+            tabsCard.addContent(new TabEditor(tab.key, TabEditor.getType(tab.value), tab.value));
           }
         }
         tabsCard.render(cardsCell);
