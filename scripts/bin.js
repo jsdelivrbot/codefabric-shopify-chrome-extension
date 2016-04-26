@@ -12095,7 +12095,8 @@ if (!namespace) {
     Card.prototype.render = function(parent) {
       var button, buttonsGrid, card, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
       card = $(Card.cardHtml).addClass(this.cssClass);
-      header = card.append(Card.cardHeader);
+      header = $(Card.cardHeader);
+      card.append(header);
       headerTextHtml = new Html($(Card.cardHeaderTitle).text(this.headerText));
       if (!this.headerButtons || this.headerButtons.length === 0) {
         headerTextHtml.render(header);
