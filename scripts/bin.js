@@ -12487,34 +12487,30 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Api;
   return Api = (function() {
-    var Logger, processQueue, shopify;
-
-    shopify = Logger = null;
-
     Api.isProcessing = false;
 
     Api.queue = [];
 
-    function Api() {
-      shopify = using('Shopify');
-      Logger = using('CodeFabric.Utils.Logger');
-    }
+    function Api() {}
 
-    Api.prototype.execute = function(operation) {
+    Api.execute = function(operation) {
       Api.queue.push(operation);
       if (!Api.isProcessing) {
         this.processQueue();
       }
     };
 
-    processQueue = function() {
-      var operation, promise;
+    Api.processQueue = function() {
+      var $, Logger, Shopify, operation, promise;
+      Shopify = using('Shopify');
+      Logger = using('CodeFabric.Utils.Logger');
+      $ = using('jQuery');
       if (Api.queue.length > 0) {
-        shopify.Loading.start();
+        Shopify.Loading.start();
         Api.isProcessing = true;
         operation = Api.queue.pop();
         Logger.showMessage("Doing the thing: " + operation.name);
-        promise = jquery.ajax(operation.toAjax());
+        promise = $.ajax(operation.toAjax());
         promise.done(function(r) {
           if (operation.onDone !== null) {
             return operation.onDone(r);
@@ -12528,12 +12524,12 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
         });
         promise.always((function(_this) {
           return function() {
-            return _this.processQueue();
+            return Api.processQueue();
           };
         })(this));
       } else {
-        logger.showMessage('Done all the things!');
-        shopify.Loading.stop();
+        Logger.showMessage('Done all the things!');
+        Shopify.Loading.stop();
         Api.isProcessing = false;
       }
     };
