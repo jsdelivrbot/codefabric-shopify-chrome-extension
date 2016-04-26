@@ -12539,6 +12539,27 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
   })();
 });
  })(using, namespace);
+(function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify', function(ns) {
+  var GetOperation;
+  return GetOperation = (function(superClass) {
+    extend(GetOperation, superClass);
+
+    function GetOperation(name, url, onDone, onError) {
+      this.name = name;
+      this.url = url;
+      this.onDone = onDone;
+      this.onError = onError != null ? onError : null;
+      GetOperation.__super__.constructor.call(this, this.name, this.url, null, 'GET', this.onDone, this.onError);
+    }
+
+    return GetOperation;
+
+  })(CodeFabric.Shopify.Operation);
+});
+ })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Operation;
   return Operation = (function() {
@@ -12689,16 +12710,17 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   return GetProductMetafieldsByNamespace = (function(superClass) {
     extend(GetProductMetafieldsByNamespace, superClass);
 
-    function GetProductMetafieldsByNamespace(productId, fieldNamespace, onDone) {
+    function GetProductMetafieldsByNamespace(productId, fieldNamespace, onDone, onError) {
       this.productId = productId;
       this.fieldNamespace = fieldNamespace;
       this.onDone = onDone;
-      GetProductMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.fieldNamespace + " for product " + this.productId, "products/" + this.productId + "/metafields.json?namespace=" + this.fieldNamespace);
+      this.onError = onError != null ? onError : null;
+      GetProductMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.fieldNamespace + " for product " + this.productId, "products/" + this.productId + "/metafields.json?namespace=" + this.fieldNamespace, this.onDone, this.onError);
     }
 
     return GetProductMetafieldsByNamespace;
 
-  })(CodeFabric.Shopify.Operation);
+  })(CodeFabric.Shopify.GetOperation);
 });
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
