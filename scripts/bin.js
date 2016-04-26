@@ -12304,15 +12304,27 @@ if (!namespace) {
 
     TabEditor.pageRegex = /^\[([^\[\]]+)\]$/;
 
+    TabEditor.contentWrapper = '<div class="next-input-wrapper"></div>';
+
     function TabEditor(name, type, value1) {
+      var ChildGrid, Grid;
       this.name = name;
       this.type = type;
       this.value = value1;
       $ = using('jQuery');
+      Grid = using('CodeFabric.Shopify.Controls.Grid');
+      ChildGrid = using('CodeFabric.Shopify.Controls.ChildGrid');
+      this.handle = this.name.toLowerCase().replace(/ /g, '-');
     }
 
     TabEditor.prototype.render = function(parent) {
-      return parent.append($("<p>" + this.name + "</p>"));
+      var headerGrid, wrapper;
+      wrapper = $(TabEditor.contentWrapper);
+      headerGrid = new Grid();
+      headerGrid.addCell(new Html("<label for=\"tab-" + this.handle + "\">" + this.name + "</label>"));
+      headerGrid.addCell(new ChildGrid(), true);
+      headerGrid.render(wrapper);
+      return parent.append(wrapper);
     };
 
     TabEditor.getType = function(value) {
