@@ -12112,12 +12112,13 @@ if (!namespace) {
         headerGrid.addCell(buttonsGrid, true, 'actions');
         headerGrid.render(header);
       }
-      contentWrapper = card.append(Card.cardContentWrapper);
+      contentWrapper = $(Card.cardContentWrapper);
       ref1 = this.cardContent;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         content = ref1[j];
         content.render(contentWrapper);
       }
+      card.append(contentWrapper);
       return parent.append(card);
     };
 
@@ -12183,7 +12184,7 @@ if (!namespace) {
 
     ChildGrid.prototype.render = function(parent) {
       var cell, element, grid, i, len, ref;
-      grid = $(ChildGrid.html).find('.next-grid');
+      grid = $(ChildGrid.html);
       ref = this.cells;
       for (i = 0, len = ref.length; i < len; i++) {
         cell = ref[i];
@@ -12196,7 +12197,6 @@ if (!namespace) {
         if (cell.cssClass) {
           element.addClass(cell.cssClass);
         }
-        element = element.find('.next-grid__cell');
         cell.content.render(element);
         grid.append(element);
       }
