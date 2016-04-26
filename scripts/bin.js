@@ -12296,9 +12296,9 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function() {
-    var $;
+    var $, ChildGrid, Grid, Html;
 
-    $ = null;
+    $ = Grid = ChildGrid = Html = null;
 
     TabEditor.snippetRegex = /^\{([^\{\}]+)\}$/;
 
@@ -12307,13 +12307,13 @@ if (!namespace) {
     TabEditor.contentWrapper = '<div class="next-input-wrapper"></div>';
 
     function TabEditor(name, type, value1) {
-      var ChildGrid, Grid;
       this.name = name;
       this.type = type;
       this.value = value1;
       $ = using('jQuery');
       Grid = using('CodeFabric.Shopify.Controls.Grid');
       ChildGrid = using('CodeFabric.Shopify.Controls.ChildGrid');
+      Html = using('CodeFabric.Shopify.Controls.Html');
       this.handle = this.name.toLowerCase().replace(/ /g, '-');
     }
 
