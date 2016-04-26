@@ -12127,19 +12127,30 @@ if (!namespace) {
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
-  var CardHeaderButton;
-  return CardHeaderButton = (function() {
-    function CardHeaderButton(cssClass, text, callback) {
+  var Button;
+  return Button = (function() {
+    var $;
+
+    $ = null;
+
+    Button.buttonHtml = "<a></a>";
+
+    function Button(cssClass, text, callback) {
       this.cssClass = cssClass;
       this.text = text;
       this.callback = callback;
+      $ = using('jQuery');
     }
 
-    CardHeaderButton.prototype.render = function(parent) {
-      return parent.append("<a class=\"" + this.cssClass + "\">" + this.text + "</a>");
+    Button.prototype.render = function(parent) {
+      var button;
+      button = $(Button.buttonHtml);
+      button.addClass(this.cssClass).text(this.text);
+      parent.append(button);
+      return button.on('click', this.callback);
     };
 
-    return CardHeaderButton;
+    return Button;
 
   })();
 });
@@ -12285,32 +12296,57 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function() {
-    var $, Card, CardHeaderButton, InputField, onAddTabClick, onReorderTabsClick;
+    function TabEditor(name, type, value) {
+      this.name = name;
+      this.type = type;
+      this.value = value;
+    }
 
-    $ = Card = CardHeaderButton = InputField = null;
+    TabEditor.prototype.render = function(parent) {};
 
-    function TabEditor(productId) {
+    return TabEditor;
+
+  })();
+});
+ })(using, namespace);
+(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+  var TabsCard;
+  return TabsCard = (function() {
+    var $, API, Button, Card, GetOperation, InputField, onAddTabClick, onReorderTabsClick;
+
+    $ = Card = Button = InputField = GetOperation = API = null;
+
+    function TabsCard(productId) {
       this.productId = productId;
       $ = using('jQuery');
       Card = using('CodeFabric.Shopify.Controls.Card');
-      CardHeaderButton = using('CodeFabric.Shopify.Controls.CardHeaderButton');
+      Button = using('CodeFabric.Shopify.Controls.Button');
       InputField = using('CodeFabric.Shopify.Controls.InputField');
+      GetOperation = using('CodeFabric.Shopify.Operations.GetProductMetafieldsByNamespace');
+      API = using('CodeFabric.Shopify.API');
     }
 
-    TabEditor.prototype.addToForm = function(productForm) {
-      var cardsCell, form, tabsCard;
-      form = productForm;
-      tabsCard = new Card('tabs-editor', 'Tabs', [new CardHeaderButton('add-tab', 'Add a new tab', onAddTabClick), new CardHeaderButton('tab-order', 'Change tab order', onReorderTabsClick)]);
+    TabsCard.prototype.render = function(parent) {
+      var cardsCell, form, getOperation, promise, tabsCard;
+      form = parent;
+      tabsCard = new Card('tabs-editor', 'Tabs', [new Button('add-tab', 'Add a new tab', onAddTabClick), new Button('tab-order', 'Change tab order', onReorderTabsClick)]);
+      cardsCell = parent.find('div.section .next-card.images').parent('.next-grid__cell');
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
-      cardsCell = form.find('div.section .next-card.images').parent('.next-grid__cell');
-      return tabsCard.render(cardsCell);
+      promise = $.Deferred();
+      getOperation = new GetOperation('tab', function(r) {
+        debugger;
+        tabsCard.render(cardsCell);
+        return promise.resolve();
+      });
+      API.execute(getOperation);
+      return promise;
     };
 
     onAddTabClick = function(e) {};
 
     onReorderTabsClick = function(e) {};
 
-    return TabEditor;
+    return TabsCard;
 
   })();
 });
@@ -12383,26 +12419,26 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
   var Extension, TabEditorExtension;
   Extension = using('CodeFabric.Chrome.Extension');
   return TabEditorExtension = (function(superClass) {
-    var $, Logger, TabEditor;
+    var $, Logger, TabsCard;
 
     extend(TabEditorExtension, superClass);
 
-    $ = Logger = TabEditor = null;
+    $ = Logger = TabsCard = null;
 
     function TabEditorExtension(productId) {
       this.productId = productId;
       TabEditorExtension.__super__.constructor.call(this);
       $ = using('jQuery');
       Logger = using('CodeFabric.Utils.Logger');
-      TabEditor = using('CodeFabric.Shopify.Controls.TabEditor');
+      TabsCard = using('CodeFabric.Shopify.Controls.TabsCard');
     }
 
     TabEditorExtension.prototype.load = function() {
-      var form, promise, tabEditor;
+      var form, promise, tabsCard;
       promise = TabEditorExtension.__super__.load.call(this);
       form = $("form#edit_product_" + this.productId);
-      tabEditor = new TabEditor(this.productId);
-      tabEditor.addToForm(form);
+      tabsCard = new TabsCard(this.productId);
+      tabsCard.render(form);
       Logger.showMessage("Loaded the tab editor for product id " + this.productId);
       return promise.resolve();
     };
@@ -12479,9 +12515,16 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
         operation = Api.queue.pop();
         Logger.showMessage("Doing the thing: " + operation.name);
         promise = jquery.ajax(operation.toAjax());
-        promise.done(function(r) {});
+        promise.done(function(r) {
+          if (operation.onDone !== null) {
+            return operation.onDone(r);
+          }
+        });
         promise.fail(function(e) {
-          return Logger.showError(e.responseText);
+          Logger.showError(e.responseText);
+          if (operation.onError !== null) {
+            return operation.onError(e);
+          }
         });
         promise.always((function(_this) {
           return function() {
@@ -12503,18 +12546,19 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Operation;
   return Operation = (function() {
-    function Operation(name, url, data, method) {
+    function Operation(name, url, data, method, onDone, onError) {
       this.name = name;
       this.url = url;
-      this.data = data;
-      this.method = method;
+      this.data = data != null ? data : null;
+      this.method = method != null ? method : 'GET';
+      this.onDone = onDone != null ? onDone : null;
+      this.onError = onError != null ? onError : null;
     }
 
     Operation.prototype.toAjax = function() {
-      var ref;
       return {
         url: this.url,
-        method: (ref = this.method) != null ? ref : 'GET',
+        method: this.method,
         dataType: 'json',
         data: this.data
       };
@@ -12618,6 +12662,45 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
     }
 
     return DeleteProductMetafield;
+
+  })(CodeFabric.Shopify.Operation);
+});
+ })(using, namespace);
+(function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Operations', function(ns) {
+  var GetMetafieldsByNamespace;
+  return GetMetafieldsByNamespace = (function(superClass) {
+    extend(GetMetafieldsByNamespace, superClass);
+
+    function GetMetafieldsByNamespace(namespace1, onDone) {
+      this.namespace = namespace1;
+      this.onDone = onDone;
+      GetMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.namespace, "metafields.json?namespace=" + this.namespace);
+    }
+
+    return GetMetafieldsByNamespace;
+
+  })(CodeFabric.Shopify.Operation);
+});
+ })(using, namespace);
+(function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Operations', function(ns) {
+  var GetProductMetafieldsByNamespace;
+  return GetProductMetafieldsByNamespace = (function(superClass) {
+    extend(GetProductMetafieldsByNamespace, superClass);
+
+    function GetProductMetafieldsByNamespace(productId, namespace1, onDone) {
+      this.productId = productId;
+      this.namespace = namespace1;
+      this.onDone = onDone;
+      GetProductMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.namespace + " for product " + this.productId, "products/" + this.productId + "/metafields.json?namespace=" + this.namespace);
+    }
+
+    return GetProductMetafieldsByNamespace;
 
   })(CodeFabric.Shopify.Operation);
 });
