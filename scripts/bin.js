@@ -12485,6 +12485,32 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
+  var Operation;
+  return Operation = (function() {
+    function Operation(name, url, data, method, onDone, onError) {
+      this.name = name;
+      this.url = url;
+      this.data = data != null ? data : null;
+      this.method = method != null ? method : 'GET';
+      this.onDone = onDone != null ? onDone : null;
+      this.onError = onError != null ? onError : null;
+    }
+
+    Operation.prototype.toAjax = function() {
+      return {
+        url: "/admin/" + this.url,
+        method: this.method,
+        dataType: 'json',
+        data: this.data
+      };
+    };
+
+    return Operation;
+
+  })();
+});
+ })(using, namespace);
+(function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Api;
   return Api = (function() {
     function Api() {}
@@ -12558,32 +12584,6 @@ namespace('CodeFabric.Shopify', function(ns) {
     return GetOperation;
 
   })(CodeFabric.Shopify.Operation);
-});
- })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
-  var Operation;
-  return Operation = (function() {
-    function Operation(name, url, data, method, onDone, onError) {
-      this.name = name;
-      this.url = url;
-      this.data = data != null ? data : null;
-      this.method = method != null ? method : 'GET';
-      this.onDone = onDone != null ? onDone : null;
-      this.onError = onError != null ? onError : null;
-    }
-
-    Operation.prototype.toAjax = function() {
-      return {
-        url: "/admin/" + this.url,
-        method: this.method,
-        dataType: 'json',
-        data: this.data
-      };
-    };
-
-    return Operation;
-
-  })();
 });
  })(using, namespace);
 (function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
