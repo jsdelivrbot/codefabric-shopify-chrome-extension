@@ -12487,11 +12487,11 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 (function (using, namespace) { namespace('CodeFabric.Shopify', function(ns) {
   var Api;
   return Api = (function() {
+    function Api() {}
+
     Api.isProcessing = false;
 
     Api.queue = [];
-
-    function Api() {}
 
     Api.execute = function(operation) {
       Api.queue.push(operation);
@@ -12553,7 +12553,7 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 
     Operation.prototype.toAjax = function() {
       return {
-        url: this.url,
+        url: "/admin/" + this.url,
         method: this.method,
         dataType: 'json',
         data: this.data
