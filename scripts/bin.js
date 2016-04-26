@@ -12312,12 +12312,11 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabsCard;
   return TabsCard = (function() {
-    var $, API, Button, Card, GetOperation, InputField, onAddTabClick, onReorderTabsClick;
+    var $, API, Button, Card, GetProductMetafieldsByNamespace, InputField, onAddTabClick, onReorderTabsClick;
 
-    $ = Card = Button = InputField = GetOperation = API = null;
+    $ = Card = Button = InputField = GetProductMetafieldsByNamespace = API = null;
 
     function TabsCard(productId) {
-      var GetProductMetafieldsByNamespace;
       this.productId = productId;
       $ = using('jQuery');
       Card = using('CodeFabric.Shopify.Controls.Card');
