@@ -12574,15 +12574,15 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   return CreateMetafield = (function(superClass) {
     extend(CreateMetafield, superClass);
 
-    function CreateMetafield(namespace1, key, value, type) {
+    function CreateMetafield(fieldNamespace, key, value, type) {
       var ref;
-      this.namespace = namespace1;
+      this.fieldNamespace = fieldNamespace;
       this.key = key;
       this.value = value;
       this.type = type;
-      CreateMetafield.__super__.constructor.call(this, "Adding metafield " + this.namespace + "." + this.key + " = " + this.value, 'metafields', {
+      CreateMetafield.__super__.constructor.call(this, "Adding metafield " + this.fieldNamespace + "." + this.key + " = " + this.value, 'metafields', {
         metafield: {
-          namespace: this.namespace,
+          namespace: this.fieldNamespace,
           key: this.key,
           value: this.value,
           type: (ref = this.type) != null ? ref : 'string'
@@ -12603,16 +12603,16 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   return CreateProductMetafield = (function(superClass) {
     extend(CreateProductMetafield, superClass);
 
-    function CreateProductMetafield(productId, namespace1, key, value, type) {
+    function CreateProductMetafield(productId, fieldNamespace, key, value, type) {
       var ref;
       this.productId = productId;
-      this.namespace = namespace1;
+      this.fieldNamespace = fieldNamespace;
       this.key = key;
       this.value = value;
       this.type = type;
-      CreateProductMetafield.__super__.constructor.call(this, "Adding product metafield " + this.namespace + "." + this.key + " = " + this.value, "products/" + this.productId + "/metafields", {
+      CreateProductMetafield.__super__.constructor.call(this, "Adding product metafield " + this.fieldNamespace + "." + this.key + " = " + this.value, "products/" + this.productId + "/metafields", {
         metafield: {
-          namespace: this.namespace,
+          namespace: this.fieldNamespace,
           key: this.key,
           value: this.value,
           type: (ref = this.type) != null ? ref : 'string'
@@ -12670,10 +12670,10 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   return GetMetafieldsByNamespace = (function(superClass) {
     extend(GetMetafieldsByNamespace, superClass);
 
-    function GetMetafieldsByNamespace(namespace1, onDone) {
-      this.namespace = namespace1;
+    function GetMetafieldsByNamespace(fieldNamespace, onDone) {
+      this.fieldNamespace = fieldNamespace;
       this.onDone = onDone;
-      GetMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.namespace, "metafields.json?namespace=" + this.namespace);
+      GetMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.fieldNamespace, "metafields.json?namespace=" + this.fieldNamespace);
     }
 
     return GetMetafieldsByNamespace;
@@ -12689,11 +12689,11 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   return GetProductMetafieldsByNamespace = (function(superClass) {
     extend(GetProductMetafieldsByNamespace, superClass);
 
-    function GetProductMetafieldsByNamespace(productId, namespace1, onDone) {
+    function GetProductMetafieldsByNamespace(productId, fieldNamespace, onDone) {
       this.productId = productId;
-      this.namespace = namespace1;
+      this.fieldNamespace = fieldNamespace;
       this.onDone = onDone;
-      GetProductMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.namespace + " for product " + this.productId, "products/" + this.productId + "/metafields.json?namespace=" + this.namespace);
+      GetProductMetafieldsByNamespace.__super__.constructor.call(this, "Getting metafields matching " + this.fieldNamespace + " for product " + this.productId, "products/" + this.productId + "/metafields.json?namespace=" + this.fieldNamespace);
     }
 
     return GetProductMetafieldsByNamespace;
