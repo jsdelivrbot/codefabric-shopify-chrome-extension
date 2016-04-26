@@ -12323,7 +12323,7 @@ if (!namespace) {
       Button = using('CodeFabric.Shopify.Controls.Button');
       InputField = using('CodeFabric.Shopify.Controls.InputField');
       GetOperation = using('CodeFabric.Shopify.Operations.GetProductMetafieldsByNamespace');
-      API = using('CodeFabric.Shopify.API');
+      API = using('CodeFabric.Shopify.Api');
     }
 
     TabsCard.prototype.render = function(parent) {
