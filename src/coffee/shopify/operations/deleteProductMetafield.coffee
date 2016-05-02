@@ -4,6 +4,6 @@ namespace 'CodeFabric.Shopify.Operations', (ns) ->
 
     constructor: (@productId, @id) ->
       super "Deleting metafield #{@id}",
-        "products/#{@productId}/metafields/#{@id}", 
+        "products/#{@productId}/metafields/#{@id}.json", 
         null,
         'DELETE'

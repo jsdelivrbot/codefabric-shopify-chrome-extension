@@ -4,7 +4,7 @@ namespace 'CodeFabric.Shopify.Operations', (ns) ->
 
     constructor: (@productId, @fieldNamespace, @key, @value, @type) ->
       super "Adding product metafield #{@fieldNamespace}.#{@key} = #{@value}",
-        "products/#{@productId}/metafields", 
+        "products/#{@productId}/metafields.json", 
         {
           metafield:
             namespace: @fieldNamespace,

@@ -13257,7 +13257,7 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
       this.key = key;
       this.value = value;
       this.type = type;
-      CreateMetafield.__super__.constructor.call(this, "Adding metafield " + this.fieldNamespace + "." + this.key + " = " + this.value, 'metafields', {
+      CreateMetafield.__super__.constructor.call(this, "Adding metafield " + this.fieldNamespace + "." + this.key + " = " + this.value, 'metafields.json', {
         metafield: {
           namespace: this.fieldNamespace,
           key: this.key,
@@ -13287,7 +13287,7 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
       this.key = key;
       this.value = value;
       this.type = type;
-      CreateProductMetafield.__super__.constructor.call(this, "Adding product metafield " + this.fieldNamespace + "." + this.key + " = " + this.value, "products/" + this.productId + "/metafields", {
+      CreateProductMetafield.__super__.constructor.call(this, "Adding product metafield " + this.fieldNamespace + "." + this.key + " = " + this.value, "products/" + this.productId + "/metafields.json", {
         metafield: {
           namespace: this.fieldNamespace,
           key: this.key,
@@ -13312,7 +13312,7 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
 
     function DeleteMetafield(id) {
       this.id = id;
-      DeleteMetafield.__super__.constructor.call(this, "Deleting metafield " + this.id, "metafields/" + this.id, null, 'DELETE');
+      DeleteMetafield.__super__.constructor.call(this, "Deleting metafield " + this.id, "metafields/" + this.id + ".json", null, 'DELETE');
     }
 
     return DeleteMetafield;
@@ -13331,7 +13331,7 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
     function DeleteProductMetafield(productId, id) {
       this.productId = productId;
       this.id = id;
-      DeleteProductMetafield.__super__.constructor.call(this, "Deleting metafield " + this.id, "products/" + this.productId + "/metafields/" + this.id, null, 'DELETE');
+      DeleteProductMetafield.__super__.constructor.call(this, "Deleting metafield " + this.id, "products/" + this.productId + "/metafields/" + this.id + ".json", null, 'DELETE');
     }
 
     return DeleteProductMetafield;
@@ -13448,7 +13448,7 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
     function UpdateMetafield(id, value) {
       this.id = id;
       this.value = value;
-      UpdateMetafield.__super__.constructor.call(this, "Updating metafield " + this.id + " => " + this.value, "metafields/" + this.id, {
+      UpdateMetafield.__super__.constructor.call(this, "Updating metafield " + this.id + " => " + this.value, "metafields/" + this.id + ".json", {
         metafield: {
           id: this.id,
           value: this.value
@@ -13473,7 +13473,7 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
       this.productId = productId;
       this.id = id;
       this.value = value;
-      UpdateProductMetafield.__super__.constructor.call(this, "Updating product metafield " + this.id + " => " + this.value, "products/" + this.productId + "/metafields/" + this.id, {
+      UpdateProductMetafield.__super__.constructor.call(this, "Updating product metafield " + this.id + " => " + this.value, "products/" + this.productId + "/metafields/" + this.id + ".json", {
         metafield: {
           id: this.id,
           value: this.value
