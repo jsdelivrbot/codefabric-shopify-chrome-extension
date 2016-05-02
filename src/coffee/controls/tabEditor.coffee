@@ -121,7 +121,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
       operation = null
       if @id
-        operation = new UpdateProductMetafield @productId, @id, value
+        operation = new UpdateProductMetafield @productId, @tabId, value
       else
         operation = new CreateProductMetafied @productId, 'tab', @name, value
 

@@ -12752,7 +12752,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       }).call(this);
       operation = null;
       if (this.id) {
-        operation = new UpdateProductMetafield(this.productId, this.id, value);
+        operation = new UpdateProductMetafield(this.productId, this.tabId, value);
       } else {
         operation = new CreateProductMetafied(this.productId, 'tab', this.name, value);
       }
