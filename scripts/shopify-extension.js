@@ -13156,7 +13156,7 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
       return {
         url: "/admin/" + this.url,
         method: this.method,
-        dataType: 'json',
+        dataType: 'application/json',
         data: this.data
       };
     };
