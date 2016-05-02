@@ -12155,7 +12155,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         ref = this.headerButtons;
         for (i = 0, len = ref.length; i < len; i++) {
           button = ref[i];
-          buttonsGrid.addCell(button, false);
+          buttonsGrid.addCell(button, true);
         }
         headerGrid.addCell(buttonsGrid, true, 'actions');
         headerGrid.render(header);
@@ -12454,16 +12454,31 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.onChange = onChange;
       this.render = bind(this.render, this);
       this.onRadioChange = bind(this.onRadioChange, this);
+      this.check = bind(this.check, this);
       this.isChecked = bind(this.isChecked, this);
       $ = using('jQuery');
+      this.checked = false;
       RadioButton.__super__.constructor.call(this);
     }
 
     RadioButton.prototype.isChecked = function() {
+      if (!this.isRendered) {
+        return this.checked;
+      }
       return this.element.is(':checked');
     };
 
+    RadioButton.prototype.check = function() {
+      this.checked = true;
+      if (this.isRendered) {
+        return this.element.attr({
+          checked: true
+        });
+      }
+    };
+
     RadioButton.prototype.onRadioChange = function(e) {
+      this.checked = this.isChecked();
       if (this.onChange) {
         return this.onChange(e);
       }
@@ -12480,7 +12495,10 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       }).text(this.label));
       parent.append(this.element);
       this.element.on('change', this.onRadioChange);
-      return RadioButton.__super__.render.call(this, parent, false);
+      RadioButton.__super__.render.call(this, parent, false);
+      if (this.checked) {
+        return this.check();
+      }
     };
 
     return RadioButton;
@@ -12550,36 +12568,58 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       radioGroup.addCell(snippetRadio, true);
       radioGroup.addCell(pageRadio, true);
       radioGroup.addCell(textRadio, true);
-      headerGrid.addCell(radioGroup);
+      headerGrid.addCell(radioGroup, true);
       headerGrid.render(this.element);
       snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
-      pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
-      textArea = new TextArea(30, 10);
-      snippetRadio.onChange = function(e) {
-        pageSelector.hide();
-        textArea.hide();
-        if (this.isChecked()) {
-          return snippetSelector.show();
-        }
-      };
-      pageRadio.onChange = function(e) {
-        snippetSelector.hide();
-        textArea.hide();
-        if (this.isChecked()) {
-          return pageSelector.show();
-        }
-      };
-      textRadio.onChange = function(e) {
-        snippetSelector.hide();
-        pageSelector.hide();
-        if (this.isChecked()) {
-          return textArea.show();
-        }
-      };
+      snippetSelector.hide();
       snippetSelector.render(this.element);
+      pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
+      pageSelector.hide();
       pageSelector.render(this.element);
+      textArea = new TextArea(30, 10);
+      textArea.hide();
       textArea.render(this.element);
       parent.append(this.element);
+      if (this.type === 'snippet') {
+        snippetRadio.check();
+        snippetSelector.show();
+      } else if (this.type === 'page') {
+        pageRadio.check();
+        pageSelector.show();
+      } else {
+        textRadio.check();
+        textArea.show();
+      }
+      snippetRadio.onChange = (function(_this) {
+        return function(e) {
+          pageSelector.hide();
+          textArea.hide();
+          if (snippetRadio.isChecked()) {
+            snippetSelector.show();
+            return _this.type = 'snippet';
+          }
+        };
+      })(this);
+      pageRadio.onChange = (function(_this) {
+        return function(e) {
+          snippetSelector.hide();
+          textArea.hide();
+          if (pageRadio.isChecked()) {
+            pageSelector.show();
+            return _this.type = 'page';
+          }
+        };
+      })(this);
+      textRadio.onChange = (function(_this) {
+        return function(e) {
+          snippetSelector.hide();
+          pageSelector.hide();
+          if (textRadio.isChecked()) {
+            textArea.show();
+            return _this.type = 'text';
+          }
+        };
+      })(this);
       return TabEditor.__super__.render.call(this, parent, false);
     };
 
@@ -12644,15 +12684,22 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabsCard;
-  return TabsCard = (function() {
+  return TabsCard = (function(superClass) {
     var $, API, Button, Card, GetProductMetafieldsByNamespace, InputField, TabEditor, onAddTabClick, onReorderTabsClick;
+
+    extend(TabsCard, superClass);
 
     $ = Card = Button = InputField = TabEditor = GetProductMetafieldsByNamespace = API = null;
 
     function TabsCard(productId) {
       this.productId = productId;
+      this.render = bind(this.render, this);
       $ = using('jQuery');
       Card = using('CodeFabric.Shopify.Controls.Card');
       Button = using('CodeFabric.Shopify.Controls.Button');
@@ -12660,6 +12707,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       GetProductMetafieldsByNamespace = using('CodeFabric.Shopify.Operations.GetProductMetafieldsByNamespace');
       API = using('CodeFabric.Shopify.Api');
       TabEditor = using('CodeFabric.Shopify.Controls.TabEditor');
+      TabsCard.__super__.constructor.call(this);
     }
 
     TabsCard.prototype.render = function(parent) {
@@ -12682,6 +12730,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         return promise.resolve();
       });
       API.execute(getOperation);
+      TabsCard.__super__.render.call(this, parent, false);
       return promise;
     };
 
@@ -12691,7 +12740,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     return TabsCard;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
