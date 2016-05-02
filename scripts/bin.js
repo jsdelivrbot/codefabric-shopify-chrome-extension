@@ -12235,7 +12235,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       var dropdown;
       dropdown = $(Dropdown.html).attr('name', this.name).addClass(this.cssClass);
       if (this.data) {
-        this.appendOptions(this.data);
+        this.appendOptions(dropdown, this.data);
       } else {
         this.dataFunc().then((function(_this) {
           return function(dropdown, data) {
