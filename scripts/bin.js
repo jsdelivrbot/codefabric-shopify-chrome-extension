@@ -12208,7 +12208,9 @@ if (!namespace) {
   })();
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Dropdown;
   return Dropdown = (function() {
     var $;
@@ -12225,23 +12227,34 @@ if (!namespace) {
       this.keyField = keyField;
       this.valueField = valueField;
       this.dataFunc = dataFunc;
+      this.appendOptions = bind(this.appendOptions, this);
       $ = using('jQuery');
-      this.dataFunc().then((function(_this) {
-        return function(data) {
-          return _this.data = data;
-        };
-      })(this));
     }
 
     Dropdown.prototype.render = function(parent) {
-      var dropdown, i, len, ref, value;
+      var dropdown;
       dropdown = $(Dropdown.html).attr('name', this.name).addClass(this.cssClass);
-      ref = this.data;
-      for (i = 0, len = ref.length; i < len; i++) {
-        value = ref[i];
-        dropdown.append($(optionHtml).text(this.valuefield ? value[this.valueField] : value).attr('value', this.keyField ? value[this.keyField] : value));
+      if (this.data) {
+        this.appendOptions(this.data);
+      } else {
+        this.dataFunc().then((function(_this) {
+          return function(dropdown, data) {
+            _this.data = data;
+            return _this.appendOptions(dropdown, _this.data);
+          };
+        })(this));
       }
       return parent.append(dropdown);
+    };
+
+    Dropdown.prototype.appendOptions = function(dropdown, data) {
+      var i, len, results, value;
+      results = [];
+      for (i = 0, len = data.length; i < len; i++) {
+        value = data[i];
+        results.push(dropdown.append($(Dropdown.optionHtml).text(this.valuefield ? value[this.valueField] : value).attr('value', this.keyField ? value[this.keyField] : value)));
+      }
+      return results;
     };
 
     return Dropdown;
