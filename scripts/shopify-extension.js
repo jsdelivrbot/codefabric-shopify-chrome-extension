@@ -12076,10 +12076,39 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.hide = bind(this.hide, this);
       this.show = bind(this.show, this);
       this.render = bind(this.render, this);
+      this.renderAfter = bind(this.renderAfter, this);
+      this.renderBefore = bind(this.renderBefore, this);
       $ = using('jQuery');
       this.element = this.content ? $(this.content) : null;
       this.isRendered = false;
+      this.isVisible = true;
     }
+
+    Html.prototype.renderBefore = function(sibling, render) {
+      if (render == null) {
+        render = true;
+      }
+      if (render) {
+        sibling.before(this.element);
+      }
+      if (!this.isVisible) {
+        this.hide();
+      }
+      return this.isRendered = true;
+    };
+
+    Html.prototype.renderAfter = function(sibling, render) {
+      if (render == null) {
+        render = true;
+      }
+      if (render) {
+        sibling.after(this.element);
+      }
+      if (!this.isVisible) {
+        this.hide();
+      }
+      return this.isRendered = true;
+    };
 
     Html.prototype.render = function(parent, render) {
       if (render == null) {
@@ -12088,15 +12117,24 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       if (render) {
         parent.append(this.element);
       }
+      if (!this.isVisible) {
+        this.hide();
+      }
       return this.isRendered = true;
     };
 
     Html.prototype.show = function() {
-      return this.element.show();
+      this.isVisible = true;
+      if (this.isRendered) {
+        return this.element.show();
+      }
     };
 
     Html.prototype.hide = function() {
-      return this.element.hide();
+      this.isVisible = false;
+      if (this.isRendered) {
+        return this.element.hide();
+      }
     };
 
     return Html;
@@ -12104,13 +12142,14 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })();
 });
  })(using, namespace);
-(function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Card;
   return Card = (function(superClass) {
-    var $, ChildGrid, Grid, Html;
+    var $, ChildGrid, Grid, Html, renderInternal;
 
     extend(Card, superClass);
 
@@ -12128,6 +12167,8 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.cssClass = cssClass;
       this.headerText = headerText;
       this.headerButtons = headerButtons;
+      this.renderBefore = bind(this.renderBefore, this);
+      this.render = bind(this.render, this);
       $ = using('jQuery');
       Html = using('CodeFabric.Shopify.Controls.Html');
       Grid = using('CodeFabric.Shopify.Controls.Grid');
@@ -12141,6 +12182,18 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     };
 
     Card.prototype.render = function(parent) {
+      renderInternal();
+      parent.append(this.element);
+      return Card.__super__.render.call(this, parent, false);
+    };
+
+    Card.prototype.renderBefore = function(sibling) {
+      renderInternal();
+      sibling.before(this.element);
+      return Card.__super__.renderBefore.call(this, sibling, false);
+    };
+
+    renderInternal = function() {
       var button, buttonsGrid, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
       this.element = $(Card.cardHtml).addClass(this.cssClass);
       header = $(Card.cardHeader);
@@ -12166,9 +12219,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         content = ref1[j];
         content.render(contentWrapper);
       }
-      this.element.append(contentWrapper);
-      parent.append(this.element);
-      return Card.__super__.render.call(this, parent, false);
+      return this.element.append(contentWrapper);
     };
 
     return Card;
@@ -12259,18 +12310,6 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       }
     };
 
-    ChildGrid.prototype.render = function(parent) {
-      var cell, i, len, ref;
-      this.element = $(ChildGrid.html);
-      ref = this.cells;
-      for (i = 0, len = ref.length; i < len; i++) {
-        cell = ref[i];
-        this.renderCell(this.element, cell);
-      }
-      parent.append(this.element);
-      return ChildGrid.__super__.render.call(this, parent, false);
-    };
-
     ChildGrid.prototype.renderCell = function(grid, cell) {
       var element;
       element = null;
@@ -12284,6 +12323,18 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       }
       cell.content.render(element);
       return grid.append(element);
+    };
+
+    ChildGrid.prototype.render = function(parent) {
+      var cell, i, len, ref;
+      this.element = $(ChildGrid.html);
+      ref = this.cells;
+      for (i = 0, len = ref.length; i < len; i++) {
+        cell = ref[i];
+        this.renderCell(this.element, cell);
+      }
+      parent.append(this.element);
+      return ChildGrid.__super__.render.call(this, parent, false);
     };
 
     return ChildGrid;
@@ -12359,10 +12410,16 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Grid;
-  return Grid = (function() {
+  return Grid = (function(superClass) {
     var $;
+
+    extend(Grid, superClass);
 
     $ = null;
 
@@ -12373,42 +12430,57 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     Grid.cellHtmlNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
 
     function Grid() {
+      this.render = bind(this.render, this);
+      this.renderCell = bind(this.renderCell, this);
+      this.addCell = bind(this.addCell, this);
       $ = using('jQuery');
       this.cells = [];
+      Grid.__super__.constructor.call(this);
     }
 
     Grid.prototype.addCell = function(cellContent, noFlex, cssClass) {
-      return this.cells.push({
+      var cell;
+      cell = {
         content: cellContent,
         noFlex: noFlex,
         cssClass: cssClass
-      });
+      };
+      this.cells.push(cell);
+      if (this.isRendered) {
+        return this.renderCell(this.element, cell);
+      }
+    };
+
+    Grid.prototype.renderCell = function(grid, cell) {
+      var element;
+      element = null;
+      if (cell.noFlex) {
+        element = $(Grid.cellHtmlNoFlex);
+      } else {
+        element = $(Grid.cellHtml);
+      }
+      if (cell.cssClass) {
+        element.addClass(cell.cssClass);
+      }
+      cell.content.render(element);
+      return grid.append(element);
     };
 
     Grid.prototype.render = function(parent) {
-      var cell, element, grid, i, len, ref;
-      grid = $(Grid.html);
+      var cell, i, len, ref;
+      this.element = $(Grid.html);
       ref = this.cells;
       for (i = 0, len = ref.length; i < len; i++) {
         cell = ref[i];
-        element = null;
-        if (cell.noFlex) {
-          element = $(Grid.cellHtmlNoFlex);
-        } else {
-          element = $(Grid.cellHtml);
-        }
-        if (cell.cssClass) {
-          element.addClass(cell.cssClass);
-        }
-        cell.content.render(element);
-        grid.append(element);
+        this.renderCell(this.element, cell);
       }
-      return parent.append(grid);
+      parent.append(this.element);
+      return Grid.__super__.render.call(this, parent, false);
     };
 
     return Grid;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
@@ -12513,13 +12585,13 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function(superClass) {
-    var $, Api, ChildGrid, Dropdown, GetPages, GetSnippets, GetTheme, Grid, Html, Logger, RadioButton, TextArea;
+    var $, Api, ChildGrid, CreateProductMetafied, Dropdown, GetPages, GetSnippets, GetTheme, Grid, Html, Logger, RadioButton, TextArea, UpdateProductMetafield;
 
     extend(TabEditor, superClass);
 
     $ = Grid = ChildGrid = Html = Dropdown = TextArea = RadioButton = null;
 
-    Logger = Api = GetSnippets = GetTheme = GetPages = null;
+    Logger = Api = GetSnippets = GetTheme = GetPages = UpdateProductMetafield = CreateProductMetafied = null;
 
     TabEditor.snippetPromise = null;
 
@@ -12535,10 +12607,13 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     TabEditor.contentWrapper = '<div class="next-input-wrapper"></div>';
 
-    function TabEditor(name, type, value1) {
-      this.name = name;
+    function TabEditor(productId, tabId, name1, type, value1) {
+      this.productId = productId;
+      this.tabId = tabId;
+      this.name = name1;
       this.type = type;
       this.value = value1;
+      this.save = bind(this.save, this);
       this.render = bind(this.render, this);
       $ = using('jQuery');
       Logger = using('CodeFabric.Utils.Logger');
@@ -12552,12 +12627,14 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       GetTheme = using('CodeFabric.Shopify.Operations.GetTheme');
       GetSnippets = using('CodeFabric.Shopify.Operations.GetSnippets');
       GetPages = using('CodeFabric.Shopify.Operations.GetPages');
+      UpdateProductMetafield = using('CodeFabric.Shopify.Operations.UpdateProductMetafield');
+      CreateProductMetafied = using('CodeFabric.Shopify.Operations.CreateProductMetafied');
       this.handle = this.name.toLowerCase().replace(/ /g, '-');
       TabEditor.__super__.constructor.call(this);
     }
 
     TabEditor.prototype.render = function(parent) {
-      var headerGrid, pageRadio, pageSelector, radioGroup, snippetRadio, snippetSelector, textArea, textRadio;
+      var headerGrid, pageRadio, radioGroup, snippetRadio, textRadio;
       this.element = $(TabEditor.contentWrapper);
       headerGrid = new Grid();
       headerGrid.addCell(new Html("<label for=\"tab-" + this.handle + "\">" + this.name + "</label>"));
@@ -12570,57 +12647,84 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       radioGroup.addCell(textRadio, true);
       headerGrid.addCell(radioGroup, true);
       headerGrid.render(this.element);
-      snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
-      snippetSelector.hide();
-      snippetSelector.render(this.element);
-      pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
-      pageSelector.hide();
-      pageSelector.render(this.element);
-      textArea = new TextArea(30, 10);
-      textArea.hide();
-      textArea.render(this.element);
+      this.snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
+      this.snippetSelector.hide();
+      this.snippetSelector.render(this.element);
+      this.pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
+      this.pageSelector.hide();
+      this.pageSelector.render(this.element);
+      this.textArea = new TextArea(30, 10);
+      this.textArea.hide();
+      this.textArea.render(this.element);
       parent.append(this.element);
       if (this.type === 'snippet') {
         snippetRadio.check();
-        snippetSelector.show();
+        this.snippetSelector.show();
       } else if (this.type === 'page') {
         pageRadio.check();
-        pageSelector.show();
+        this.pageSelector.show();
       } else {
         textRadio.check();
-        textArea.show();
+        this.textArea.show();
       }
       snippetRadio.onChange = (function(_this) {
         return function(e) {
-          pageSelector.hide();
-          textArea.hide();
+          _this.pageSelector.hide();
+          _this.textArea.hide();
           if (snippetRadio.isChecked()) {
-            snippetSelector.show();
+            _this.snippetSelector.show();
             return _this.type = 'snippet';
           }
         };
       })(this);
       pageRadio.onChange = (function(_this) {
         return function(e) {
-          snippetSelector.hide();
-          textArea.hide();
+          _this.snippetSelector.hide();
+          _this.textArea.hide();
           if (pageRadio.isChecked()) {
-            pageSelector.show();
+            _this.pageSelector.show();
             return _this.type = 'page';
           }
         };
       })(this);
       textRadio.onChange = (function(_this) {
         return function(e) {
-          snippetSelector.hide();
-          pageSelector.hide();
+          _this.snippetSelector.hide();
+          _this.pageSelector.hide();
           if (textRadio.isChecked()) {
-            textArea.show();
+            _this.textArea.show();
             return _this.type = 'text';
           }
         };
       })(this);
       return TabEditor.__super__.render.call(this, parent, false);
+    };
+
+    TabEditor.prototype.save = function() {
+      var operation, promise, value;
+      Logger.showMessage("Saving tab " + name);
+      promise = $.Deferred();
+      value = (function() {
+        switch (this.type) {
+          case 'snippet':
+            return "{" + (this.snippetSelector.value()) + "}";
+          case 'page':
+            return "[" + (this.pageSelector.value()) + "]";
+          default:
+            return this.textArea.value();
+        }
+      }).call(this);
+      operation = null;
+      if (this.id) {
+        operation = new UpdateProductMetafield(this.productId, this.id, value);
+      } else {
+        operation = new CreateProductMetafied(this.productId, 'tab', this.name, value);
+      }
+      operation.onDone = function(res) {
+        return promise.resolve(res);
+      };
+      Api.execute(operation);
+      return promise;
     };
 
     TabEditor.getSnippets = function() {
@@ -12699,6 +12803,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     function TabsCard(productId) {
       this.productId = productId;
+      this.save = bind(this.save, this);
       this.render = bind(this.render, this);
       $ = using('jQuery');
       Card = using('CodeFabric.Shopify.Controls.Card');
@@ -12707,26 +12812,36 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       GetProductMetafieldsByNamespace = using('CodeFabric.Shopify.Operations.GetProductMetafieldsByNamespace');
       API = using('CodeFabric.Shopify.Api');
       TabEditor = using('CodeFabric.Shopify.Controls.TabEditor');
+      this.tabs = [];
       TabsCard.__super__.constructor.call(this);
     }
 
     TabsCard.prototype.render = function(parent) {
-      var cardsCell, form, getOperation, promise, tabsCard;
-      form = parent;
-      tabsCard = new Card('tabs-editor', 'Tabs', [new Button('add-tab', 'Add a new tab', onAddTabClick), new Button('tab-order', 'Change tab order', onReorderTabsClick)]);
-      cardsCell = parent.find('div.section .next-card.images').parent('.next-grid__cell');
+      var cardsCell, getOperation, promise;
+      this.tabsCard = new Card('tabs-editor', 'Tabs', [new Button('add-tab', 'Add a new tab', onAddTabClick), new Button('tab-order', 'Change tab order', onReorderTabsClick)]);
+      cardsCell = parent.find('div.section .next-card.images');
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
       promise = $.Deferred();
       getOperation = new GetProductMetafieldsByNamespace(this.productId, 'tab', function(r) {
         var i, len, ref, tab;
-        ref = r.metafields;
+        this.tabs = (function() {
+          var i, len, ref, results;
+          ref = r.metafields;
+          results = [];
+          for (i = 0, len = ref.length; i < len; i++) {
+            tab = ref[i];
+            if (tab.key !== '_order') {
+              results.push(new TabEditor(this.productId, tab.id, tab.key, TabEditor.getType(tab.value), tab.value));
+            }
+          }
+          return results;
+        }).call(this);
+        ref = this.tabs;
         for (i = 0, len = ref.length; i < len; i++) {
           tab = ref[i];
-          if (tab.key !== '_order') {
-            tabsCard.addContent(new TabEditor(tab.key, TabEditor.getType(tab.value), tab.value));
-          }
+          tabsCard.addContent(tab);
         }
-        tabsCard.render(cardsCell);
+        tabsCard.renderBefore(cardsCell);
         return promise.resolve();
       });
       API.execute(getOperation);
@@ -12737,6 +12852,24 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     onAddTabClick = function(e) {};
 
     onReorderTabsClick = function(e) {};
+
+    TabsCard.prototype.save = function() {
+      var promise, tab;
+      promise = $.Deferred();
+      $.when((function() {
+        var i, len, ref, results;
+        ref = this.tabs;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          tab = ref[i];
+          results.push(tab.save());
+        }
+        return results;
+      }).call(this)).then(function(res) {
+        return promise.resolve(res);
+      });
+      return promise;
+    };
 
     return TabsCard;
 
@@ -12864,13 +12997,26 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
     }
 
     TabEditorExtension.prototype.load = function() {
-      var form, promise, tabsCard;
+      var form, promise, renderResult, tabsCard;
       promise = TabEditorExtension.__super__.load.call(this);
       form = $("form#edit_product_" + this.productId);
       tabsCard = new TabsCard(this.productId);
-      tabsCard.render(form);
-      Logger.showMessage("Loaded the tab editor for product id " + this.productId);
-      return promise.resolve();
+      renderResult = tabsCard.render(form);
+      form.on('submit', function(e) {
+        return tabsCard.save().then(function(res) {
+          return Logger.showMessage("Saved the things");
+        });
+      });
+      if (renderResult && typeof renderResult.then === 'function') {
+        renderResult.then(function(result) {
+          Logger.showMessage("Loaded the tab editor for product id " + this.productId);
+          return promise.resolve();
+        });
+      } else {
+        Logger.showMessage("Loaded the tab editor for product id " + this.productId);
+        promise.resolve();
+      }
+      return promise;
     };
 
     return TabEditorExtension;
