@@ -12682,7 +12682,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       radioGroup.addCell(pageRadio, true);
       radioGroup.addCell(textRadio, true);
       headerGrid.addCell(radioGroup, true);
-      return $.when(TabEditor.getSnippets, TabEditor.getPages, (function(_this) {
+      return $.when(TabEditor.getSnippets, TabEditor.getPages).then((function(_this) {
         return function(snippets, pages) {
           _this.snippetSelector = new Dropdown('snippets', 'snippets', null, null, snippets);
           _this.snippetSelector.hide();
