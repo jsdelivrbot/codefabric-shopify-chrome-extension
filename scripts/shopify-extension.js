@@ -13445,13 +13445,15 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   return UpdateMetafield = (function(superClass) {
     extend(UpdateMetafield, superClass);
 
-    function UpdateMetafield(id, value) {
+    function UpdateMetafield(id, value, type) {
       this.id = id;
       this.value = value;
+      this.type = type != null ? type : 'string';
       UpdateMetafield.__super__.constructor.call(this, "Updating metafield " + this.id + " => " + this.value, "metafields/" + this.id + ".json", {
         metafield: {
           id: this.id,
-          value: this.value
+          value: this.value,
+          value_type: this.type
         }
       }, 'PUT');
     }
@@ -13469,14 +13471,16 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   return UpdateProductMetafield = (function(superClass) {
     extend(UpdateProductMetafield, superClass);
 
-    function UpdateProductMetafield(productId, id, value) {
+    function UpdateProductMetafield(productId, id, value, type) {
       this.productId = productId;
       this.id = id;
       this.value = value;
+      this.type = type != null ? type : 'string';
       UpdateProductMetafield.__super__.constructor.call(this, "Updating product metafield " + this.id + " => " + this.value, "products/" + this.productId + "/metafields/" + this.id + ".json", {
         metafield: {
           id: this.id,
-          value: this.value
+          value: this.value,
+          value_type: this.type
         }
       }, 'PUT');
     }
