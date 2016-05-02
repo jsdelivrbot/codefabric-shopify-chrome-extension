@@ -46,18 +46,18 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       @cardContent.push content
 
     render: (parent) =>
-      renderInternal()
+      @renderInternal()
       parent.append @element
 
       super parent, false
 
     renderBefore: (sibling) =>
-      renderInternal()
+      @renderInternal()
       sibling.before @element
 
       super sibling, false
 
-    renderInternal = () =>
+    renderInternal: () =>
 
       @element = $ Card.cardHtml
                .addClass @cssClass

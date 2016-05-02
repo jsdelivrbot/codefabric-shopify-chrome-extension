@@ -12149,7 +12149,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Card;
   return Card = (function(superClass) {
-    var $, ChildGrid, Grid, Html, renderInternal;
+    var $, ChildGrid, Grid, Html;
 
     extend(Card, superClass);
 
@@ -12167,6 +12167,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.cssClass = cssClass;
       this.headerText = headerText;
       this.headerButtons = headerButtons;
+      this.renderInternal = bind(this.renderInternal, this);
       this.renderBefore = bind(this.renderBefore, this);
       this.render = bind(this.render, this);
       this.addContent = bind(this.addContent, this);
@@ -12183,30 +12184,30 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     };
 
     Card.prototype.render = function(parent) {
-      renderInternal();
+      this.renderInternal();
       parent.append(this.element);
       return Card.__super__.render.call(this, parent, false);
     };
 
     Card.prototype.renderBefore = function(sibling) {
-      renderInternal();
+      this.renderInternal();
       sibling.before(this.element);
       return Card.__super__.renderBefore.call(this, sibling, false);
     };
 
-    renderInternal = function() {
+    Card.prototype.renderInternal = function() {
       var button, buttonsGrid, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
-      Card.element = $(Card.cardHtml).addClass(Card.cssClass);
+      this.element = $(Card.cardHtml).addClass(this.cssClass);
       header = $(Card.cardHeader);
-      Card.element.append(header);
-      headerTextHtml = new Html($(Card.cardHeaderTitle).text(Card.headerText));
-      if (!Card.headerButtons || Card.headerButtons.length === 0) {
+      this.element.append(header);
+      headerTextHtml = new Html($(Card.cardHeaderTitle).text(this.headerText));
+      if (!this.headerButtons || this.headerButtons.length === 0) {
         headerTextHtml.render(header);
       } else {
         headerGrid = new Grid();
         headerGrid.addCell(headerTextHtml);
         buttonsGrid = new ChildGrid();
-        ref = Card.headerButtons;
+        ref = this.headerButtons;
         for (i = 0, len = ref.length; i < len; i++) {
           button = ref[i];
           buttonsGrid.addCell(button, true);
@@ -12215,12 +12216,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         headerGrid.render(header);
       }
       contentWrapper = $(Card.cardContentWrapper);
-      ref1 = Card.cardContent;
+      ref1 = this.cardContent;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         content = ref1[j];
         content.render(contentWrapper);
       }
-      return Card.element.append(contentWrapper);
+      return this.element.append(contentWrapper);
     };
 
     return Card;
