@@ -7,7 +7,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
     constructor: (@columns, @rows, @content) ->
       $ = using 'jQuery'
-
+      @val = null
       super()
 
     render: (parent) =>
@@ -19,4 +19,19 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
       parent.append @element
 
+      if @val
+        @element.val @val
+
       super parent, false
+
+    value: (value) =>
+      if value
+        @val = value
+
+        if @isRendered
+          @element.val @val
+
+      if @isRendered
+        @val = @element.val()
+      
+      return @val

@@ -12368,10 +12368,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.valueField = valueField;
       this.data = data1;
       this.onChange = onChange;
+      this.value = bind(this.value, this);
       this.onValueChange = bind(this.onValueChange, this);
       this.appendOptions = bind(this.appendOptions, this);
       this.render = bind(this.render, this);
       $ = using('jQuery');
+      this.val = null;
       Dropdown.__super__.constructor.call(this);
     }
 
@@ -12388,6 +12390,9 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       }
       parent.append(this.element);
       this.element.on('change', this.onValueChange);
+      if (this.val) {
+        this.element.val(this.val);
+      }
       return Dropdown.__super__.render.call(this, parent, false);
     };
 
@@ -12405,6 +12410,19 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       if (this.onChange) {
         return this.onChange(e);
       }
+    };
+
+    Dropdown.prototype.value = function(value) {
+      if (value) {
+        this.val = value;
+        if (this.isRendered) {
+          this.element.val(this.val);
+        }
+      }
+      if (this.isRendered) {
+        this.val = this.element.val();
+      }
+      return this.val;
     };
 
     return Dropdown;
@@ -12485,21 +12503,33 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var InputField;
-  return InputField = (function() {
+  return InputField = (function(superClass) {
+    extend(InputField, superClass);
+
     function InputField(type, name) {
       this.type = type;
       this.name = name;
+      this.value = bind(this.value, this);
+      InputField.__super__.constructor.call(this, "<input type=\"" + this.type + "\" name=\"" + this.name + "\" />");
     }
 
-    InputField.prototype.render = function(parent) {
-      return parent.append("<input type=\"" + this.type + "\" name=\"" + this.name + "\" />");
+    InputField.prototype.value = function() {
+      if (this.isRendered) {
+        return this.element.val();
+      } else {
+        return null;
+      }
     };
 
     return InputField;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -12897,8 +12927,10 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.columns = columns;
       this.rows = rows;
       this.content = content;
+      this.value = bind(this.value, this);
       this.render = bind(this.render, this);
       $ = using('jQuery');
+      this.val = null;
       TextArea.__super__.constructor.call(this);
     }
 
@@ -12908,7 +12940,23 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         size: this.columns
       }).val(this.content);
       parent.append(this.element);
+      if (this.val) {
+        this.element.val(this.val);
+      }
       return TextArea.__super__.render.call(this, parent, false);
+    };
+
+    TextArea.prototype.value = function(value) {
+      if (value) {
+        this.val = value;
+        if (this.isRendered) {
+          this.element.val(this.val);
+        }
+      }
+      if (this.isRendered) {
+        this.val = this.element.val();
+      }
+      return this.val;
     };
 
     return TextArea;
