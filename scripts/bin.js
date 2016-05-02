@@ -12497,6 +12497,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       Html = using('CodeFabric.Shopify.Controls.Html');
       Dropdown = using('CodeFabric.Shopify.Controls.Dropdown');
       TextArea = using('CodeFabric.Shopify.Controls.TextArea');
+      RadioButton = using('CodeFabric.Shopify.Controls.RadioButton');
       Api = using('CodeFabric.Shopify.Api');
       GetTheme = using('CodeFabric.Shopify.Operations.GetTheme');
       GetSnippets = using('CodeFabric.Shopify.Operations.GetSnippets');
