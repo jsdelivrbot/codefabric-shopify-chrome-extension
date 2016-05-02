@@ -12365,6 +12365,7 @@ if (!namespace) {
       Api = using('CodeFabric.Shopify.Api');
       GetTheme = using('CodeFabric.Shopify.Operations.GetTheme');
       GetSnippets = using('CodeFabric.Shopify.Operations.GetSnippets');
+      GetPages = using('CodeFabric.Shopify.Operations.GetPages');
       this.handle = this.name.toLowerCase().replace(/ /g, '-');
     }
 
@@ -12376,7 +12377,7 @@ if (!namespace) {
       headerGrid.addCell(new ChildGrid(), true);
       headerGrid.render(wrapper);
       snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
-      pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabsEditor.getPages);
+      pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
       textArea = new TextArea(30, 10);
       snippetSelector.render(wrapper);
       pageSelector.render(wrapper);
@@ -12878,17 +12879,17 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
   hasProp = {}.hasOwnProperty;
 
 namespace('CodeFabric.Shopify.Operations', function(ns) {
-  var GetPAges;
-  return GetPAges = (function(superClass) {
-    extend(GetPAges, superClass);
+  var GetPages;
+  return GetPages = (function(superClass) {
+    extend(GetPages, superClass);
 
-    function GetPAges(onDone, onError) {
+    function GetPages(onDone, onError) {
       this.onDone = onDone;
       this.onError = onError != null ? onError : null;
-      GetPAges.__super__.constructor.call(this, "Getting pages", "pages.json", this.onDone, this.onError);
+      GetPages.__super__.constructor.call(this, "Getting pages", "pages.json", this.onDone, this.onError);
     }
 
-    return GetPAges;
+    return GetPages;
 
   })(CodeFabric.Shopify.GetOperation);
 });
