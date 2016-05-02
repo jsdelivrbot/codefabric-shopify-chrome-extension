@@ -54,64 +54,61 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
       headerGrid.addCell radioGroup, true
 
-      $.when TabEditor.getSnippets, TabEditor.getPages
-       .then (snippets, pages) =>
+      @snippetSelector = new Dropdown 'snippets', 'snippets', null, null, TabEditor.getSnippets
+      @snippetSelector.hide()
 
-          @snippetSelector = new Dropdown 'snippets', 'snippets', null, null, snippets
-          @snippetSelector.hide()
-          @snippetSelector.render @element
+      @pageSelector = new Dropdown 'pages', 'pages', 'handle', 'title', TabEditor.getPages
+      @pageSelector.hide()
 
-          @pageSelector = new Dropdown 'pages', 'pages', 'handle', 'title', pages
-          @pageSelector.hide()
-          @pageSelector.render @element
+      @textArea = new TextArea 30, 10
+      @textArea.hide()
 
-          @textArea = new TextArea 30, 10
-          @textArea.hide()
-          @textArea.render @element
+      if @type == 'snippet'
+        snippetRadio.check()
+        @snippetSelector.show()
+        @snippetSelector.value (@value.match TabEditor.snippetRegex)[1]
+      else if @type == 'page'
+        pageRadio.check()
+        @pageSelector.show()
+        @pageSelector.value (@value.match TabEditor.pageRegex)[1]
+      else
+        textRadio.check()
+        @textArea.show()
+        @textArea.value @value
 
-          if @type == 'snippet'
-            snippetRadio.check()
-            @snippetSelector.show()
-            @snippetSelector.value (@value.match TabEditor.snippetRegex)[1]
-          else if @type == 'page'
-            pageRadio.check()
-            @pageSelector.show()
-            @pageSelector.value (@value.match TabEditor.pageRegex)[1]
-          else
-            textRadio.check()
-            @textArea.show()
-            @textArea.value @value
+      @snippetSelector.render @element
+      @pageSelector.render @element
+      @textArea.render @element
 
-          snippetRadio.onChange = (e) =>
-            @pageSelector.hide()
-            @textArea.hide()
+      headerGrid.render @element
+      parent.append @element
 
-            if snippetRadio.isChecked()
-              @snippetSelector.show()
-              @type = 'snippet'
+      snippetRadio.onChange = (e) =>
+        @pageSelector.hide()
+        @textArea.hide()
 
-
-          pageRadio.onChange = (e) =>
-            @snippetSelector.hide()
-            @textArea.hide()
-
-            if pageRadio.isChecked()
-              @pageSelector.show()
-              @type = 'page'
-
-          textRadio.onChange = (e) =>
-            @snippetSelector.hide()
-            @pageSelector.hide()
-
-            if textRadio.isChecked()
-              @textArea.show()
-              @type = 'text'
+        if snippetRadio.isChecked()
+          @snippetSelector.show()
+          @type = 'snippet'
 
 
-          headerGrid.render @element
-          parent.append @element
+      pageRadio.onChange = (e) =>
+        @snippetSelector.hide()
+        @textArea.hide()
 
-          super parent, false
+        if pageRadio.isChecked()
+          @pageSelector.show()
+          @type = 'page'
+
+      textRadio.onChange = (e) =>
+        @snippetSelector.hide()
+        @pageSelector.hide()
+
+        if textRadio.isChecked()
+          @textArea.show()
+          @type = 'text'
+
+      super parent, false
 
     save: () =>
       Logger.showMessage "Saving tab #{name}"

@@ -12682,59 +12682,61 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       radioGroup.addCell(pageRadio, true);
       radioGroup.addCell(textRadio, true);
       headerGrid.addCell(radioGroup, true);
-      return $.when(TabEditor.getSnippets, TabEditor.getPages).then((function(_this) {
-        return function(snippets, pages) {
-          _this.snippetSelector = new Dropdown('snippets', 'snippets', null, null, snippets);
-          _this.snippetSelector.hide();
-          _this.snippetSelector.render(_this.element);
-          _this.pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', pages);
+      this.snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
+      this.snippetSelector.hide();
+      this.pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
+      this.pageSelector.hide();
+      this.textArea = new TextArea(30, 10);
+      this.textArea.hide();
+      if (this.type === 'snippet') {
+        snippetRadio.check();
+        this.snippetSelector.show();
+        this.snippetSelector.value((this.value.match(TabEditor.snippetRegex))[1]);
+      } else if (this.type === 'page') {
+        pageRadio.check();
+        this.pageSelector.show();
+        this.pageSelector.value((this.value.match(TabEditor.pageRegex))[1]);
+      } else {
+        textRadio.check();
+        this.textArea.show();
+        this.textArea.value(this.value);
+      }
+      this.snippetSelector.render(this.element);
+      this.pageSelector.render(this.element);
+      this.textArea.render(this.element);
+      headerGrid.render(this.element);
+      parent.append(this.element);
+      snippetRadio.onChange = (function(_this) {
+        return function(e) {
           _this.pageSelector.hide();
-          _this.pageSelector.render(_this.element);
-          _this.textArea = new TextArea(30, 10);
           _this.textArea.hide();
-          _this.textArea.render(_this.element);
-          if (_this.type === 'snippet') {
-            snippetRadio.check();
+          if (snippetRadio.isChecked()) {
             _this.snippetSelector.show();
-            _this.snippetSelector.value((_this.value.match(TabEditor.snippetRegex))[1]);
-          } else if (_this.type === 'page') {
-            pageRadio.check();
-            _this.pageSelector.show();
-            _this.pageSelector.value((_this.value.match(TabEditor.pageRegex))[1]);
-          } else {
-            textRadio.check();
-            _this.textArea.show();
-            _this.textArea.value(_this.value);
+            return _this.type = 'snippet';
           }
-          snippetRadio.onChange = function(e) {
-            _this.pageSelector.hide();
-            _this.textArea.hide();
-            if (snippetRadio.isChecked()) {
-              _this.snippetSelector.show();
-              return _this.type = 'snippet';
-            }
-          };
-          pageRadio.onChange = function(e) {
-            _this.snippetSelector.hide();
-            _this.textArea.hide();
-            if (pageRadio.isChecked()) {
-              _this.pageSelector.show();
-              return _this.type = 'page';
-            }
-          };
-          textRadio.onChange = function(e) {
-            _this.snippetSelector.hide();
-            _this.pageSelector.hide();
-            if (textRadio.isChecked()) {
-              _this.textArea.show();
-              return _this.type = 'text';
-            }
-          };
-          headerGrid.render(_this.element);
-          parent.append(_this.element);
-          return TabEditor.__super__.render.call(_this, parent, false);
         };
-      })(this));
+      })(this);
+      pageRadio.onChange = (function(_this) {
+        return function(e) {
+          _this.snippetSelector.hide();
+          _this.textArea.hide();
+          if (pageRadio.isChecked()) {
+            _this.pageSelector.show();
+            return _this.type = 'page';
+          }
+        };
+      })(this);
+      textRadio.onChange = (function(_this) {
+        return function(e) {
+          _this.snippetSelector.hide();
+          _this.pageSelector.hide();
+          if (textRadio.isChecked()) {
+            _this.textArea.show();
+            return _this.type = 'text';
+          }
+        };
+      })(this);
+      return TabEditor.__super__.render.call(this, parent, false);
     };
 
     TabEditor.prototype.save = function() {
