@@ -12751,7 +12751,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         }
       }).call(this);
       operation = null;
-      if (this.id) {
+      if (this.tabId) {
         operation = new UpdateProductMetafield(this.productId, this.tabId, value);
       } else {
         operation = new CreateProductMetafied(this.productId, 'tab', this.name, value);

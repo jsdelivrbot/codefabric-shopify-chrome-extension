@@ -120,7 +120,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
         else @textArea.value()
 
       operation = null
-      if @id
+      if @tabId
         operation = new UpdateProductMetafield @productId, @tabId, value
       else
         operation = new CreateProductMetafied @productId, 'tab', @name, value
