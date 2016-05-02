@@ -61,7 +61,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
           @snippetSelector.hide()
           @snippetSelector.render @element
 
-          @pageSelector = new Dropdown 'pages', 'pages', 'handle', 'title', psges
+          @pageSelector = new Dropdown 'pages', 'pages', 'handle', 'title', pages
           @pageSelector.hide()
           @pageSelector.render @element
 

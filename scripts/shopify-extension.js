@@ -12687,7 +12687,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
           _this.snippetSelector = new Dropdown('snippets', 'snippets', null, null, snippets);
           _this.snippetSelector.hide();
           _this.snippetSelector.render(_this.element);
-          _this.pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', psges);
+          _this.pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', pages);
           _this.pageSelector.hide();
           _this.pageSelector.render(_this.element);
           _this.textArea = new TextArea(30, 10);
