@@ -12382,17 +12382,20 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       if (typeof this.data === 'function') {
         this.data().then((function(_this) {
           return function(result) {
-            return _this.appendOptions(_this.element, result);
+            _this.appendOptions(_this.element, result);
+            if (_this.val) {
+              return _this.element.val(_this.val);
+            }
           };
         })(this));
       } else {
         this.appendOptions(this.element, this.data);
+        if (this.val) {
+          this.element.val(this.val);
+        }
       }
       parent.append(this.element);
       this.element.on('change', this.onValueChange);
-      if (this.val) {
-        this.element.val(this.val);
-      }
       return Dropdown.__super__.render.call(this, parent, false);
     };
 

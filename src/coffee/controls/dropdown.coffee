@@ -19,14 +19,15 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       if typeof @data is 'function'
         @data().then (result) =>
           @appendOptions @element, result
+          if @val
+            @element.val @val
       else
         @appendOptions @element, @data
+        if @val
+          @element.val @val
 
       parent.append @element
       @element.on 'change', @onValueChange
-
-      if @val
-        @element.val @val
 
       super parent, false
 
