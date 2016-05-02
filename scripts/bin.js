@@ -12445,13 +12445,15 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     RadioButton.radioHtml = '<input type="radio"></input>';
 
-    function RadioButton(label, cssClass, name, id, value) {
+    function RadioButton(label, cssClass, name, id, value, onChange) {
       this.label = label;
       this.cssClass = cssClass;
       this.name = name;
       this.id = id;
       this.value = value;
+      this.onChange = onChange;
       this.render = bind(this.render, this);
+      this.onRadioChange = bind(this.onRadioChange, this);
       this.isChecked = bind(this.isChecked, this);
       $ = using('jQuery');
       RadioButton.__super__.constructor.call(this);
@@ -12459,6 +12461,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     RadioButton.prototype.isChecked = function() {
       return this.element.is(':checked');
+    };
+
+    RadioButton.prototype.onRadioChange = function(e) {
+      if (this.onChange) {
+        return this.onChange(e);
+      }
     };
 
     RadioButton.prototype.render = function(parent) {
@@ -12471,6 +12479,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         "for": this.id
       }).text(this.label));
       parent.append(this.element);
+      this.element.on('change', this.onRadioChange);
       return RadioButton.__super__.render.call(this, parent, false);
     };
 
@@ -12534,27 +12543,27 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
       pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
       textArea = new TextArea(30, 10);
-      snippetRadio.onChange(function(e) {
+      snippetRadio.onChange = function(e) {
         pageSelector.hide();
         textArea.hide();
         if (this.isChecked()) {
           return snippetSelector.show();
         }
-      });
-      pageRadio.onChange(function(e) {
+      };
+      pageRadio.onChange = function(e) {
         snippetSelector.hide();
         textArea.hide();
         if (this.isChecked()) {
           return pageSelector.show();
         }
-      });
-      textRadio.onChange(function(e) {
+      };
+      textRadio.onChange = function(e) {
         snippetSelector.hide();
         pageSelector.hide();
         if (this.isChecked()) {
           return textArea.show();
         }
-      });
+      };
       snippetSelector.render(wrapper);
       pageSelector.render(wrapper);
       textArea.render(wrapper);
