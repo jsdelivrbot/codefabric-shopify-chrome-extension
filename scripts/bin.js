@@ -12428,12 +12428,16 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })();
 });
  })(using, namespace);
-(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 namespace('CodeFabric.Shopify.Controls', function(ns) {
   var RadioButton;
-  return RadioButton = (function() {
+  return RadioButton = (function(superClass) {
     var $;
+
+    extend(RadioButton, superClass);
 
     $ = null;
 
@@ -12448,23 +12452,31 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.id = id;
       this.value = value;
       this.render = bind(this.render, this);
+      this.isChecked = bind(this.isChecked, this);
       $ = using('jQuery');
+      RadioButton.__super__.constructor.call(this);
     }
 
+    RadioButton.prototype.isChecked = function() {
+      return this.element.is(':checked');
+    };
+
     RadioButton.prototype.render = function(parent) {
-      parent.append($(RadioButton.labelHtml).attr({
-        "for": this.id
-      }).text(this.label));
-      return parent.append($(RadioButton.radioHtml).attr({
+      this.element = $(RadioButton.radioHtml).attr({
         id: this.id,
         name: this.name,
         value: this.value
-      }).addClass(this.cssClass));
+      }).addClass(this.cssClass);
+      parent.append($(RadioButton.labelHtml).attr({
+        "for": this.id
+      }).text(this.label));
+      parent.append(this.element);
+      return RadioButton.__super__.render.call(this, parent, false);
     };
 
     return RadioButton;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
@@ -12522,6 +12534,27 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
       pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
       textArea = new TextArea(30, 10);
+      snippetRadio.onChange(function(e) {
+        pageSelector.hide();
+        textArea.hide();
+        if (this.isChecked()) {
+          return snippetSelector.show();
+        }
+      });
+      pageRadio.onChange(function(e) {
+        snippetSelector.hide();
+        textArea.hide();
+        if (this.isChecked()) {
+          return pageSelector.show();
+        }
+      });
+      textRadio.onChange(function(e) {
+        snippetSelector.hide();
+        pageSelector.hide();
+        if (this.isChecked()) {
+          return textArea.show();
+        }
+      });
       snippetSelector.render(wrapper);
       pageSelector.render(wrapper);
       textArea.render(wrapper);
