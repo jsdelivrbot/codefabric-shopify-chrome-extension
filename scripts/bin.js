@@ -12291,12 +12291,16 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
-(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Dropdown;
-  return Dropdown = (function() {
+  return Dropdown = (function(superClass) {
     var $;
+
+    extend(Dropdown, superClass);
 
     $ = null;
 
@@ -12315,7 +12319,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.appendOptions = bind(this.appendOptions, this);
       this.render = bind(this.render, this);
       $ = using('jQuery');
-      this.element = null;
+      Dropdown.__super__.constructor.call(this);
     }
 
     Dropdown.prototype.render = function(parent) {
@@ -12330,7 +12334,8 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         this.appendOptions(this.element, this.data);
       }
       parent.append(this.element);
-      return this.element.on('change', this.onValueChange);
+      this.element.on('change', this.onValueChange);
+      return Dropdown.__super__.render.call(this, parent, false);
     };
 
     Dropdown.prototype.appendOptions = function(dropdown, data) {
@@ -12351,7 +12356,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     return Dropdown;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
@@ -12423,7 +12428,9 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })();
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var RadioButton;
   return RadioButton = (function() {
     var $;
@@ -12440,20 +12447,20 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.name = name;
       this.id = id;
       this.value = value;
+      this.render = bind(this.render, this);
       $ = using('jQuery');
     }
 
     RadioButton.prototype.render = function(parent) {
-      return parent.append($(RadioButton.labelHtml).attr({
+      parent.append($(RadioButton.labelHtml).attr({
         "for": this.id
       }).text(this.label));
+      return parent.append($(RadioButton.radioHtml).attr({
+        id: this.id,
+        name: this.name,
+        value: this.value
+      }).addClass(this.cssClass));
     };
-
-    parent.append($(RadioButton.radioHtml).attr({
-      id: RadioButton.id,
-      name: RadioButton.name,
-      value: RadioButton.value
-    }).addClass(RadioButton.cssClasss));
 
     return RadioButton;
 
