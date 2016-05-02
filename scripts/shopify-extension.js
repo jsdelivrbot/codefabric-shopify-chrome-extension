@@ -12857,28 +12857,30 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       cardsCell = parent.find('div.section .next-card.images');
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
       promise = $.Deferred();
-      getOperation = new GetProductMetafieldsByNamespace(this.productId, 'tab', function(r) {
-        var i, len, ref, tab;
-        this.tabs = (function() {
-          var i, len, ref, results;
-          ref = r.metafields;
-          results = [];
+      getOperation = new GetProductMetafieldsByNamespace(this.productId, 'tab', (function(_this) {
+        return function(r) {
+          var i, len, ref, tab;
+          _this.tabs = (function() {
+            var i, len, ref, results;
+            ref = r.metafields;
+            results = [];
+            for (i = 0, len = ref.length; i < len; i++) {
+              tab = ref[i];
+              if (tab.key !== '_order') {
+                results.push(new TabEditor(this.productId, tab.id, tab.key, TabEditor.getType(tab.value), tab.value));
+              }
+            }
+            return results;
+          }).call(_this);
+          ref = _this.tabs;
           for (i = 0, len = ref.length; i < len; i++) {
             tab = ref[i];
-            if (tab.key !== '_order') {
-              results.push(new TabEditor(this.productId, tab.id, tab.key, TabEditor.getType(tab.value), tab.value));
-            }
+            tabsCard.addContent(tab);
           }
-          return results;
-        }).call(this);
-        ref = this.tabs;
-        for (i = 0, len = ref.length; i < len; i++) {
-          tab = ref[i];
-          tabsCard.addContent(tab);
-        }
-        tabsCard.renderBefore(cardsCell);
-        return promise.resolve();
-      });
+          tabsCard.renderBefore(cardsCell);
+          return promise.resolve();
+        };
+      })(this));
       API.execute(getOperation);
       TabsCard.__super__.render.call(this, parent, false);
       return promise;
@@ -13028,37 +13030,49 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })();
 });
  })(using, namespace);
-(function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 namespace('CodeFabric.Chrome.Products', function(ns) {
   var Extension, TabEditorExtension;
   Extension = using('CodeFabric.Chrome.Extension');
   return TabEditorExtension = (function(superClass) {
-    var $, Logger, TabsCard;
+    var $, InputField, Logger, TabsCard;
 
     extend(TabEditorExtension, superClass);
 
-    $ = Logger = TabsCard = null;
+    $ = Logger = TabsCard = InputField = null;
+
+    TabEditorExtension.existsElement = 'tabs-editor';
 
     function TabEditorExtension(productId) {
       this.productId = productId;
+      this.load = bind(this.load, this);
       TabEditorExtension.__super__.constructor.call(this);
       $ = using('jQuery');
       Logger = using('CodeFabric.Utils.Logger');
+      InputField = using('CodeFabric.Shopify.Controls.InputField');
       TabsCard = using('CodeFabric.Shopify.Controls.TabsCard');
     }
 
     TabEditorExtension.prototype.load = function() {
-      var form, promise, renderResult, tabsCard;
+      var checkField, form, promise, renderResult, tabsCard;
       promise = TabEditorExtension.__super__.load.call(this);
       form = $("form#edit_product_" + this.productId);
+      checkField = new InputField('hidden', TabEditorExtension.existsElement);
+      checkField.render(form);
       tabsCard = new TabsCard(this.productId);
       renderResult = tabsCard.render(form);
       form.on('submit', function(e) {
         return tabsCard.save().then(function(res) {
           return Logger.showMessage("Saved the things");
         });
+      });
+      form.on('change', function(e) {
+        if ($("form#edit_product_" + this.productId).find("input[name='" + TabEditorExtension.existsElement + "']").length <= 0) {
+          return window.setTimeout(this.load, 100);
+        }
       });
       if (renderResult && typeof renderResult.then === 'function') {
         renderResult.then(function(result) {

@@ -34,7 +34,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
       promise = $.Deferred()
 
-      getOperation = new GetProductMetafieldsByNamespace @productId, 'tab', (r) -> 
+      getOperation = new GetProductMetafieldsByNamespace @productId, 'tab', (r) => 
         @tabs = ((new TabEditor @productId, tab.id, tab.key, TabEditor.getType(tab.value), tab.value) for tab in r.metafields when tab.key != '_order')
         (tabsCard.addContent tab) for tab in @tabs
         tabsCard.renderBefore cardsCell
