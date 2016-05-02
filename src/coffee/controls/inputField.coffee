@@ -2,8 +2,8 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
   class InputField extends CodeFabric.Shopify.Controls.Html
 
-    constructor: (@type, @name) ->
-      super "<input type=\"#{@type}\" name=\"#{@name}\" />" 
+    constructor: (@type, @name, @id) ->
+      super "<input type=\"#{@type}\" name=\"#{@name}\" id=\"#{@id}\" />" 
 
     value: () =>
       if @isRendered

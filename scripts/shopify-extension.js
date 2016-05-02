@@ -12512,11 +12512,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   return InputField = (function(superClass) {
     extend(InputField, superClass);
 
-    function InputField(type, name) {
+    function InputField(type, name, id) {
       this.type = type;
       this.name = name;
+      this.id = id;
       this.value = bind(this.value, this);
-      InputField.__super__.constructor.call(this, "<input type=\"" + this.type + "\" name=\"" + this.name + "\" />");
+      InputField.__super__.constructor.call(this, "<input type=\"" + this.type + "\" name=\"" + this.name + "\" id=\"" + this.id + "\" />");
     }
 
     InputField.prototype.value = function() {
@@ -13060,25 +13061,31 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
       var checkField, form, promise, renderResult, tabsCard;
       promise = TabEditorExtension.__super__.load.call(this);
       form = $("form#edit_product_" + this.productId);
-      checkField = new InputField('hidden', TabEditorExtension.existsElement);
+      checkField = new InputField('hidden', TabEditorExtension.existsElement, TabEditorExtension.existsElement);
       checkField.render(form);
       tabsCard = new TabsCard(this.productId);
       renderResult = tabsCard.render(form);
-      form.on('submit', function(e) {
-        return tabsCard.save().then(function(res) {
-          return Logger.showMessage("Saved the things");
-        });
-      });
-      form.on('change', function(e) {
-        if ($("form#edit_product_" + this.productId).find("input[name='" + TabEditorExtension.existsElement + "']").length <= 0) {
-          return window.setTimeout(this.load, 100);
-        }
-      });
+      form.on('submit', (function(_this) {
+        return function(e) {
+          return tabsCard.save().then(function(res) {
+            return Logger.showMessage("Saved the things");
+          });
+        };
+      })(this));
+      form.on('change', (function(_this) {
+        return function(e) {
+          if ($(("form#edit_product_" + _this.productId + " #" + TabEditorExtension.existsElement).length <= 0)) {
+            return window.setTimeout(_this.load, 100);
+          }
+        };
+      })(this));
       if (renderResult && typeof renderResult.then === 'function') {
-        renderResult.then(function(result) {
-          Logger.showMessage("Loaded the tab editor for product id " + this.productId);
-          return promise.resolve();
-        });
+        renderResult.then((function(_this) {
+          return function(result) {
+            Logger.showMessage("Loaded the tab editor for product id " + _this.productId);
+            return promise.resolve();
+          };
+        })(this));
       } else {
         Logger.showMessage("Loaded the tab editor for product id " + this.productId);
         promise.resolve();

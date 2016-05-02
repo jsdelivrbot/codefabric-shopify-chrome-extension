@@ -20,25 +20,23 @@ namespace 'CodeFabric.Chrome.Products', (ns) ->
 
       form = $ "form#edit_product_#{@productId}"
 
-      checkField = new InputField 'hidden', TabEditorExtension.existsElement
+      checkField = new InputField 'hidden', TabEditorExtension.existsElement, TabEditorExtension.existsElement
       checkField.render form
 
       tabsCard = new TabsCard(@productId)
       renderResult = tabsCard.render form
 
-      form.on 'submit', (e) ->
+      form.on 'submit', (e) =>
         tabsCard.save()
-                .then (res) ->
+                .then (res) =>
                   Logger.showMessage "Saved the things"
 
-      form.on 'change', (e) ->
-        if $ "form#edit_product_#{@productId}"
-              .find "input[name='#{TabEditorExtension.existsElement}']"
-              .length <= 0
+      form.on 'change', (e) =>
+        if $ "form#edit_product_#{@productId} ##{TabEditorExtension.existsElement}".length <= 0
           window.setTimeout @load, 100
 
       if renderResult and typeof renderResult.then == 'function'
-        renderResult.then (result) ->
+        renderResult.then (result) =>
           Logger.showMessage "Loaded the tab editor for product id #{@productId}"
           promise.resolve()
       else
