@@ -12817,8 +12817,8 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     }
 
     TabsCard.prototype.render = function(parent) {
-      var cardsCell, getOperation, promise;
-      this.tabsCard = new Card('tabs-editor', 'Tabs', [new Button('add-tab', 'Add a new tab', onAddTabClick), new Button('tab-order', 'Change tab order', onReorderTabsClick)]);
+      var cardsCell, getOperation, promise, tabsCard;
+      tabsCard = new Card('tabs-editor', 'Tabs', [new Button('add-tab', 'Add a new tab', onAddTabClick), new Button('tab-order', 'Change tab order', onReorderTabsClick)]);
       cardsCell = parent.find('div.section .next-card.images');
       tabsCard.addContent(new InputField('hidden', 'tabs-deleted'));
       promise = $.Deferred();

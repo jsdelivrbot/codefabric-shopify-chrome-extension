@@ -17,7 +17,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       super()
 
     render: (parent) =>
-      @tabsCard = new Card 'tabs-editor', 
+      tabsCard = new Card 'tabs-editor', 
                            'Tabs',
                            [
                              (new Button 'add-tab',
