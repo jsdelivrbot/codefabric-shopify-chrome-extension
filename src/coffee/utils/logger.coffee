@@ -1,9 +1,14 @@
-define ['shopify'], (shopify) ->
-
+namespace 'CodeFabric.Utils', (ns) ->
   class Logger
 
     @showMessage: (message) ->
-      shopify.Flash.notice message
+      Shopify = using 'Shopify'
+      console.log message
+      if (Shopify.Flash)
+      	Shopify.Flash.notice message
 
     @showError: (message) ->
-      shopify.Flash.error message
+      Shopify = using 'Shopify'
+      console.error message
+      if (Shopify.Flash)
+        Shopify.Flash.error message

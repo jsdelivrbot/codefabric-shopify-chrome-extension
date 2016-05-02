@@ -1,12 +1,10 @@
-define ['jquery', 'shopify', 'utils/logger'], (jquery, shopify, logger) ->
+namespace 'CodeFabric.Shopify', (ns) ->
 
   class Api
     @isProcessing = false
     @queue = []
 
-    constructor: ->
-
-    execute: (operation) ->
+    @execute: (operation) ->
       Api.queue.push operation
 
       if not Api.isProcessing
@@ -14,25 +12,33 @@ define ['jquery', 'shopify', 'utils/logger'], (jquery, shopify, logger) ->
 
       return
 
-    processQueue = () ->
+    @processQueue = () ->
+      Shopify = using 'Shopify'
+      Logger = using 'CodeFabric.Utils.Logger'
+      $ = using 'jQuery'
+
       if Api.queue.length > 0
-        shopify.Loading.start()
+        Shopify.Loading.start()
         Api.isProcessing = true
 
         operation = Api.queue.pop()
-        logger.showMessage "Doing the thing: #{operation.name}"
+        Logger.showMessage "Doing the thing: #{operation.name}"
 
-        promise = jquery.ajax operation.toAjax()
+        promise = $.ajax operation.toAjax()
         promise.done (r) ->
+          if operation.onDone != null 
+            operation.onDone r
         promise.fail (e) ->
-          logger.showError e.responseText
+          Logger.showError e.responseText
+          if operation.onError != null
+            operation.onError e
 
         promise.always () =>
-          @processQueue()
+          Api.processQueue()
 
       else
-        logger.showMessage('Done all the things!')
-        shopify.Loading.stop()
+        Logger.showMessage('Done all the things!')
+        Shopify.Loading.stop()
         Api.isProcessing = false
 
       return

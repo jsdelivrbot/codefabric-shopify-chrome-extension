@@ -1,13 +1,15 @@
-define ['shopify/operation'], (Operation) ->
+namespace 'CodeFabric.Shopify.Operations', (ns) ->
+
+  Operation = using 'CodeFabric.Shopify.Operation'
 
   class CreateMetafield extends Operation
 
-    constructor: (@namespace, @key, @value, @type) ->
-      super "Adding metafield #{@namespace}.#{@key} = #{@value}",
+    constructor: (@fieldNamespace, @key, @value, @type) ->
+      super "Adding metafield #{@fieldNamespace}.#{@key} = #{@value}",
         'metafields', 
         {
           metafield:
-            namespace: @namespace,
+            namespace: @fieldNamespace,
             key: @key,
             value: @value,
             type: @type ? 'string'

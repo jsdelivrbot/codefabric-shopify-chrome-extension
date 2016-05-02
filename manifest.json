@@ -1,7 +1,7 @@
 {
    "background": {
       "persistent": false,
-      "scripts": [ "lib/require.js", "scripts/main.js" ]
+      "scripts": [ "scripts/load.js" ]
    },
    "browser_action": {
       "default_icon": "images/icon-16.png",

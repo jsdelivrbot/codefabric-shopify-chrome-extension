@@ -1,6 +1,6 @@
-define ['shopify/operation'], (Operation) ->
+namespace 'CodeFabric.Shopify.Operations', (ns) ->
 
-  class DeleteProductMetafield extends Operation
+  class DeleteProductMetafield extends  CodeFabric.Shopify.Operation
 
     constructor: (@productId, @id) ->
       super "Deleting metafield #{@id}",

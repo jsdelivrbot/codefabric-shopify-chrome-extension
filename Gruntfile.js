@@ -9,6 +9,7 @@ module.exports = function(grunt) {
     watch: {
       files: [
         'Gruntfile.js',
+        'src/*.js',
         'src/coffee/*.coffee',
         'src/coffee/**/*.coffee',
         'src/sass/*.scss',
@@ -16,8 +17,12 @@ module.exports = function(grunt) {
       ],
       tasks: [
         // 'sass:dev',
+        'clean',
         'coffee:compile',
-        'bower_concat'
+        'bower_concat',
+        'concat',
+        'copy',
+       // 'clean:build'
       ],
       options: {
         livereload: true,
@@ -45,7 +50,7 @@ module.exports = function(grunt) {
       compile: {
         options: {
           bare: true,
-          sourceMap: true
+          sourceMap: false
         },
         expand: true,
         flatten: false,
@@ -54,15 +59,47 @@ module.exports = function(grunt) {
           '**/*.coffee'
         ],
         cwd: 'src/coffee',
-        dest: 'scripts',
+        dest: 'build/src',
         ext: '.js'
       }
     },
     bower_concat: {
       concat: {
-        dest: 'scripts/vendor.js'
+        dest: 'build/vendor.js'
       }
     },
+    concat: {
+      js: {
+        options: {
+          process: function (src, filepath) {
+            if (filepath == 'src/namespace.js') {
+               return src;
+            }
+            else {
+              return '(function (using, namespace) { ' + src + ' })(using, namespace);';
+            }
+          }
+        },
+        src: [
+          'build/vendor.js',
+          'src/namespace.js',
+          'build/src/**/*.js',
+          'build/src/*.js',
+          'src/run.js'
+        ],
+        dest: 'scripts/shopify-extension.js'
+      }
+    },
+    clean: {
+      build: [ 'build' ],
+      scripts: [ 'scripts' ]
+    },
+    copy: {
+      loader: {
+        src: 'src/load.js',
+        dest: 'scripts/load.js'
+      }
+    }
     // autoprefixer: {
     //   options: {
     //     browsers: ['> 1%', 'last 2 versions', 'Firefox ESR', 'Opera 12.1', 'ie 9']
