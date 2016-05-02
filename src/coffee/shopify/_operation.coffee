@@ -7,6 +7,6 @@ namespace 'CodeFabric.Shopify', (ns) ->
       return { 
         url: "/admin/#{@url}",
         method: @method,
-        dataType: 'application/json',
+        dataType: 'json',
         data: @data
       }
