@@ -12091,10 +12091,10 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       if (render) {
         sibling.before(this.element);
       }
+      this.isRendered = true;
       if (!this.isVisible) {
-        this.hide();
+        return this.hide();
       }
-      return this.isRendered = true;
     };
 
     Html.prototype.renderAfter = function(sibling, render) {
@@ -12104,10 +12104,10 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       if (render) {
         sibling.after(this.element);
       }
+      this.isRendered = true;
       if (!this.isVisible) {
-        this.hide();
+        return this.hide();
       }
-      return this.isRendered = true;
     };
 
     Html.prototype.render = function(parent, render) {
@@ -12117,10 +12117,10 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       if (render) {
         parent.append(this.element);
       }
+      this.isRendered = true;
       if (!this.isVisible) {
-        this.hide();
+        return this.hide();
       }
-      return this.isRendered = true;
     };
 
     Html.prototype.show = function() {
@@ -12692,12 +12692,15 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       if (this.type === 'snippet') {
         snippetRadio.check();
         this.snippetSelector.show();
+        this.snippetSelector.value((this.value.match(TabEditor.snippetRegex))[1]);
       } else if (this.type === 'page') {
         pageRadio.check();
         this.pageSelector.show();
+        this.pageSelector.value((this.value.match(TabEditor.pageRegex))[1]);
       } else {
         textRadio.check();
         this.textArea.show();
+        this.textArea.value(this.value);
       }
       snippetRadio.onChange = (function(_this) {
         return function(e) {

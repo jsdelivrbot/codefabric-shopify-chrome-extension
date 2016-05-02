@@ -14,28 +14,28 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       if render
         sibling.before @element
 
+      @isRendered = true
+
       if not @isVisible
         @hide()
-
-      @isRendered = true
 
     renderAfter: (sibling, render = true) =>
       if render
         sibling.after @element
 
+      @isRendered = true
+
       if not @isVisible
         @hide()
-
-      @isRendered = true
 
     render: (parent, render = true) =>
       if render
         parent.append @element
 
+      @isRendered = true
+
       if not @isVisible
         @hide()
-
-      @isRendered = true
 
     show: () =>
       @isVisible = true

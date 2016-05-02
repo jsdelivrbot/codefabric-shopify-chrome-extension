@@ -73,12 +73,15 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       if @type == 'snippet'
         snippetRadio.check()
         @snippetSelector.show()
+        @snippetSelector.value (@value.match TabEditor.snippetRegex)[1]
       else if @type == 'page'
         pageRadio.check()
         @pageSelector.show()
+        @pageSelector.value (@value.match TabEditor.pageRegex)[1]
       else
         textRadio.check()
         @textArea.show()
+        @textArea.value @value
 
       snippetRadio.onChange = (e) =>
         @pageSelector.hide()
