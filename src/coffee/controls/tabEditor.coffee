@@ -53,8 +53,6 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       radioGroup.addCell textRadio, true
 
       headerGrid.addCell radioGroup, true
-      
-      headerGrid.render @element
 
       @snippetSelector = new Dropdown 'snippets', 'snippets', null, null, TabEditor.getSnippets
       @snippetSelector.hide()
@@ -67,8 +65,6 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       @textArea = new TextArea 30, 10
       @textArea.hide()
       @textArea.render @element
-
-      parent.append @element
 
       if @type == 'snippet'
         snippetRadio.check()
@@ -107,6 +103,10 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
         if textRadio.isChecked()
           @textArea.show()
           @type = 'text'
+
+
+      headerGrid.render @element
+      parent.append @element
 
       super parent, false
 

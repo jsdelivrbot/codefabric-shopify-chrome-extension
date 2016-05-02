@@ -12682,7 +12682,6 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       radioGroup.addCell(pageRadio, true);
       radioGroup.addCell(textRadio, true);
       headerGrid.addCell(radioGroup, true);
-      headerGrid.render(this.element);
       this.snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
       this.snippetSelector.hide();
       this.snippetSelector.render(this.element);
@@ -12692,7 +12691,6 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.textArea = new TextArea(30, 10);
       this.textArea.hide();
       this.textArea.render(this.element);
-      parent.append(this.element);
       if (this.type === 'snippet') {
         snippetRadio.check();
         this.snippetSelector.show();
@@ -12736,6 +12734,8 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
           }
         };
       })(this);
+      headerGrid.render(this.element);
+      parent.append(this.element);
       return TabEditor.__super__.render.call(this, parent, false);
     };
 
