@@ -29,7 +29,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       GetSnippets = using 'CodeFabric.Shopify.Operations.GetSnippets'
       GetPages = using 'CodeFabric.Shopify.Operations.GetPages'
       UpdateProductMetafield = using 'CodeFabric.Shopify.Operations.UpdateProductMetafield'
-      CreateProductMetafied = using 'CodeFabric.Shopify.Operations.CreateProductMetafied'
+      CreateProductMetafied = using 'CodeFabric.Shopify.Operations.CreateProductMetafield'
 
       @handle = @name.toLowerCase().replace(/ /g, '-')
 

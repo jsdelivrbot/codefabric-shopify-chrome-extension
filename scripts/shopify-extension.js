@@ -12628,7 +12628,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       GetSnippets = using('CodeFabric.Shopify.Operations.GetSnippets');
       GetPages = using('CodeFabric.Shopify.Operations.GetPages');
       UpdateProductMetafield = using('CodeFabric.Shopify.Operations.UpdateProductMetafield');
-      CreateProductMetafied = using('CodeFabric.Shopify.Operations.CreateProductMetafied');
+      CreateProductMetafied = using('CodeFabric.Shopify.Operations.CreateProductMetafield');
       this.handle = this.name.toLowerCase().replace(/ /g, '-');
       TabEditor.__super__.constructor.call(this);
     }
