@@ -12337,9 +12337,9 @@ if (!namespace) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function() {
-    var $, Api, ChildGrid, GetPAges, GetSnippets, GetTheme, Grid, Html, Logger;
+    var $, Api, ChildGrid, Dropdown, GetPages, GetSnippets, GetTheme, Grid, Html, Logger, TextArea;
 
-    $ = Grid = ChildGrid = Html = Logger = Api = GetSnippets = GetTheme = GetPAges = null;
+    $ = Grid = ChildGrid = Html = Dropdown = TextArea = Logger = Api = GetSnippets = GetTheme = GetPages = null;
 
     TabEditor.snippets = null;
 
@@ -12360,6 +12360,8 @@ if (!namespace) {
       Grid = using('CodeFabric.Shopify.Controls.Grid');
       ChildGrid = using('CodeFabric.Shopify.Controls.ChildGrid');
       Html = using('CodeFabric.Shopify.Controls.Html');
+      Dropdown = using('CodeFabric.Shopify.Controls.Dropdown');
+      TextArea = using('CodeFabric.Shopify.Controls.TextArea');
       Api = using('CodeFabric.Shopify.Api');
       GetTheme = using('CodeFabric.Shopify.Operations.GetTheme');
       GetSnippets = using('CodeFabric.Shopify.Operations.GetSnippets');
