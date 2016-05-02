@@ -12221,12 +12221,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     Dropdown.optionHtml = '<option></option>';
 
-    function Dropdown(cssClass, name, keyField, valueField, dataFunc) {
+    function Dropdown(cssClass, name, keyField, valueField, data1) {
       this.cssClass = cssClass;
       this.name = name;
       this.keyField = keyField;
       this.valueField = valueField;
-      this.dataFunc = dataFunc;
+      this.data = data1;
       this.appendOptions = bind(this.appendOptions, this);
       $ = using('jQuery');
     }
@@ -12234,15 +12234,14 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     Dropdown.prototype.render = function(parent) {
       var dropdown;
       dropdown = $(Dropdown.html).attr('name', this.name).addClass(this.cssClass);
-      if (this.data) {
-        this.appendOptions(dropdown, this.data);
-      } else {
-        this.dataFunc().then((function(_this) {
-          return function(dropdown, data) {
-            _this.data = data;
-            return _this.appendOptions(dropdown, _this.data);
+      if (typeof this.data === 'function') {
+        this.data().then((function(_this) {
+          return function(result) {
+            return _this.appendOptions(dropdown, result);
           };
         })(this));
+      } else {
+        this.appendOptions(dropdown, this.data);
       }
       return parent.append(dropdown);
     };
