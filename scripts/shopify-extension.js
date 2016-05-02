@@ -12169,6 +12169,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.headerButtons = headerButtons;
       this.renderBefore = bind(this.renderBefore, this);
       this.render = bind(this.render, this);
+      this.addContent = bind(this.addContent, this);
       $ = using('jQuery');
       Html = using('CodeFabric.Shopify.Controls.Html');
       Grid = using('CodeFabric.Shopify.Controls.Grid');
@@ -12195,17 +12196,17 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     renderInternal = function() {
       var button, buttonsGrid, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
-      this.element = $(Card.cardHtml).addClass(this.cssClass);
+      Card.element = $(Card.cardHtml).addClass(Card.cssClass);
       header = $(Card.cardHeader);
-      this.element.append(header);
-      headerTextHtml = new Html($(Card.cardHeaderTitle).text(this.headerText));
-      if (!this.headerButtons || this.headerButtons.length === 0) {
+      Card.element.append(header);
+      headerTextHtml = new Html($(Card.cardHeaderTitle).text(Card.headerText));
+      if (!Card.headerButtons || Card.headerButtons.length === 0) {
         headerTextHtml.render(header);
       } else {
         headerGrid = new Grid();
         headerGrid.addCell(headerTextHtml);
         buttonsGrid = new ChildGrid();
-        ref = this.headerButtons;
+        ref = Card.headerButtons;
         for (i = 0, len = ref.length; i < len; i++) {
           button = ref[i];
           buttonsGrid.addCell(button, true);
@@ -12214,12 +12215,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
         headerGrid.render(header);
       }
       contentWrapper = $(Card.cardContentWrapper);
-      ref1 = this.cardContent;
+      ref1 = Card.cardContent;
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         content = ref1[j];
         content.render(contentWrapper);
       }
-      return this.element.append(contentWrapper);
+      return Card.element.append(contentWrapper);
     };
 
     return Card;

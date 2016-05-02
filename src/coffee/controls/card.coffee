@@ -42,7 +42,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 # </div>"
 
 
-    addContent: (content) ->
+    addContent: (content) =>
       @cardContent.push content
 
     render: (parent) =>
@@ -57,7 +57,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
       super sibling, false
 
-    renderInternal = () ->
+    renderInternal = () =>
 
       @element = $ Card.cardHtml
                .addClass @cssClass
