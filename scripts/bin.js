@@ -12939,7 +12939,7 @@ namespace('CodeFabric.Shopify.Operations', function(ns) {
       this.themeId = themeId;
       this.onDone = onDone;
       this.onError = onError != null ? onError : null;
-      GetSnippets.__super__.constructor.call(this, "Getting snippets", "themes/@themeId/assets.json", this.onDone, this.onError);
+      GetSnippets.__super__.constructor.call(this, "Getting snippets", "themes/" + this.themeId + "/assets.json", this.onDone, this.onError);
     }
 
     return GetSnippets;
