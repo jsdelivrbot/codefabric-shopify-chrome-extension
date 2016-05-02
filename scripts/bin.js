@@ -12470,9 +12470,9 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function() {
-    var $, Api, ChildGrid, Dropdown, GetPages, GetSnippets, GetTheme, Grid, Html, Logger, TextArea;
+    var $, Api, ChildGrid, Dropdown, GetPages, GetSnippets, GetTheme, Grid, Html, Logger, RadioButton, TextArea;
 
-    $ = Grid = ChildGrid = Html = Dropdown = TextArea = RadioButton(null);
+    $ = Grid = ChildGrid = Html = Dropdown = TextArea = RadioButton = null;
 
     Logger = Api = GetSnippets = GetTheme = GetPages = null;
 
