@@ -12488,16 +12488,26 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
-  return TabEditor = (function() {
+  return TabEditor = (function(superClass) {
     var $, Api, ChildGrid, Dropdown, GetPages, GetSnippets, GetTheme, Grid, Html, Logger, RadioButton, TextArea;
+
+    extend(TabEditor, superClass);
 
     $ = Grid = ChildGrid = Html = Dropdown = TextArea = RadioButton = null;
 
     Logger = Api = GetSnippets = GetTheme = GetPages = null;
 
+    TabEditor.snippetPromise = null;
+
     TabEditor.snippets = null;
+
+    TabEditor.pagesPromise = null;
 
     TabEditor.pages = null;
 
@@ -12511,6 +12521,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.name = name;
       this.type = type;
       this.value = value1;
+      this.render = bind(this.render, this);
       $ = using('jQuery');
       Logger = using('CodeFabric.Utils.Logger');
       Grid = using('CodeFabric.Shopify.Controls.Grid');
@@ -12524,11 +12535,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       GetSnippets = using('CodeFabric.Shopify.Operations.GetSnippets');
       GetPages = using('CodeFabric.Shopify.Operations.GetPages');
       this.handle = this.name.toLowerCase().replace(/ /g, '-');
+      TabEditor.__super__.constructor.call(this);
     }
 
     TabEditor.prototype.render = function(parent) {
-      var headerGrid, pageRadio, pageSelector, radioGroup, snippetRadio, snippetSelector, textArea, textRadio, wrapper;
-      wrapper = $(TabEditor.contentWrapper);
+      var headerGrid, pageRadio, pageSelector, radioGroup, snippetRadio, snippetSelector, textArea, textRadio;
+      this.element = $(TabEditor.contentWrapper);
       headerGrid = new Grid();
       headerGrid.addCell(new Html("<label for=\"tab-" + this.handle + "\">" + this.name + "</label>"));
       snippetRadio = new RadioButton('Snippet', 'snippet-radio', "tab-type-" + this.handle, "tab-type-" + this.handle + "-snippet", "snippet");
@@ -12539,7 +12551,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       radioGroup.addCell(pageRadio, true);
       radioGroup.addCell(textRadio, true);
       headerGrid.addCell(radioGroup);
-      headerGrid.render(wrapper);
+      headerGrid.render(this.element);
       snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
       pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
       textArea = new TextArea(30, 10);
@@ -12564,52 +12576,55 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
           return textArea.show();
         }
       };
-      snippetSelector.render(wrapper);
-      pageSelector.render(wrapper);
-      textArea.render(wrapper);
-      return parent.append(wrapper);
+      snippetSelector.render(this.element);
+      pageSelector.render(this.element);
+      textArea.render(this.element);
+      parent.append(this.element);
+      return TabEditor.__super__.render.call(this, parent, false);
     };
 
     TabEditor.getSnippets = function() {
-      var promise;
-      promise = $.Deferred();
-      if (TabEditor.snippets != null) {
-        promise.resolve(TabEditor.snippets);
-      } else {
-        Api.execute(new GetTheme(function(result) {
-          return Api.execute(new GetSnippets(result.themes[0].id, function(result2) {
-            var e;
-            TabEditor.snippets = (function() {
-              var i, len, ref, results;
-              ref = result2.assets;
-              results = [];
-              for (i = 0, len = ref.length; i < len; i++) {
-                e = ref[i];
-                if (/^snippets\/.+\.liquid$/i.test(e.key)) {
-                  results.push(e.key.match(/^snippets\/(.+)\.liquid$/i)[1]);
+      if (!TabEditor.snippetPromise) {
+        TabEditor.snippetPromise = $.Deferred();
+        if (TabEditor.snippets != null) {
+          TabEditor.snippetPromise.resolve(TabEditor.snippets);
+        } else {
+          Api.execute(new GetTheme(function(result) {
+            return Api.execute(new GetSnippets(result.themes[0].id, function(result2) {
+              var e;
+              TabEditor.snippets = (function() {
+                var i, len, ref, results;
+                ref = result2.assets;
+                results = [];
+                for (i = 0, len = ref.length; i < len; i++) {
+                  e = ref[i];
+                  if (/^snippets\/.+\.liquid$/i.test(e.key)) {
+                    results.push(e.key.match(/^snippets\/(.+)\.liquid$/i)[1]);
+                  }
                 }
-              }
-              return results;
-            })();
-            return promise.resolve(TabEditor.snippets);
+                return results;
+              })();
+              return TabEditor.snippetPromise.resolve(TabEditor.snippets);
+            }));
           }));
-        }));
+        }
       }
-      return promise;
+      return TabEditor.snippetPromise;
     };
 
     TabEditor.getPages = function() {
-      var promise;
-      promise = $.Deferred();
-      if (TabEditor.pages != null) {
-        promise.resolve(TabEditor.pages);
-      } else {
-        Api.execute(new GetPages(function(result) {
-          TabEditor.pages = result.pages;
-          return promise.resolve(TabEditor.pages);
-        }));
+      if (!TabEditor.pagesPromise) {
+        TabEditor.pagesPromise = $.Deferred();
+        if (TabEditor.pages != null) {
+          TabEditor.pagesPromise.resolve(TabEditor.pages);
+        } else {
+          Api.execute(new GetPages(function(result) {
+            TabEditor.pages = result.pages;
+            return TabEditor.pagesPromise.resolve(TabEditor.pages);
+          }));
+        }
       }
-      return promise;
+      return TabEditor.pagesPromise;
     };
 
     TabEditor.getType = function(value) {
@@ -12626,7 +12641,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     return TabEditor;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
@@ -12679,10 +12694,16 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
   })();
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TextArea;
-  return TextArea = (function() {
+  return TextArea = (function(superClass) {
     var $;
+
+    extend(TextArea, superClass);
 
     $ = null;
 
@@ -12692,21 +12713,23 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       this.columns = columns;
       this.rows = rows;
       this.content = content;
+      this.render = bind(this.render, this);
       $ = using('jQuery');
+      TextArea.__super__.constructor.call(this);
     }
 
     TextArea.prototype.render = function(parent) {
-      var textarea;
-      textarea = $(TextArea.html).attr({
+      this.element = $(TextArea.html).attr({
         rows: this.rows,
         size: this.columns
       }).val(this.content);
-      return parent.append(textarea);
+      parent.append(this.element);
+      return TextArea.__super__.render.call(this, parent, false);
     };
 
     return TextArea;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Chrome', function(ns) {
