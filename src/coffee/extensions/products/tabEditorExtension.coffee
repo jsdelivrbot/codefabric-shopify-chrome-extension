@@ -16,6 +16,9 @@ namespace 'CodeFabric.Chrome.Products', (ns) ->
 
 
     load: =>
+      if $("form#edit_product_#{@productId} ##{TabEditorExtension.existsElement}").length > 0
+        return
+        
       promise = super()
 
       form = $ "form#edit_product_#{@productId}"
@@ -32,7 +35,7 @@ namespace 'CodeFabric.Chrome.Products', (ns) ->
                   Logger.showMessage "Saved the things"
 
       form.on 'change', (e) =>
-        if $ "form#edit_product_#{@productId} ##{TabEditorExtension.existsElement}".length <= 0
+        if $("form#edit_product_#{@productId} ##{TabEditorExtension.existsElement}").length <= 0
           window.setTimeout @load, 100
 
       if renderResult and typeof renderResult.then == 'function'

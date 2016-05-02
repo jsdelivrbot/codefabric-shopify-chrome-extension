@@ -13059,6 +13059,9 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
 
     TabEditorExtension.prototype.load = function() {
       var checkField, form, promise, renderResult, tabsCard;
+      if ($("form#edit_product_" + this.productId + " #" + TabEditorExtension.existsElement).length > 0) {
+        return;
+      }
       promise = TabEditorExtension.__super__.load.call(this);
       form = $("form#edit_product_" + this.productId);
       checkField = new InputField('hidden', TabEditorExtension.existsElement, TabEditorExtension.existsElement);
@@ -13074,7 +13077,7 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
       })(this));
       form.on('change', (function(_this) {
         return function(e) {
-          if ($(("form#edit_product_" + _this.productId + " #" + TabEditorExtension.existsElement).length <= 0)) {
+          if ($("form#edit_product_" + _this.productId + " #" + TabEditorExtension.existsElement).length <= 0) {
             return window.setTimeout(_this.load, 100);
           }
         };
