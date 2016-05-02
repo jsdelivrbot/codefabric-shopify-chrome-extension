@@ -12062,10 +12062,57 @@ if (!namespace) {
   };
 
 }
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
+  var Html;
+  return Html = (function() {
+    var $;
+
+    $ = null;
+
+    function Html(content) {
+      this.content = content;
+      this.hide = bind(this.hide, this);
+      this.show = bind(this.show, this);
+      this.render = bind(this.render, this);
+      $ = using('jQuery');
+      this.element = this.content ? $(this.content) : null;
+      this.isRendered = false;
+    }
+
+    Html.prototype.render = function(parent, render) {
+      if (render == null) {
+        render = true;
+      }
+      if (render) {
+        parent.append(this.element);
+      }
+      return this.isRendered = true;
+    };
+
+    Html.prototype.show = function() {
+      return this.element.show();
+    };
+
+    Html.prototype.hide = function() {
+      return this.element.hide();
+    };
+
+    return Html;
+
+  })();
+});
+ })(using, namespace);
+(function (using, namespace) { var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Card;
-  return Card = (function() {
+  return Card = (function(superClass) {
     var $, ChildGrid, Grid, Html;
+
+    extend(Card, superClass);
 
     $ = Html = Grid = ChildGrid = null;
 
@@ -12086,6 +12133,7 @@ if (!namespace) {
       Grid = using('CodeFabric.Shopify.Controls.Grid');
       ChildGrid = using('CodeFabric.Shopify.Controls.ChildGrid');
       this.cardContent = [];
+      Card.__super__.constructor.call(this);
     }
 
     Card.prototype.addContent = function(content) {
@@ -12093,10 +12141,10 @@ if (!namespace) {
     };
 
     Card.prototype.render = function(parent) {
-      var button, buttonsGrid, card, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
-      card = $(Card.cardHtml).addClass(this.cssClass);
+      var button, buttonsGrid, content, contentWrapper, header, headerGrid, headerTextHtml, i, j, len, len1, ref, ref1;
+      this.element = $(Card.cardHtml).addClass(this.cssClass);
       header = $(Card.cardHeader);
-      card.append(header);
+      this.element.append(header);
       headerTextHtml = new Html($(Card.cardHeaderTitle).text(this.headerText));
       if (!this.headerButtons || this.headerButtons.length === 0) {
         headerTextHtml.render(header);
@@ -12118,19 +12166,26 @@ if (!namespace) {
         content = ref1[j];
         content.render(contentWrapper);
       }
-      card.append(contentWrapper);
-      return parent.append(card);
+      this.element.append(contentWrapper);
+      parent.append(this.element);
+      return Card.__super__.render.call(this, parent, false);
     };
 
     return Card;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var Button;
-  return Button = (function() {
+  return Button = (function(superClass) {
     var $;
+
+    extend(Button, superClass);
 
     $ = null;
 
@@ -12140,26 +12195,40 @@ if (!namespace) {
       this.cssClass = cssClass;
       this.text = text;
       this.callback = callback;
+      this.buttonCallback = bind(this.buttonCallback, this);
       $ = using('jQuery');
+      Button.__super__.constructor.call(this);
     }
 
+    Button.prototype.buttonCallback = function(e) {
+      if (this.callback) {
+        return this.callback(e);
+      }
+    };
+
     Button.prototype.render = function(parent) {
-      var button;
-      button = $(Button.buttonHtml);
-      button.addClass(this.cssClass).text(this.text);
-      parent.append(button);
-      return button.on('click', this.callback);
+      this.element = $(Button.buttonHtml);
+      this.element.addClass(this.cssClass).text(this.text);
+      parent.append(this.element);
+      this.element.on('click', this.buttonCallback);
+      return Button.__super__.render.call(this, parent, false);
     };
 
     return Button;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+(function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+namespace('CodeFabric.Shopify.Controls', function(ns) {
   var ChildGrid;
-  return ChildGrid = (function() {
+  return ChildGrid = (function(superClass) {
     var $;
+
+    extend(ChildGrid, superClass);
 
     $ = null;
 
@@ -12170,42 +12239,56 @@ if (!namespace) {
     ChildGrid.cellHtmlNoFlex = '<div class="next-grid__cell next-grid__cell--no-flex"></div>';
 
     function ChildGrid() {
+      this.render = bind(this.render, this);
+      this.addCell = bind(this.addCell, this);
       $ = using('jQuery');
       this.cells = [];
+      ChildGrid.__super__.constructor.call(this);
     }
 
     ChildGrid.prototype.addCell = function(cellContent, noFlex, cssClass) {
-      return this.cells.push({
+      var cell;
+      cell = {
         content: cellContent,
         noFlex: noFlex,
         cssClass: cssClass
-      });
+      };
+      this.cells.push(cell);
+      if (this.isRendered) {
+        return this.renderCell(this.element, cell);
+      }
     };
 
     ChildGrid.prototype.render = function(parent) {
-      var cell, element, grid, i, len, ref;
-      grid = $(ChildGrid.html);
+      var cell, i, len, ref;
+      this.element = $(ChildGrid.html);
       ref = this.cells;
       for (i = 0, len = ref.length; i < len; i++) {
         cell = ref[i];
-        element = null;
-        if (cell.noFlex) {
-          element = $(ChildGrid.cellHtmlNoFlex);
-        } else {
-          element = $(ChildGrid.cellHtml);
-        }
-        if (cell.cssClass) {
-          element.addClass(cell.cssClass);
-        }
-        cell.content.render(element);
-        grid.append(element);
+        this.renderCell(this.element, cell);
       }
-      return parent.append(grid);
+      parent.append(this.element);
+      return ChildGrid.__super__.render.call(this, parent, false);
+    };
+
+    ChildGrid.prototype.renderCell = function(grid, cell) {
+      var element;
+      element = null;
+      if (cell.noFlex) {
+        element = $(ChildGrid.cellHtmlNoFlex);
+      } else {
+        element = $(ChildGrid.cellHtml);
+      }
+      if (cell.cssClass) {
+        element.addClass(cell.cssClass);
+      }
+      cell.content.render(element);
+      return grid.append(element);
     };
 
     return ChildGrid;
 
-  })();
+  })(CodeFabric.Shopify.Controls.Html);
 });
  })(using, namespace);
 (function (using, namespace) { var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -12221,29 +12304,33 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 
     Dropdown.optionHtml = '<option></option>';
 
-    function Dropdown(cssClass, name, keyField, valueField, data1) {
+    function Dropdown(cssClass, name, keyField, valueField, data1, onChange) {
       this.cssClass = cssClass;
       this.name = name;
       this.keyField = keyField;
       this.valueField = valueField;
       this.data = data1;
+      this.onChange = onChange;
+      this.onValueChange = bind(this.onValueChange, this);
       this.appendOptions = bind(this.appendOptions, this);
+      this.render = bind(this.render, this);
       $ = using('jQuery');
+      this.element = null;
     }
 
     Dropdown.prototype.render = function(parent) {
-      var dropdown;
-      dropdown = $(Dropdown.html).attr('name', this.name).addClass(this.cssClass);
+      this.element = $(Dropdown.html).attr('name', this.name).addClass(this.cssClass);
       if (typeof this.data === 'function') {
         this.data().then((function(_this) {
           return function(result) {
-            return _this.appendOptions(dropdown, result);
+            return _this.appendOptions(_this.element, result);
           };
         })(this));
       } else {
-        this.appendOptions(dropdown, this.data);
+        this.appendOptions(this.element, this.data);
       }
-      return parent.append(dropdown);
+      parent.append(this.element);
+      return this.element.on('change', this.onValueChange);
     };
 
     Dropdown.prototype.appendOptions = function(dropdown, data) {
@@ -12251,9 +12338,15 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       results = [];
       for (i = 0, len = data.length; i < len; i++) {
         value = data[i];
-        results.push(dropdown.append($(Dropdown.optionHtml).text(this.valuefield ? value[this.valueField] : value).attr('value', this.keyField ? value[this.keyField] : value)));
+        results.push(dropdown.append($(Dropdown.optionHtml).text(this.valueField ? value[this.valueField] : value).attr('value', this.keyField ? value[this.keyField] : value)));
       }
       return results;
+    };
+
+    Dropdown.prototype.onValueChange = function(e) {
+      if (this.onChange) {
+        return this.onChange(e);
+      }
     };
 
     return Dropdown;
@@ -12314,22 +12407,6 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
-  var Html;
-  return Html = (function() {
-    function Html(content) {
-      this.content = content;
-    }
-
-    Html.prototype.render = function(parent) {
-      return parent.append(this.content);
-    };
-
-    return Html;
-
-  })();
-});
- })(using, namespace);
-(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var InputField;
   return InputField = (function() {
     function InputField(type, name) {
@@ -12347,11 +12424,50 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
 });
  })(using, namespace);
 (function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
+  var RadioButton;
+  return RadioButton = (function() {
+    var $;
+
+    $ = null;
+
+    RadioButton.labelHtml = '<label class="next-label next-label--inline"></label>';
+
+    RadioButton.radioHtml = '<input type="radio"></input>';
+
+    function RadioButton(label, cssClass, name, id, value) {
+      this.label = label;
+      this.cssClass = cssClass;
+      this.name = name;
+      this.id = id;
+      this.value = value;
+      $ = using('jQuery');
+    }
+
+    RadioButton.prototype.render = function(parent) {
+      return parent.append($(RadioButton.labelHtml).attr({
+        "for": this.id
+      }).text(this.label));
+    };
+
+    parent.append($(RadioButton.radioHtml).attr({
+      id: RadioButton.id,
+      name: RadioButton.name,
+      value: RadioButton.value
+    }).addClass(RadioButton.cssClasss));
+
+    return RadioButton;
+
+  })();
+});
+ })(using, namespace);
+(function (using, namespace) { namespace('CodeFabric.Shopify.Controls', function(ns) {
   var TabEditor;
   return TabEditor = (function() {
     var $, Api, ChildGrid, Dropdown, GetPages, GetSnippets, GetTheme, Grid, Html, Logger, TextArea;
 
-    $ = Grid = ChildGrid = Html = Dropdown = TextArea = Logger = Api = GetSnippets = GetTheme = GetPages = null;
+    $ = Grid = ChildGrid = Html = Dropdown = TextArea = RadioButton(null);
+
+    Logger = Api = GetSnippets = GetTheme = GetPages = null;
 
     TabEditor.snippets = null;
 
@@ -12382,11 +12498,18 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     }
 
     TabEditor.prototype.render = function(parent) {
-      var headerGrid, pageSelector, snippetSelector, textArea, wrapper;
+      var headerGrid, pageRadio, pageSelector, radioGroup, snippetRadio, snippetSelector, textArea, textRadio, wrapper;
       wrapper = $(TabEditor.contentWrapper);
       headerGrid = new Grid();
       headerGrid.addCell(new Html("<label for=\"tab-" + this.handle + "\">" + this.name + "</label>"));
-      headerGrid.addCell(new ChildGrid(), true);
+      snippetRadio = new RadioButton('Snippet', 'snippet-radio', "tab-type-" + this.handle, "tab-type-" + this.handle + "-snippet", "snippet");
+      pageRadio = new RadioButton('Page', 'page-radio', "tab-type-" + this.handle, "tab-type-" + this.handle + "-page", "page");
+      textRadio = new RadioButton('Text', 'text-radio', "tab-type-" + this.handle, "tab-type-" + this.handle + "-text", "text");
+      radioGroup = new ChildGrid();
+      radioGroup.addCell(snippetRadio, true);
+      radioGroup.addCell(pageRadio, true);
+      radioGroup.addCell(textRadio, true);
+      headerGrid.addCell(radioGroup);
       headerGrid.render(wrapper);
       snippetSelector = new Dropdown('snippets', 'snippets', null, null, TabEditor.getSnippets);
       pageSelector = new Dropdown('pages', 'pages', 'handle', 'title', TabEditor.getPages);
