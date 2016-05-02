@@ -12388,9 +12388,9 @@ if (!namespace) {
       var promise;
       promise = $.Deferred();
       if (TabEditor.snippets != null) {
-        return promise.resolve(TabEditor.snippets);
+        promise.resolve(TabEditor.snippets);
       } else {
-        return Api.execute(new GetTheme(function(result) {
+        Api.execute(new GetTheme(function(result) {
           return Api.execute(new GetSnippets(result.themes[0].id, function(result2) {
             var e;
             TabEditor.snippets = (function() {
@@ -12409,19 +12409,21 @@ if (!namespace) {
           }));
         }));
       }
+      return promise;
     };
 
     TabEditor.getPages = function() {
       var promise;
       promise = $.Deferred();
       if (TabEditor.pages != null) {
-        return promise.resolve(TabEditor.pages);
+        promise.resolve(TabEditor.pages);
       } else {
-        return Api.execute(new GetPages(function(result) {
+        Api.execute(new GetPages(function(result) {
           TabEditor.pages = result.pages;
           return promise.resolve(TabEditor.pages);
         }));
       }
+      return promise;
     };
 
     TabEditor.getType = function(value) {
