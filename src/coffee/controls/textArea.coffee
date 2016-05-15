@@ -5,7 +5,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
     @html = '<textarea class="next-input"></textarea>'
 
-    constructor: (@columns, @rows, @content) ->
+    constructor: (@columns, @rows, @content, @onChange) ->
       $ = using 'jQuery'
       @val = null
       super()
@@ -22,7 +22,13 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       if @val
         @element.val @val
 
+      @element.on 'change', @onValueChanged
+
       super parent, false
+
+    onValueChanged: (e) =>
+      if @onChange?
+        @onChange e
 
     value: (value) =>
       if value

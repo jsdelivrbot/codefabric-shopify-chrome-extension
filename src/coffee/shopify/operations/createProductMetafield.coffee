@@ -10,6 +10,6 @@ namespace 'CodeFabric.Shopify.Operations', (ns) ->
             namespace: @fieldNamespace,
             key: @key,
             value: @value,
-            type: @type ? 'string'
+            value_type: @type ? 'string'
         },
         'POST'

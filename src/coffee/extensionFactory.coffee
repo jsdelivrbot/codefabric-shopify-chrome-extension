@@ -1,11 +1,12 @@
 namespace 'CodeFabric.Chrome', (ns) ->
 
   class ExtensionFactory
-    TabEditorExtension = null
+    TabEditorExtension = BulkTabEditorExtension = null
 
 
     constructor: ->
       TabEditorExtension = using 'CodeFabric.Chrome.Products.TabEditorExtension'
+      BulkTabEditorExtension = using 'CodeFabric.Chrome.Products.BulkTabEditorExtension'
 
     create: (url) ->
       adminPage = getAdminPage url
@@ -17,8 +18,9 @@ namespace 'CodeFabric.Chrome', (ns) ->
           when 'products'
             console.log "Load product extensions"
             if adminPage[2]
-              extensions.push new TabEditorExtension(adminPage[2])
+              extensions.push new TabEditorExtension adminPage[2]
             else
+              extensions.push new BulkTabEditorExtension()
 
           else
             console.log "Don't have any extensions to load for #{adminPage[1]}!"

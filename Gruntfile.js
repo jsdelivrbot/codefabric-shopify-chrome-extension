@@ -22,10 +22,11 @@ module.exports = function(grunt) {
         'bower_concat',
         'concat',
         'copy',
+        'connect'
        // 'clean:build'
       ],
       options: {
-        livereload: true,
+        livereload: 35729
       },
     },
     // sass: {
@@ -46,6 +47,20 @@ module.exports = function(grunt) {
     //     }
     //   },
     // },
+    connect: {
+      server: {
+        options: {
+          port: 8080,
+          protocol: 'https',
+          key: grunt.file.read('banana.key').toString(),
+          cert: grunt.file.read('banana.crt').toString(),
+          debug: true,
+          livereload: true,
+          open: false,
+          keepalive: true
+        }
+      }
+    },
     coffee: {
       compile: {
         options: {

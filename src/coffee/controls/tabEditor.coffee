@@ -1,8 +1,8 @@
 namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
   class TabEditor extends CodeFabric.Shopify.Controls.Html
-    $ = Grid = ChildGrid = Html = Dropdown = TextArea = RadioButton = null
-    Logger = Api = GetSnippets = GetTheme = GetPages = UpdateProductMetafield = CreateProductMetafied = null
+    $ = Grid = ChildGrid = Html = Dropdown = TextArea = RadioButton = Button = InputField = null
+    Logger = Api = GetSnippets = GetTheme = GetPages = UpdateProductMetafield = CreateProductMetafield = DeleteProductMetafield = null
 
     @snippetPromise = null
     @snippets = null
@@ -23,15 +23,19 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       Dropdown = using 'CodeFabric.Shopify.Controls.Dropdown'
       TextArea = using 'CodeFabric.Shopify.Controls.TextArea'
       RadioButton = using 'CodeFabric.Shopify.Controls.RadioButton'
+      Button = using 'CodeFabric.Shopify.Controls.Button'
+      InputField = using 'CodeFabric.Shopify.Controls.InputField'
 
       Api = using 'CodeFabric.Shopify.Api'
       GetTheme = using 'CodeFabric.Shopify.Operations.GetTheme'
       GetSnippets = using 'CodeFabric.Shopify.Operations.GetSnippets'
       GetPages = using 'CodeFabric.Shopify.Operations.GetPages'
       UpdateProductMetafield = using 'CodeFabric.Shopify.Operations.UpdateProductMetafield'
-      CreateProductMetafied = using 'CodeFabric.Shopify.Operations.CreateProductMetafield'
+      CreateProductMetafield = using 'CodeFabric.Shopify.Operations.CreateProductMetafield'
+      DeleteProductMetafield = using 'CodeFabric.Shopify.Operations.DeleteProductMetafield'
 
-      @handle = @name.toLowerCase().replace(/ /g, '-')
+      @handle = if @name? then @name.toLowerCase().replace(/ /g, '-') else 'new-tab'
+      @isDeleted = false
 
       super()
 
@@ -41,7 +45,12 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
       headerGrid = new Grid()
 
-      headerGrid.addCell new Html("<label for=\"tab-#{@handle}\">#{@name}</label>")
+      nameInput = null
+      if @name? and @name != ''
+        headerGrid.addCell new Html("<label for=\"tab-#{@handle}\">#{@name}</label>")
+      else
+        nameInput = new InputField 'text', 'tab-name', 'tab-name', 'New tab'
+        headerGrid.addCell nameInput
 
       snippetRadio = new RadioButton 'Snippet', 'snippet-radio', "tab-type-#{@handle}", "tab-type-#{@handle}-snippet", "snippet"
       pageRadio = new RadioButton 'Page', 'page-radio', "tab-type-#{@handle}", "tab-type-#{@handle}-page", "page"
@@ -53,6 +62,14 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       radioGroup.addCell textRadio, true
 
       headerGrid.addCell radioGroup, true
+
+      deleteButton = new Button 'btn btn-delete', '', (e) => 
+        @isDeleted = true
+        parent.parents 'form'
+              .trigger 'change'
+        @element.remove()
+
+      headerGrid.addCell deleteButton, true
 
       @snippetSelector = new Dropdown 'snippets', 'snippets', null, null, TabEditor.getSnippets
       @snippetSelector.hide()
@@ -76,11 +93,17 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
         @textArea.show()
         @textArea.value @value
 
+      headerGrid.render @element
+
+      if nameInput?
+        nameInput.element.on 'change', (e) =>
+          @name = nameInput.value()
+          @handle = if @name? then @name.toLowerCase().replace(/ /g, '-') else 'new-tab'
+
       @snippetSelector.render @element
       @pageSelector.render @element
       @textArea.render @element
 
-      headerGrid.render @element
       parent.append @element
 
       snippetRadio.onChange = (e) =>
@@ -90,7 +113,11 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
         if snippetRadio.isChecked()
           @snippetSelector.show()
           @type = 'snippet'
+          @value = "{#{@snippetSelector.value()}}"
 
+      @snippetSelector.onChange = (e) =>
+        if snippetRadio.isChecked()
+          @value = "{#{@snippetSelector.value()}}"
 
       pageRadio.onChange = (e) =>
         @snippetSelector.hide()
@@ -99,6 +126,11 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
         if pageRadio.isChecked()
           @pageSelector.show()
           @type = 'page'
+          @value = "[#{@pageSelector.value()}]"
+
+      @pageSelector.onChange = (e) =>
+        if pageRadio.isChecked()
+          @value = "[#{@pageSelector.value()}]"
 
       textRadio.onChange = (e) =>
         @snippetSelector.hide()
@@ -107,28 +139,35 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
         if textRadio.isChecked()
           @textArea.show()
           @type = 'text'
+          @value = @textArea.value()
+
+      @textArea.onChange = (e) =>
+        if textRadio.isChecked()
+          @value = @textArea.value()
 
       super parent, false
 
     save: () =>
-      Logger.showMessage "Saving tab #{name}"
       promise = $.Deferred()
-
-      value = switch @type
-        when 'snippet' then "{#{@snippetSelector.value()}}"
-        when 'page' then "[#{@pageSelector.value()}]"
-        else @textArea.value()
-
-      operation = null
-      if @tabId
-        operation = new UpdateProductMetafield @productId, @tabId, value
+      if @isDeleted and not @tabId?
+        promise.resolve()
       else
-        operation = new CreateProductMetafied @productId, 'tab', @name, value
+        operation = null
+        if @isDeleted
+          Logger.showMessage "Deleting tab #{@name}"
+          operation = new DeleteProductMetafield @productId, @tabId
+        else
+          Logger.showMessage "Saving tab #{@name}"
 
-      operation.onDone = (res) ->
-        promise.resolve res
+          if @tabId
+            operation = new UpdateProductMetafield @productId, @tabId, @value || ' '
+          else
+            operation = new CreateProductMetafield @productId, 'tab', @name, @value || ' '
 
-      Api.execute operation
+        operation.onDone = (res) ->
+          promise.resolve res
+
+        Api.execute operation
 
       return promise
 

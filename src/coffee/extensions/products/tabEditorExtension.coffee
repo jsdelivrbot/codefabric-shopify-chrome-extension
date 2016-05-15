@@ -36,7 +36,7 @@ namespace 'CodeFabric.Chrome.Products', (ns) ->
 
       form.on 'change', (e) =>
         if $("form#edit_product_#{@productId} ##{TabEditorExtension.existsElement}").length <= 0
-          window.setTimeout @load, 100
+          window.setTimeout @load, 500
 
       if renderResult and typeof renderResult.then == 'function'
         renderResult.then (result) =>

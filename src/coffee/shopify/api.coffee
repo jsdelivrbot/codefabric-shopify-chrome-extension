@@ -24,7 +24,8 @@ namespace 'CodeFabric.Shopify', (ns) ->
         operation = Api.queue.pop()
         Logger.showMessage "Doing the thing: #{operation.name}"
 
-        promise = $.ajax operation.toAjax()
+        ajaxOptions = operation.toAjax()
+        promise = $.ajax ajaxOptions
         promise.done (r) ->
           if operation.onDone != null 
             operation.onDone r

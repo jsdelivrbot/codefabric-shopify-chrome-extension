@@ -45,6 +45,9 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
     addContent: (content) =>
       @cardContent.push content
 
+      if @isRendered
+        @renderContentItem content
+
     render: (parent) =>
       @renderInternal()
       parent.append @element
@@ -79,11 +82,17 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
 
         headerGrid.render header
 
-      contentWrapper = $ Card.cardContentWrapper
-      (content.render contentWrapper) for content in @cardContent
+      @contentWrapper = $ Card.cardContentWrapper
+      (@renderContentItem content) for content in @cardContent
 
-      @element.append contentWrapper
+      @element.append @contentWrapper
 
+    renderContentItem: (item) =>
+      if @contentWrapper?
+        if item.render?
+          item.render @contentWrapper
+        else
+          @contentWrapper.append item
 
 
 
