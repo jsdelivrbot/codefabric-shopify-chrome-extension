@@ -965,7 +965,7 @@
                     }
                   }
 
-                  jq('.next-card.images').before(tabsCard);
+                  jq('div.section .ui-layout__item:first .ui-card:last').before(tabsCard);
 
                   result.resolve();
                 });
