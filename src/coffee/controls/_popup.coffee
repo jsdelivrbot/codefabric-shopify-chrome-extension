@@ -46,9 +46,9 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
       buttonsWrapper = $ Popup.modalButtonsWrapper
       for button in @buttons by -1
         if button.cssClass.indexOf 'btn-close-modal' > -1
-          cb = button.callback
-          button.callback = (e) =>
-            if not cb? or cb e
+          button.oldCallback = button.callback
+          button.callback = (e) ->
+            if not @oldCallback? or @oldCallback e
               modal.hide()
 
         button.render buttonsWrapper

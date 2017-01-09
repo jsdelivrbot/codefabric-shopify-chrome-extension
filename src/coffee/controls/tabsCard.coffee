@@ -37,7 +37,7 @@ namespace 'CodeFabric.Shopify.Controls', (ns) ->
                                          @onReorderTabsClick)
                            ]
 
-      cardsCell = parent.find 'div.section .next-card.images'
+      cardsCell = parent.find 'div.section .ui-layout__item:first .ui-card:last'
       promise = $.Deferred()
 
       getOperation = new GetProductMetafieldsByNamespace @productId, 'tab', (r) => 

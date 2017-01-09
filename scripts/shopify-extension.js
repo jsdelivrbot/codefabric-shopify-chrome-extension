@@ -195,7 +195,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     };
 
     Popup.prototype.show = function() {
-      var body, button, buttonsWrapper, cb, content, element, header, i, modal, ref;
+      var body, button, buttonsWrapper, content, element, header, i, modal, ref;
       element = $(Popup.modalWrapper);
       modal = new Shopify.Modal(element.get(0));
       modal.show();
@@ -216,14 +216,12 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
       for (i = ref.length - 1; i >= 0; i += -1) {
         button = ref[i];
         if (button.cssClass.indexOf('btn-close-modal' > -1)) {
-          cb = button.callback;
-          button.callback = (function(_this) {
-            return function(e) {
-              if ((cb == null) || cb(e)) {
-                return modal.hide();
-              }
-            };
-          })(this);
+          button.oldCallback = button.callback;
+          button.callback = function(e) {
+            if ((this.oldCallback == null) || this.oldCallback(e)) {
+              return modal.hide();
+            }
+          };
         }
         button.render(buttonsWrapper);
       }
@@ -1295,7 +1293,7 @@ namespace('CodeFabric.Shopify.Controls', function(ns) {
     TabsCard.prototype.render = function(parent) {
       var cardsCell, getOperation, promise;
       this.tabsCard = new Card('tabs-editor', 'Tabs', [new Button('add-tab', 'Add a new tab', this.onAddTabClick), new Button('tab-order', 'Change tab order', this.onReorderTabsClick)]);
-      cardsCell = parent.find('div.section .next-card.images');
+      cardsCell = parent.find('div.section .ui-layout__item:first .ui-card:last');
       promise = $.Deferred();
       getOperation = new GetProductMetafieldsByNamespace(this.productId, 'tab', (function(_this) {
         return function(r) {
@@ -1666,6 +1664,7 @@ namespace('CodeFabric.Chrome.Products', function(ns) {
             operation.onDone = function(res) {
               return promise.resolve(res);
             };
+            promises.push(promise);
             API.execute(operation);
           }
           return $.when(promises).then(function(results) {
