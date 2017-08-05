@@ -426,7 +426,7 @@
             if (bulkMenu.length > 1) {
               bulkMenu = jq(bulkMenu[bulkMenu.length - 1]);
             }
-            bulkMenu = bulkMenu.append('<div class="ui-popover__section ui-popover__section--no-padding next-popover__pane cfb_ext"></div>').find('.cfb_ext');
+            bulkMenu = bulkMenu.append('<div class="ui-popover__section ui-popover__section--no-padding next-popover__pane cfb_ext"><ul class="next-list next-list--compact"></ul></div>').find('.cfb_ext ul');
           }
           for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
             var item = items[itemIdx];
