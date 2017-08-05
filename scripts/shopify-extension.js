@@ -421,6 +421,10 @@
             bulkMenu = jq('.bulk-actions ul .next-popover ul.next-list');
             bulkMenu = bulkMenu.append('<div class="next-popover__pane cfb_ext"></div>').find('.cfb_ext');
           }
+          if (bulkMenu.length < 1) {
+            bulkMenu = jq('.bulk-actions ul .ui-popover ul.next-list');
+            bulkMenu = bulkMenu.append('<div class="ui-popover__section ui-popover__section--no-padding next-popover__pane cfb_ext"></div>').find('.cfb_ext');
+          }
           for (var itemIdx = 0; itemIdx < items.length; itemIdx++) {
             var item = items[itemIdx];
             var itemEl = null;
@@ -965,7 +969,7 @@
                     }
                   }
 
-                  jq('div.section .ui-layout__item:first .ui-card:last').before(tabsCard);
+                  jq('div.ui-layout .ui-layout__item:first .ui-card:last').before(tabsCard);
 
                   result.resolve();
                 });
