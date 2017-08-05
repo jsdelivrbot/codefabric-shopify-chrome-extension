@@ -424,7 +424,7 @@
           if (bulkMenu.length < 1) {
             bulkMenu = jq('.bulk-actions ul .ui-popover .ui-popover__section');
             if (bulkMenu.length > 1) {
-              bulkMenu = bulkMenu.get(bulkMenu.length - 1);
+              bulkMenu = jq(bulkMenu[bulkMenu.length - 1]);
             }
             bulkMenu = bulkMenu.append('<div class="ui-popover__section ui-popover__section--no-padding next-popover__pane cfb_ext"></div>').find('.cfb_ext');
           }
