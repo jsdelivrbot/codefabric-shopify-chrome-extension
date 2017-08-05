@@ -578,7 +578,7 @@
 
           jq.when(getPages(), getSnippets(), getSelectedItems())
             .done(function (pages, snippets, selection) {
-                shopify.Flash.hide();
+                //shopify.Flash.hide();
                 var itemsText = selection.length;
                 var modalContent = jq(bulkAddTabModalContent.replace('{0}', itemsText));
                 var modalBody = jq(modalContent[1]);
@@ -631,7 +631,7 @@
             .done(function (selection) {
               jq.when(getTabsForProducts(selection))
                 .done(function (tabs) {
-                  shopify.Flash.hide();
+                  //shopify.Flash.hide();
                   var itemsText = selection.length;
                   var modalContent = jq(bulkRemoveTabModalContent.replace('{0}', itemsText));
                   var modalBody = jq(modalContent[1]);
@@ -675,7 +675,7 @@
             .done(function (selection) {
               jq.when(getTabsForProducts(selection), getTabOrderForProducts(selection))
                 .done(function (tabs, orderFields) {
-                  shopify.Flash.hide();
+                  //shopify.Flash.hide();
                   var itemsText = selection.length;
 
                   var modalContent = jq(bulkReOrderTabModalContent.replace('{0}', itemsText));
